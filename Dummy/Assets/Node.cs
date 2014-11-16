@@ -1,11 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 [ExecuteInEditMode]
 public class Node : MonoBehaviour {
 
 	public GameObject nextNode;
-	private LineRenderer line;
+	public List<GameObject> nextNodes = new List<GameObject> ();
+	public Material RailWayMaterial;
+	private IEnumerable<LineRenderer> lines = new List<LineRenderer>();
 	private Vector3 from;
 	private Vector3 to;
 
@@ -20,37 +24,43 @@ public class Node : MonoBehaviour {
 		CreateLine ();
 	}
 
+	void Reset(){
+		nextNodes = new List<GameObject> ();
+	}
+
 	void CreateLine(){
-		from = Vector3.zero;
-		to = Vector3.zero;
+		if (nextNodes.Count == 0)
+			nextNodes.Add (nextNode);
 
-		line = gameObject.GetComponent<LineRenderer> ();
-		if (line == null) {
-			line = gameObject.AddComponent("LineRenderer") as LineRenderer;
-		}
-		line.SetVertexCount (nextNode == null ? 1 : 2);
-
-		line.SetColors (new Color(255,0,0,100), new Color(0,255,0,100));
-		line.SetVertexCount (2);
-		line.SetWidth(0.3f, 0.3f);
+		lines = nextNodes.Select ((go, i) => {
+			var lineParent = i == 0 ? gameObject : new GameObject(gameObject.name + " extra line", new [] { typeof(LineRenderer) });
+			var line = lineParent.GetComponent<LineRenderer> () ?? lineParent.AddComponent("LineRenderer") as LineRenderer;
+			line.SetVertexCount(2);
+			line.material = RailWayMaterial;
+			line.SetWidth(0.3f, 0.3f);
+			line.SetPosition(0, this.transform.position);
+			line.SetPosition(1, go.transform.position);
+			return line;
+		}).ToList();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		if (line == null || !line.isVisible) {
+		if (lines == null) {
 			CreateLine ();
 		}
-
-		if (from != this.transform.position) {
-			from = this.transform.position;
-			line.SetPosition(0, from);
-		}
-		if (nextNode != null && to != nextNode.transform.position) {
-			to = nextNode.transform.position;
-			line.SetPosition(1, to);
-		}
+		return;
+//		if (from != this.transform.position) {
+//			from = this.transform.position;
+//			line.SetPosition(0, from);
+//		}
+//		if (nextNode != null && to != nextNode.transform.position) {
+//			to = nextNode.transform.position;
+//			line.SetPosition(1, to);
+//		}
 	}
 
+	// Previous way of moving: using the defined line between a waypoint and the next waypoint
 	public Node PositionOnLineReturningOverflow(float unitsFromStart, out float newUnitsFromStart, out Vector3 position, out Vector3 destination){
 		position = to;
 		destination = to;
