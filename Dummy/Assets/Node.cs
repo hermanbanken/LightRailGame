@@ -37,7 +37,7 @@ public class Node : MonoBehaviour {
 			var line = lineParent.GetComponent<LineRenderer> () ?? lineParent.AddComponent("LineRenderer") as LineRenderer;
 			line.SetVertexCount(2);
 			line.material = RailWayMaterial;
-			line.SetWidth(0.3f, 0.3f);
+			line.SetWidth(0.6f, 0.6f);
 			line.SetPosition(0, this.transform.position);
 			line.SetPosition(1, go.transform.position);
 			return line;
