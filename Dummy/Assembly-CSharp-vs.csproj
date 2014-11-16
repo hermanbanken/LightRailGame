@@ -5,7 +5,7 @@
 	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
 	<ProductVersion>10.0.20506</ProductVersion>
 	<SchemaVersion>2.0</SchemaVersion>
-	<ProjectGuid>{B2B58FB2-4462-6B0C-A872-40DD957E5FE0}</ProjectGuid>
+	<ProjectGuid>{5D140478-0F28-07E4-C8A7-2F745EC759D7}</ProjectGuid>
 	<OutputType>Library</OutputType>
 	<AppDesignerFolder>Properties</AppDesignerFolder>
 	<RootNamespace></RootNamespace>
@@ -47,6 +47,8 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Graph.cs" />
+     <Compile Include="Assets\Node.cs" />
+     <Compile Include="Assets\Train.cs" />
      <Compile Include="Assets\Tuple.cs" />
      <Compile Include="Assets\Tuple2.cs" />
   </ItemGroup>
