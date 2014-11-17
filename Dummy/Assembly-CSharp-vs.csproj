@@ -46,10 +46,20 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Bezier.cs" />
+     <Compile Include="Assets\BezierControlPointMode.cs" />
+     <Compile Include="Assets\BezierCurve.cs" />
+     <Compile Include="Assets\BezierSpline.cs" />
+     <Compile Include="Assets\Edge.cs" />
      <Compile Include="Assets\Graph.cs" />
      <Compile Include="Assets\HUDFPS.cs" />
      <Compile Include="Assets\LightRailGame.cs" />
+     <Compile Include="Assets\Line.cs" />
      <Compile Include="Assets\Node.cs" />
+     <Compile Include="Assets\Node2.cs" />
+     <Compile Include="Assets\SplineDecorator.cs" />
+     <Compile Include="Assets\SplineWalker.cs" />
+     <Compile Include="Assets\SplineWalkerMode.cs" />
      <Compile Include="Assets\Train.cs" />
      <Compile Include="Assets\TrainCollisionDetector.cs" />
      <Compile Include="Assets\Tuple.cs" />
