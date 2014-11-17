@@ -14,11 +14,7 @@ public class NodeInspector : Editor {
 	public override void OnInspectorGUI () {
 		Node2 node = target as Node2;
 		Graph graph = node.GetGraph ();
-		if (graph == null)
-			Debug.Log ("Graph null");
-		if (graph.edges.First().From == null)
-			Debug.Log ("Edges From null");
-		var existingEdges 	   = graph.edges.Where (e => e.From == node);
+		var existingEdges 	   = graph.edges.Where (e => e != null && e.From == node);
 		var allreadyConnected  = existingEdges.Select (e => e.To);
 		var possibleConnection = graph.nodes.Where (n => n != node).Where (n => !allreadyConnected.Contains (n));
 
@@ -30,9 +26,12 @@ public class NodeInspector : Editor {
 			}
 		}
 	}
+	
+	public void OnSceneGUI () {
+		NodeInspector.OnSceneGUI (target as Node2);
+	}
 
-	private void OnSceneGUI () {
-		Node2 node = target as Node2;
+	public static void OnSceneGUI (Node2 node) {
 		Quaternion handleRotation = Tools.pivotRotation == PivotRotation.Local ? node.gameObject.transform.rotation : Quaternion.identity;
 
 		EditorGUI.BeginChangeCheck();
@@ -47,29 +46,8 @@ public class NodeInspector : Editor {
 		float size = HandleUtility.GetHandleSize(node.position) * 2f;
 		if (Handles.Button(node.position, handleRotation, size * handleSize, size * pickSize, Handles.DotCap)) {
 			// Show buttons to connect to other nodes
-			Repaint();
+			// Select node?
 		}
-
-//		Transform handleTransform = node.transform;
-//		Quaternion handleRotation = Tools.pivotRotation == PivotRotation.Local ? handleTransform.rotation : Quaternion.identity;
-//
-//		Vector3 p0 = handleTransform.TransformPoint(node.position);
-//		
-//		Handles.color = Color.green;
-//		float size = HandleUtility.GetHandleSize(handleTransform.position) * 2f;
-//
-//		if (Handles.Button(handleTransform.position, handleRotation, size * handleSize, size * pickSize, Handles.DotCap)) {
-//			// Show buttons to connect to other nodes
-//			Repaint();
-//		}
-//
-//		EditorGUI.BeginChangeCheck();
-//		p0 = Handles.DoPositionHandle(p0, handleRotation);
-//		if (EditorGUI.EndChangeCheck()) {
-//			Undo.RecordObject(node, "Move Node");
-//			EditorUtility.SetDirty(node);
-//			node.position = handleTransform.InverseTransformPoint(p0);
-//		}
 	}
 
 }

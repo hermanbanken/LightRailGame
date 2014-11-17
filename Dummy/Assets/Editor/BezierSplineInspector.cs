@@ -16,8 +16,6 @@ public class BezierSplineInspector : Editor {
 	};
 
 	private BezierSpline spline;
-	private Transform handleTransform;
-	private Quaternion handleRotation;
 	private int selectedIndex = -1;
 
 	public override void OnInspectorGUI () {
@@ -62,21 +60,19 @@ public class BezierSplineInspector : Editor {
 		}
 	}
 
-	private void OnSceneGUI () {
-		InternalOnSceneGUI ();
+	public virtual void OnSceneGUI () {
+		OnSceneGUI(target as BezierSpline);
 	}
 
-	protected void InternalOnSceneGUI(){
-		spline = target as BezierSpline;
-		handleTransform = spline.transform;
-		handleRotation = Tools.pivotRotation == PivotRotation.Local ?
-			handleTransform.rotation : Quaternion.identity;
+	public static void OnSceneGUI(BezierSpline spline, BezierSplineInspector inspector = null){
+		var handleTransform = spline.transform;
+		var handleRotation = Tools.pivotRotation == PivotRotation.Local ? handleTransform.rotation : Quaternion.identity;
 		
-		Vector3 p0 = ShowPoint(0);
+		Vector3 p0 = ShowPoint(spline, 0, handleTransform, handleRotation, inspector);
 		for (int i = 1; i < spline.ControlPointCount; i += 3) {
-			Vector3 p1 = ShowPoint(i);
-			Vector3 p2 = ShowPoint(i + 1);
-			Vector3 p3 = ShowPoint(i + 2);
+			Vector3 p1 = ShowPoint(spline, i, handleTransform, handleRotation, inspector);
+			Vector3 p2 = ShowPoint(spline, i + 1, handleTransform, handleRotation, inspector);
+			Vector3 p3 = ShowPoint(spline, i + 2, handleTransform, handleRotation, inspector);
 			
 			Handles.color = Color.gray;
 			Handles.DrawLine(p0, p1);
@@ -85,7 +81,7 @@ public class BezierSplineInspector : Editor {
 			Handles.DrawBezier(p0, p3, p1, p2, Color.white, null, 2f);
 			p0 = p3;
 		}
-		ShowDirections();
+		//ShowDirections();
 	}
 
 	private void ShowDirections () {
@@ -99,7 +95,7 @@ public class BezierSplineInspector : Editor {
 		}
 	}
 
-	private Vector3 ShowPoint (int index) {
+	public static Vector3 ShowPoint(BezierSpline spline, int index, Transform handleTransform, Quaternion handleRotation, BezierSplineInspector self){
 		Vector3 point = handleTransform.TransformPoint(spline.GetControlPoint(index));
 		float size = HandleUtility.GetHandleSize(point);
 		if (index == 0) {
@@ -107,10 +103,12 @@ public class BezierSplineInspector : Editor {
 		}
 		Handles.color = modeColors[(int)spline.GetControlPointMode(index)];
 		if (Handles.Button(point, handleRotation, size * handleSize, size * pickSize, Handles.DotCap)) {
-			selectedIndex = index;
-			Repaint();
+			if(self != null){
+				self.selectedIndex = index;
+				self.Repaint();
+			}
 		}
-		if (selectedIndex == index) {
+		if (self != null && self.selectedIndex == index) {
 			EditorGUI.BeginChangeCheck();
 			point = Handles.DoPositionHandle(point, handleRotation);
 			if (EditorGUI.EndChangeCheck()) {
@@ -121,4 +119,5 @@ public class BezierSplineInspector : Editor {
 		}
 		return point;
 	}
+	
 }

@@ -5,7 +5,7 @@ using System.Linq;
 
 public class Node2 : MonoBehaviour {
 
-	private Graph graph;
+	public Graph graph;
 
 	public Vector3 position {
 		get {
@@ -13,6 +13,10 @@ public class Node2 : MonoBehaviour {
 		}
 		set {
 			gameObject.transform.position = value;
+			var m = graph.edges.Where (e => e != null).Where (e => e.From == this || e.To == this).ToList ();
+			var h = graph.edges.Select (e => e == null ? 5 : (e.From == null ? 1 : 0) + (e.To == null ? 1 : 0)).Sum (a => a);
+			m.ForEach(e => e.UpdatePositions());
+			Debug.Log ("Found "+m.Count+" edges to update, and "+(h / graph.edges.Count())+" positions per edge are null....");
 		}
 	}
 

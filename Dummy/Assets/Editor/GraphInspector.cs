@@ -22,4 +22,10 @@ public class GraphInspector : Editor {
 		}
 	}
 
+	public void OnSceneGUI () {
+		graph = target as Graph;
+		graph.CleanUp ();
+		graph.nodes.ForEach(n => NodeInspector.OnSceneGUI(n));
+		graph.edges.ForEach(e => EdgeInspector.OnSceneGUI(e));
+	}
 }
