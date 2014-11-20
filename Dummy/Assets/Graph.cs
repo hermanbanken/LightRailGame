@@ -5,12 +5,28 @@ using System.Linq;
 
 public class Graph : MonoBehaviour {
 
-	public List<Edge> edges;
-	public List<Node2> nodes;
-	
+	private List<Edge> _edges;
+	private List<Node2> _nodes;
+
+	public List<Edge> edges {
+		get {
+			if(_edges == null || _edges.Any (e => e == null))
+				_edges = new List<Edge>(this.gameObject.GetComponentsInChildren<Edge>());
+			return _edges;
+		}
+	}
+
+	public List<Node2> nodes {
+		get {
+			if(_nodes == null || _nodes.Any (n => n == null))
+				_nodes = new List<Node2>(this.gameObject.GetComponentsInChildren<Node2>());
+			return _nodes;
+		}
+	}
+
 	public void Reset () {
-		edges = new List<Edge> ();
-		nodes = new List<Node2> ();
+		_edges = null;
+		_nodes = null;
 	}
 
 	public void CleanUp() {
@@ -23,17 +39,18 @@ public class Graph : MonoBehaviour {
 			edges.RemoveAt(r);
 	}
 
-	public void AddNode ()
+	public Node2 AddNode ()
 	{
 		GameObject go = new GameObject ();
 		go.transform.parent = this.gameObject.transform;
 		Node2 node = go.AddComponent<Node2> ();
 		nodes.Add (node);
 		go.name = "Node "+nodes.Count;
-		node.SetGraph (this);
+		node.graph = this;
+		return node;
 	}
 
-	public void AddEdge (Node2 from, Node2 to)
+	public Edge AddEdge (Node2 from, Node2 to)
 	{
 		GameObject go = new GameObject ();
 		go.transform.parent = this.gameObject.transform;
@@ -43,6 +60,7 @@ public class Graph : MonoBehaviour {
 		edge.From = from;
 		edge.To = to;
 		// Set positions here
-		edge.SetGraph (this);
+		edge.graph = this;
+		return edge;
 	}
 }

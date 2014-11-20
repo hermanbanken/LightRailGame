@@ -5,7 +5,18 @@ using System.Linq;
 
 public class Node2 : MonoBehaviour {
 
-	public Graph graph;
+	private Graph _graph;
+	public Graph graph {
+		get { 
+			if(this._graph == null){
+				this._graph = this.gameObject.GetComponentInParent<Graph> ();
+			}
+			return this._graph;
+		}
+		set {
+			this._graph = value;
+		}
+	}
 
 	public Vector3 position {
 		get {
@@ -14,21 +25,10 @@ public class Node2 : MonoBehaviour {
 		set {
 			gameObject.transform.position = value;
 			var m = graph.edges.Where (e => e != null).Where (e => e.From == this || e.To == this).ToList ();
-			var h = graph.edges.Select (e => e == null ? 5 : (e.From == null ? 1 : 0) + (e.To == null ? 1 : 0)).Sum (a => a);
 			m.ForEach(e => e.UpdatePositions());
-			Debug.Log ("Found "+m.Count+" edges to update, and "+(h / graph.edges.Count())+" positions per edge are null....");
+			var h = graph.edges.Select (e => e == null ? 5 : (e.From == null ? 1 : 0) + (e.To == null ? 1 : 0)).Sum (a => a);
+			//Debug.Log ("Found "+m.Count+" edges to update, and "+(h / graph.edges.Count())+" positions per edge are null....");
 		}
-	}
-
-	public void SetGraph (Graph g)
-	{
-		this.graph = g;
-	}
-
-	public Graph GetGraph (){
-		if (this.graph == null)
-			this.graph = this.gameObject.GetComponentInParent<Graph> ();
-		return this.graph;
 	}
 
 }

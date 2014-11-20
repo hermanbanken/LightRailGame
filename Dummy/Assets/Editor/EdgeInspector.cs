@@ -17,5 +17,16 @@ public class EdgeInspector : BezierSplineInspector {
 		e.To = e.To;
 		BezierSplineInspector.OnSceneGUI(e);
 	}
+
+	
+	public override void OnInspectorGUI () {
+		base.OnInspectorGUI ();
+		Edge e = target as Edge;
+		
+		//		Editor
+		e.From = EditorGUILayout.ObjectField(e.From, typeof(Node2), true) as Node2;
+		e.To = EditorGUILayout.ObjectField(e.To, typeof(Node2), true) as Node2;
+	}
+
 }
 

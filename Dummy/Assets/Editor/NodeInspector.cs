@@ -13,7 +13,7 @@ public class NodeInspector : Editor {
 
 	public override void OnInspectorGUI () {
 		Node2 node = target as Node2;
-		Graph graph = node.GetGraph ();
+		Graph graph = node.graph;
 		var existingEdges 	   = graph.edges.Where (e => e != null && e.From == node);
 		var allreadyConnected  = existingEdges.Select (e => e.To);
 		var possibleConnection = graph.nodes.Where (n => n != node).Where (n => !allreadyConnected.Contains (n));
@@ -21,7 +21,8 @@ public class NodeInspector : Editor {
 		foreach (Node2 n in possibleConnection) {
 			if (GUILayout.Button ("Connect to node "+n.gameObject.name)) {
 				Undo.RecordObject (graph, "Connect nodes");
-				graph.AddEdge(node, n);
+				Edge e = graph.AddEdge(node, n);
+				EditorUtility.SetDirty (e);
 				EditorUtility.SetDirty (graph);
 			}
 		}
