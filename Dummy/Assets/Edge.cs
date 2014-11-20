@@ -44,6 +44,29 @@ public class Edge : BezierSpline
 		From = From;
 	}
 
+	public void Awake(){
+		GameObject a = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+		a.transform.position = GetUnitPoint (GetLength () / 2);
+		GameObject b = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+		b.transform.position = GetPoint (0.5f);
+
+		Vector3 a1 = a.transform.position;
+		a1.z = -5f;
+		a.transform.position = a1;
+		Vector3 b1 = b.transform.position;
+		b1.z = -5f;
+		b.transform.position = b1;
+
+		a.renderer.material.color = Color.red;
+		b.renderer.material.color = Color.yellow;
+//		foreach(Vector3 d in this.positionCache){
+//			GameObject c = GameObject.CreatePrimitive(PrimitiveType.Cube);
+//			c.transform.position = d;
+//			c.renderer.material.color = Color.green;
+//		}
+		Debug.Log ("Edge, Length = " + GetLength () + ", Halfway = " + GetUnitPoint (GetLength () / 2) + ", 0.5 = " + GetPoint (0.5f));
+	}
+
 	private Graph _graph;
 	public Graph graph {
 		get { 

@@ -1,5 +1,9 @@
 ﻿using UnityEngine;
 using System;
+using Eppy;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 public class BezierSpline : MonoBehaviour {
 
@@ -143,7 +147,36 @@ public class BezierSpline : MonoBehaviour {
 		}
 		return transform.TransformPoint(Bezier.GetPoint(points[i], points[i + 1], points[i + 2], points[i + 3], t));
 	}
-	
+
+	protected IList<Vector3> positionCache; 
+	private IList<float> lengthCache; 
+	private int precision = 100;
+
+	public Vector3 GetUnitPoint(float units){
+		cachePositions ();
+		var distance = 0f;
+		var i = 0;
+		while (distance < units && i < lengthCache.Count)
+			distance += lengthCache [i++];
+		return GetPoint (Math.Min (1f, (Math.Max (0f, (float)i / lengthCache.Count - 0.5f/lengthCache.Count))));
+	}
+
+	public float GetLength(){
+		cachePositions ();
+		var length = 0f;
+		for (int i = 0; i < lengthCache.Count; i++) {
+			length += lengthCache[i];
+		}
+		return length;
+	}
+
+	private void cachePositions(bool forceReset = false){
+		if(positionCache == null || forceReset)
+			positionCache = Enumerable.Range (0, precision + 1).Select (t => (float) t / precision).Select (t => this.GetPoint (t)).ToList();
+		if (lengthCache == null || forceReset)
+			lengthCache = positionCache.TakeWhile ((_, i) => i < positionCache.Count - 1).Select ((p, i) => Vector3.Distance (p, positionCache [i + 1])).ToList();
+	}
+
 	public Vector3 GetVelocity (float t) {
 		int i;
 		if (t >= 1f) {
