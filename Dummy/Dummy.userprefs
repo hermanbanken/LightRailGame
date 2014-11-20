@@ -1,18 +1,19 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Editor/BezierSplineInspector.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Node2.cs">
     <Files>
       <File FileName="Assets/BezierControlPointMode.cs" Line="1" Column="1" />
-      <File FileName="Assets/Editor/BezierCurveInspector.cs" Line="7" Column="35" />
-      <File FileName="Assets/Editor/BezierSplineInspector.cs" Line="12" Column="34" />
-      <File FileName="Assets/BezierSpline.cs" Line="186" Column="14" />
-      <File FileName="Assets/SplineDecorator.cs" Line="30" Column="61" />
+      <File FileName="Assets/Editor/BezierCurveInspector.cs" Line="1" Column="1" />
+      <File FileName="Assets/Editor/BezierSplineInspector.cs" Line="75" Column="56" />
+      <File FileName="Assets/SplineDecorator.cs" Line="1" Column="1" />
       <File FileName="Assets/Node.cs" Line="1" Column="1" />
-      <File FileName="Assets/Edge.cs" Line="17" Column="2" />
-      <File FileName="Assets/Graph.cs" Line="45" Column="24" />
-      <File FileName="Assets/Editor/GraphInspector.cs" Line="22" Column="4" />
-      <File FileName="Assets/Editor/NodeInspector.cs" Line="28" Column="3" />
-      <File FileName="Assets/Node2.cs" Line="15" Column="1" />
+      <File FileName="Assets/Graph.cs" Line="23" Column="22" />
+      <File FileName="Assets/Editor/GraphInspector.cs" Line="27" Column="11" />
+      <File FileName="Assets/Editor/NodeInspector.cs" Line="19" Column="58" />
+      <File FileName="Assets/Node2.cs" Line="19" Column="20" />
+      <File FileName="Assets/Editor/EdgeInspector.cs" Line="16" Column="3" />
+      <File FileName="Assets/BezierSpline.cs" Line="4" Column="1" />
+      <File FileName="Assets/Edge.cs" Line="31" Column="36" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
