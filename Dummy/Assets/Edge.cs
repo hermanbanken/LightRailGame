@@ -74,7 +74,8 @@ public class Edge : BezierSpline
 		deco.frequency = (int)Math.Round(4 * this.GetLength ());
 		MeshRenderer r = go.AddComponent<MeshRenderer> ();
 		deco.Mesh = go.AddComponent<MeshFilter> ();
-		r.material.color = Color.yellow;
+		//r.material.color = Color.yellow;
+		r.material.mainTexture = Resources.Load<Texture2D>("rail");
 		deco.Awake ();
 	}
 	

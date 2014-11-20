@@ -43,6 +43,7 @@ public class LightRailGame : MonoBehaviour {
 
 			GameObject go = new GameObject();
 			var model = Instantiate(Train, Vector3.zero, Quaternion.LookRotation(Vector3.down)) as Transform;
+			model.localScale = new Vector3(3, 3, 3);
 			model.parent = go.transform;
 			Train train = go.AddComponent<Train>();
 			train.Path = edges.ToList();
