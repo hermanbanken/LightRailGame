@@ -4,12 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 
 public class Node2 : MonoBehaviour {
-
+	
 	private Graph _graph;
 	public Graph graph {
 		get { 
 			if(this._graph == null){
-				this._graph = this.gameObject.GetComponentInParent<Graph> ();
+				this._graph = GameObject.FindObjectOfType<Graph>();
 			}
 			return this._graph;
 		}

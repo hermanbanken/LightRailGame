@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
+using System;
 
 public class Edge : BezierSpline
 {
@@ -63,6 +64,18 @@ public class Edge : BezierSpline
 			}
 
 		}
+	}
+
+	public void Start(){
+		var go = new GameObject ();
+		go.transform.parent = this.transform;
+		var deco = go.AddComponent<MeshAlongSpline> ();
+		deco.spline = this;
+		deco.frequency = (int)Math.Round(4 * this.GetLength ());
+		MeshRenderer r = go.AddComponent<MeshRenderer> ();
+		deco.Mesh = go.AddComponent<MeshFilter> ();
+		r.material.color = Color.yellow;
+		deco.Awake ();
 	}
 	
 }

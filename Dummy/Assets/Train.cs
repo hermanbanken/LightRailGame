@@ -14,7 +14,7 @@ public class Train : MonoBehaviour {
 	public float speed = 10f;
 	private float position = 0f;
 
-	public List<GameObject> Path = new List<GameObject>();
+	public List<Edge> Path = new List<Edge>();
 	public int currentStation;
 
 	// Use this for initialization
@@ -30,35 +30,23 @@ public class Train : MonoBehaviour {
 			return;		
 		}
 
-		// Store starting node
-		currentNode = StartingNode == null ? null : StartingNode.GetComponent<Node>();
-	
-		// Read implicit Path that follows from WayPoint directions
-		if (Path.Count == 0 && currentNode != null) {
-			Path.Add (StartingNode);
-			while(currentNode.nextNode != null && currentNode.nextNode.GetComponent<Node>() != null && currentNode.nextNode != StartingNode){
-				Path.Add(currentNode.nextNode);
-				currentNode = currentNode.nextNode.GetComponent<Node>();
-			}	
-		}
-
 		Update ();
 	}
 
 	public void SetPath(IList<GameObject> path){
 		Debug.Log("Current station was "+this.Path[currentStation].name);
-		var p = path.ToList ();
-		var whereToStart = p.Where ((go, i) => {
-			var next = path [(i + 1) % path.Count];
-			if (go != this.Path [currentStation] && next != this.Path [currentStation])
-					return false;
-			var direction = (go.transform.position - next.transform.position).normalized;
-			return true;
-		}).First ();
-
-		this.Path = path.ToList();
-		this.currentStation = path.IndexOf (whereToStart);
-		Debug.Log("Current station is now "+Path[currentStation].name);
+//		var p = path.ToList ();
+//		var whereToStart = p.Where ((go, i) => {
+//			var next = path [(i + 1) % path.Count];
+//			if (go != this.Path [currentStation] && next != this.Path [currentStation])
+//					return false;
+//			var direction = (go.transform.position - next.transform.position).normalized;
+//			return true;
+//		}).First ();
+//
+//		this.Path = path.ToList();
+//		this.currentStation = path.IndexOf (whereToStart);
+//		Debug.Log("Current station is now "+Path[currentStation].name);
 	}
 
 	// Update is called once per frame
@@ -70,41 +58,31 @@ public class Train : MonoBehaviour {
 		if (Path.Count > 0) {
 			UpdateToNextPosition(position + speed * Time.deltaTime);
 		}
-		// Old way of moving: move along waypoints
-		else {
-			if (currentNode == null)
-				return;
 
-			position += speed * Time.deltaTime;
-
-			Vector3 pos;
-			Vector3 dest;
-			currentNode = currentNode.PositionOnLineReturningOverflow (position, out position, out pos, out dest);
-			transform.position = pos;
-			transform.rotation = Quaternion.LookRotation (dest - pos); ///Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(dest - pos));
-
-		}
-		
 		if (this.speed < 10f)
 			this.speed = Math.Min(10f, this.speed+Time.deltaTime);
 	}
 
 	public void UpdateToNextPosition(float unitsFromStation){
-		int nextStation = (currentStation + 1) % Path.Count;
+		Edge current = Path [currentStation];
 
-		Vector3 from = Path [currentStation].transform.position;
-		Vector3 to = Path [nextStation].transform.position;
-				
-		float overflow = unitsFromStation - (to - from).magnitude;
-
-		if (overflow > 0) {
-			currentStation = nextStation;
-			UpdateToNextPosition (overflow);
-		} else {
-			position = unitsFromStation;
-			this.transform.position = from + (to - from).normalized * unitsFromStation;
-			this.transform.rotation = Quaternion.LookRotation (to - from);
+		while (current.GetLength () < unitsFromStation) {
+			Debug.Log ("Train went onto new Edge");
+			unitsFromStation -= current.GetLength();
+			currentStation = (currentStation + 1) % Path.Count;
+			current = Path[currentStation];
 		}
+
+		float t = current.GetPositionOfUnitPoint (unitsFromStation);
+		Vector3 pos = current.GetPoint (t);
+		Vector3 rot = current.GetDirection (t);
+
+		var parentTransform = this.gameObject.transform;
+		pos.z -= 1;
+		this.transform.position = pos;
+		this.transform.rotation = Quaternion.LookRotation(rot);
+
+	    this.position = unitsFromStation;
 	}
 
 	public void Deselect(){

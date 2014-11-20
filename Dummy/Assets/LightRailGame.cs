@@ -11,6 +11,9 @@ public class LightRailGame : MonoBehaviour {
 	private LineRenderer selectionLine;
 	private bool selectionIsRound = false;
 	private bool mouseDown = false;
+	private Graph graph;
+
+	public Transform Train;
 
 	// Use this for initialization
 	void Start () {
@@ -21,11 +24,29 @@ public class LightRailGame : MonoBehaviour {
 		selectionLine.SetVertexCount (0);
 		selectionLine.SetColors(new Color(0,0,255,10), new Color(0,0,255,200));
 		selectionLine.SetWidth(0.5f, 0.5f);
+
+
+		graph = GameObject.FindObjectOfType<Graph> ();
+		StartGame ();
 	}
 
 	// Update is called once per frame
 	void Update () {
 		HandleTouches ();
+	}
+
+	private void StartGame(){
+		var routes = graph.Cycles ();
+		foreach (IList<Node2> route in routes) {
+			Debug.Log ("Cycle of length "+route.Count+": "+route.Select (n => n.name).Aggregate ("", (f, n) => f.Length == 0 ? n : f + "," + n));
+			IEnumerable<Edge> edges = route.Select((n, i) => graph.edges.First(e => e.From == n && e.To == route[(i+1)%route.Count]));
+
+			GameObject go = new GameObject();
+			var model = Instantiate(Train, Vector3.zero, Quaternion.LookRotation(Vector3.down)) as Transform;
+			model.parent = go.transform;
+			Train train = go.AddComponent<Train>();
+			train.Path = edges.ToList();
+		}
 	}
 
 	private void HandleTouches(){

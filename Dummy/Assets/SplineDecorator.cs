@@ -11,7 +11,7 @@ public class SplineDecorator : MonoBehaviour {
 
 	public Transform[] items;
 
-	private void Awake () {
+	public void Awake () {
 		if (frequency <= 0 || items == null || items.Length == 0) {
 			return;
 		}

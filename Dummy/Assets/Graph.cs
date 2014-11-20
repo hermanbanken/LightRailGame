@@ -8,9 +8,12 @@ public class Graph : MonoBehaviour {
 	private List<Edge> _edges;
 	private List<Node2> _nodes;
 
+	[SerializeField]
+	public Transform Decoration;
+
 	public List<Edge> edges {
 		get {
-			if(_edges == null || _edges.Any (e => e == null))
+			if(_edges == null || _edges.Any (e => e == null) || _edges.Count == 0)
 				_edges = new List<Edge>(this.gameObject.GetComponentsInChildren<Edge>());
 			return _edges;
 		}
@@ -18,7 +21,7 @@ public class Graph : MonoBehaviour {
 
 	public List<Node2> nodes {
 		get {
-			if(_nodes == null || _nodes.Any (n => n == null))
+			if(_nodes == null || _nodes.Any (n => n == null) || _nodes.Count == 0)
 				_nodes = new List<Node2>(this.gameObject.GetComponentsInChildren<Node2>());
 			return _nodes;
 		}
@@ -63,4 +66,5 @@ public class Graph : MonoBehaviour {
 		edge.graph = this;
 		return edge;
 	}
+
 }

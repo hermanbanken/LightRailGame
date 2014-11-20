@@ -152,13 +152,18 @@ public class BezierSpline : MonoBehaviour {
 	private IList<float> lengthCache; 
 	private int precision = 100;
 
-	public Vector3 GetUnitPoint(float units){
+	public float GetPositionOfUnitPoint(float units){
 		cachePositions ();
 		var distance = 0f;
 		var i = 0;
 		while (distance < units && i < lengthCache.Count)
 			distance += lengthCache [i++];
-		return GetPoint (Math.Min (1f, (Math.Max (0f, (float)i / lengthCache.Count - 0.5f/lengthCache.Count))));
+
+		var segmentLength = lengthCache [i - 1];
+		var inSegment = units - distance + segmentLength;
+		var relativeInSegment = inSegment / segmentLength;
+
+		return (i - 1 + relativeInSegment) / precision;
 	}
 
 	public float GetLength(){
