@@ -24,10 +24,10 @@ public class MeshAlongSpline : MonoBehaviour {
 
 		var stepSize = 1f / frequency;
 
-		var vertices = new Vector3[frequency*4+4];
-		var tri = new int[3 * frequency * 4];
-		var normals = new Vector3[frequency*4+4];
-		var uv = new Vector2[frequency * 4 + 4];
+		var vertices = new Vector3[frequency*2+2];
+		var tri = new int[3 * frequency * 2];
+		var normals = new Vector3[frequency*2+2];
+		var uv = new Vector2[frequency*2 + 2];
 
 		var half = frequency;
 
@@ -36,16 +36,10 @@ public class MeshAlongSpline : MonoBehaviour {
 			Vector3 d = spline.GetDirection(stepSize * f);
 			vertices[f  ] 		= p + Vector3.Cross(d, width);
 			vertices[f+1] 		= p - Vector3.Cross(d, width);;
-			vertices[half+f]	= p + Vector3.Cross(d, width);
-			vertices[half+f+1]	= p - Vector3.Cross(d, width);	
 			normals [f  ]		= -Vector3.forward;
 			normals [f+1]		= -Vector3.forward;
-			normals [half+f] 	= Vector3.left;
-			normals [half+f+1] 	= Vector3.left;
 			uv[f  ] 		= new Vector2(0.5f, 0);
 			uv[f+1] 		= new Vector2(0.5f, 1);
-			uv[half+f] 		= new Vector2(0.5f, 0);
-			uv[half+f+1] 	= new Vector2(0.5f, 1);
 
 			if(f > 0){
 				tri[t-6] = f-2;
@@ -54,13 +48,6 @@ public class MeshAlongSpline : MonoBehaviour {
 				tri[t-3] = f;
 				tri[t-2] = f+1;
 				tri[t-1] = f-1;
-
-				tri[t-6+3*half] = half + f-2;
-				tri[t-5+3*half] = half + f;
-				tri[t-4+3*half] = half + f-1;
-				tri[t-3+3*half] = half + f;
-				tri[t-2+3*half] = half + f+1;
-				tri[t-1+3*half] = half + f-1;
 			}
 		}
 
