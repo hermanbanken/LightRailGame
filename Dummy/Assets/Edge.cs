@@ -14,9 +14,12 @@ public class Edge : BezierSpline
 	public Node2 From {
 		get { return _from; }
 		set {
-			if(value == null || value == _from)
+			// Convert Node position to World-relative-space and then to Spline-relative-space (this)
+			Vector3 pos = this.transform.InverseTransformPoint(value.graph.transform.TransformPoint(value.position));
+
+			if(value == null || this.points[0] == pos)
 				return;
-			this.points[0] = value.transform.position;
+			this.points[0] = pos;
 			_from = value;
 			EditorUtility.SetDirty(this);
 		}
@@ -24,10 +27,12 @@ public class Edge : BezierSpline
 	public Node2 To  {
 		get { return _to; }
 		set { 
-			if(value == null || value == _to)
+			// Convert Node position to World-relative-space and then to Spline-relative-space (this)
+			Vector3 pos = this.transform.InverseTransformPoint(value.graph.transform.TransformPoint(value.position));
+
+			if(value == null || this.points[this.points.Length-1] == pos)
 				return;
-			Debug.Log ("Setting <To> Node2 on Edge");
-			this.points[this.points.Length-1] = value.transform.position;
+			this.points[this.points.Length-1] = pos;
 			_to = value;
 			EditorUtility.SetDirty(this);
 		}
@@ -35,12 +40,8 @@ public class Edge : BezierSpline
 
 	public void UpdatePositions ()
 	{
-		if (this.points [0] != _from.transform.position || this.points [this.points.Length - 1] != _to.transform.position) {
-			Debug.Log ("Updating positions");
-			this.points [0] = _from.transform.position;
-			this.points [this.points.Length - 1] = _to.transform.position;
-			EditorUtility.SetDirty(this);
-		}
+		To = To;
+		From = From;
 	}
 
 	private Graph _graph;

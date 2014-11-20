@@ -33,19 +33,21 @@ public class NodeInspector : Editor {
 	}
 
 	public static void OnSceneGUI (Node2 node) {
-		Quaternion handleRotation = Tools.pivotRotation == PivotRotation.Local ? node.gameObject.transform.rotation : Quaternion.identity;
+		Transform handleTransform = node.graph.gameObject.transform;
+		Vector3 point = handleTransform.TransformPoint(node.position);
+		Quaternion handleRotation = Tools.pivotRotation == PivotRotation.Local ? handleTransform.rotation : Quaternion.identity;
 
 		EditorGUI.BeginChangeCheck();
-		var p0 = Handles.DoPositionHandle(node.position, handleRotation);
+		var p0 = Handles.DoPositionHandle(handleTransform.TransformPoint(node.position), handleRotation);
 		if (EditorGUI.EndChangeCheck()) {
 			Undo.RecordObject(node, "Move Node");
 			EditorUtility.SetDirty(node);
-			node.position = p0;
+			node.position = handleTransform.InverseTransformPoint(p0);
 		}
 		
 		Handles.color = Color.green;
 		float size = HandleUtility.GetHandleSize(node.position) * 2f;
-		if (Handles.Button(node.position, handleRotation, size * handleSize, size * pickSize, Handles.DotCap)) {
+		if (Handles.Button(handleTransform.TransformPoint(node.position), handleRotation, size * handleSize, size * pickSize, Handles.DotCap)) {
 			// Show buttons to connect to other nodes
 			// Select node?
 		}

@@ -96,6 +96,7 @@ public class BezierSplineInspector : Editor {
 	}
 
 	public static Vector3 ShowPoint(BezierSpline spline, int index, Transform handleTransform, Quaternion handleRotation, BezierSplineInspector self){
+		//Vector3 point = spline.GetControlPoint (index);
 		Vector3 point = handleTransform.TransformPoint(spline.GetControlPoint(index));
 		float size = HandleUtility.GetHandleSize(point);
 		if (index == 0) {
