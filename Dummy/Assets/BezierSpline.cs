@@ -159,7 +159,7 @@ public class BezierSpline : MonoBehaviour {
 		while (distance < units && i < lengthCache.Count)
 			distance += lengthCache [i++];
 
-		var segmentLength = lengthCache [i - 1];
+		var segmentLength = i - 1 >= 0 ? lengthCache [i - 1] : 1;
 		var inSegment = units - distance + segmentLength;
 		var relativeInSegment = inSegment / segmentLength;
 

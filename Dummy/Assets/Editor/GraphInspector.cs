@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEditor;
+using System.Linq;
 
 [CustomEditor(typeof(Graph))]
 public class GraphInspector : Editor {
@@ -17,8 +18,8 @@ public class GraphInspector : Editor {
 			EditorUtility.SetDirty (graph);
 		}
 
-		GUILayout.TextField ("Node Count: " + graph.nodes.Count);
-		GUILayout.TextField ("Edge Count: " + graph.edges.Count);
+		GUILayout.TextField ("Node Count: " + graph.nodes.Count());
+		GUILayout.TextField ("Edge Count: " + graph.edges.Count());
 
 		if (GUILayout.Button ("Add Node")) {
 			Undo.RecordObject (graph, "Add Node");
@@ -31,7 +32,7 @@ public class GraphInspector : Editor {
 	public void OnSceneGUI () {
 		graph = target as Graph;
 		graph.CleanUp ();
-		graph.nodes.ForEach(n => NodeInspector.OnSceneGUI(n));
-		graph.edges.ForEach(e => EdgeInspector.OnSceneGUI(e));
+		foreach (var n in graph.nodes) NodeInspector.OnSceneGUI (n);
+		foreach (var e in graph.edges) EdgeInspector.OnSceneGUI (e);
 	}
 }

@@ -29,8 +29,6 @@ public class MeshAlongSpline : MonoBehaviour {
 		var normals = new Vector3[frequency*2+2];
 		var uv = new Vector2[frequency*2 + 2];
 
-		var half = frequency;
-
 		for(int f = 0, t = 0; f <= frequency*2; f+=2, t+=6){
 			Vector3 p = spline.GetPoint(stepSize * f);
 			Vector3 d = spline.GetDirection(stepSize * f);

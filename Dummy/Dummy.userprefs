@@ -1,19 +1,12 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Node2.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/GUIs.cs">
     <Files>
-      <File FileName="Assets/BezierControlPointMode.cs" Line="1" Column="1" />
-      <File FileName="Assets/Editor/BezierCurveInspector.cs" Line="1" Column="1" />
-      <File FileName="Assets/Editor/BezierSplineInspector.cs" Line="75" Column="56" />
-      <File FileName="Assets/SplineDecorator.cs" Line="1" Column="1" />
-      <File FileName="Assets/Node.cs" Line="1" Column="1" />
-      <File FileName="Assets/Graph.cs" Line="23" Column="22" />
-      <File FileName="Assets/Editor/GraphInspector.cs" Line="27" Column="11" />
-      <File FileName="Assets/Editor/NodeInspector.cs" Line="19" Column="58" />
-      <File FileName="Assets/Node2.cs" Line="19" Column="20" />
-      <File FileName="Assets/Editor/EdgeInspector.cs" Line="16" Column="3" />
-      <File FileName="Assets/BezierSpline.cs" Line="4" Column="1" />
-      <File FileName="Assets/Edge.cs" Line="31" Column="36" />
+      <File FileName="Assets/LightRailGame.cs" Line="32" Column="16" />
+      <File FileName="Assets/GUIs.cs" Line="12" Column="9" />
+      <File FileName="Assets/Train.cs" Line="64" Column="83" />
+      <File FileName="Assets/Mouse.cs" Line="36" Column="55" />
+      <File FileName="Assets/BezierSpline.cs" Line="162" Column="31" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

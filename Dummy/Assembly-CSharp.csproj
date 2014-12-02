@@ -50,12 +50,15 @@
      <Compile Include="Assets\BezierControlPointMode.cs" />
      <Compile Include="Assets\BezierCurve.cs" />
      <Compile Include="Assets\BezierSpline.cs" />
+     <Compile Include="Assets\DijkstraAlgorithm.cs" />
      <Compile Include="Assets\Edge.cs" />
+     <Compile Include="Assets\GUIs.cs" />
      <Compile Include="Assets\Graph.cs" />
      <Compile Include="Assets\HUDFPS.cs" />
      <Compile Include="Assets\LightRailGame.cs" />
      <Compile Include="Assets\Line.cs" />
      <Compile Include="Assets\MeshAlongSpline.cs" />
+     <Compile Include="Assets\Mouse.cs" />
      <Compile Include="Assets\Node.cs" />
      <Compile Include="Assets\Node2.cs" />
      <Compile Include="Assets\SplineDecorator.cs" />

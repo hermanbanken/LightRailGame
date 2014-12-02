@@ -5,12 +5,23 @@ using System.Linq;
 using UnityEditor;
 using System;
 
-public class Edge : BezierSpline
+public interface IEdge<TNode> where TNode : class {
+	TNode From { get; }
+	TNode To { get; }
+	float Cost { get; }
+}
+
+public class Edge : BezierSpline, IEdge<Node2>
 {
 	[SerializeField]
 	private Node2 _from;
 	[SerializeField]
 	private Node2 _to;
+
+	private bool highlighted;
+	private LineRenderer highlight;
+
+	public float Cost { get { return this.GetLength (); } }
 
 	public Node2 From {
 		get { return _from; }
@@ -45,10 +56,6 @@ public class Edge : BezierSpline
 		From = From;
 	}
 
-	public void Awake(){
-		Debug.Log ("Edge with length of "+this.GetLength () + " units");
-	}
-
 	private Graph _graph;
 	public Graph graph {
 		get { 
@@ -62,8 +69,11 @@ public class Edge : BezierSpline
 				this._graph = value;
 				EditorUtility.SetDirty(this);
 			}
-
 		}
+	}
+	
+	public void Awake(){
+		this.GetLength ();
 	}
 
 	public void Start(){
@@ -79,4 +89,31 @@ public class Edge : BezierSpline
 		deco.Awake ();
 	}
 	
+	public void Straighten ()
+	{
+		var step = (points[points.Length-1] - points[0]) / (this.points.Length - 1);
+		for (int i = 1; i < this.points.Length - 1; i++) {
+			this.points[i] = this.points[0] + i * step;
+		}
+		EditorUtility.SetDirty (this);
+	}
+
+	public void SetHighlighted(bool highlighted){
+		if (!highlighted) {
+			highlight.enabled = false;
+		} else {
+			if(this.highlight == null){
+				var go = new GameObject();
+				go.transform.parent = this.transform;
+				this.highlight = go.AddComponent<LineRenderer>();
+				this.highlight.material.color = Color.red;
+				this.highlight.SetVertexCount(100);
+				for(int i = 0; i < 100; i++){
+					this.highlight.SetPosition(i, this.GetPoint(i/100f)+Vector3.back);
+				}
+			}
+			this.highlight.enabled = true;
+		}
+		this.highlighted = highlighted;
+	}
 }

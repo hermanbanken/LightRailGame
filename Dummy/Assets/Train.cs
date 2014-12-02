@@ -11,7 +11,8 @@ public class Train : MonoBehaviour {
 	public GameObject StartingNode;
 	private Node currentNode;
 	public bool forward = true;
-	public float speed = 10f;
+	public float speed = 0;
+	public float desiredSpeed = 10f;
 	private float position = 0f;
 
 	public List<Edge> Path = new List<Edge>();
@@ -30,7 +31,7 @@ public class Train : MonoBehaviour {
 			return;		
 		}
 
-		Update ();
+		FixedUpdate ();
 	}
 
 	public void SetPath(IList<GameObject> path){
@@ -50,7 +51,7 @@ public class Train : MonoBehaviour {
 	}
 
 	// Update is called once per frame
-	void Update () {
+	void FixedUpdate () {
 		if (lightRailGame.paused)
 			return;
 
@@ -59,8 +60,8 @@ public class Train : MonoBehaviour {
 			UpdateToNextPosition(position + speed * Time.deltaTime);
 		}
 
-		if (this.speed < 10f)
-			this.speed = Math.Min(10f, this.speed+Time.deltaTime);
+		if (Math.Abs (this.speed - this.desiredSpeed) > 0.0001)
+			this.speed = this.speed + (this.desiredSpeed - this.speed) * Time.deltaTime / 2;
 	}
 
 	public void UpdateToNextPosition(float unitsFromStation){
@@ -77,7 +78,6 @@ public class Train : MonoBehaviour {
 		Vector3 pos = current.GetPoint (t);
 		Vector3 rot = current.GetDirection (t);
 
-		var parentTransform = this.gameObject.transform;
 		pos.z -= 1;
 		this.transform.position = pos;
 		this.transform.rotation = Quaternion.LookRotation(rot);
