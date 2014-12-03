@@ -7,7 +7,7 @@ public class Graph : MonoBehaviour {
 
 	private List<Edge> _edges;
 	private List<Node2> _nodes;
-	public Dijkstra<Edge,Node2> Dijkstra;
+	public Dijkstra<Edge,Node2> Dijkstra { get { return new Dijkstra<Edge, Node2> (_edges); } }
 
 	[SerializeField]
 	public Transform Decoration;
@@ -16,7 +16,6 @@ public class Graph : MonoBehaviour {
 		get {
 			if(_edges == null || _edges.Any (e => e == null) || _edges.Count == 0){
 				_edges = new List<Edge>(this.gameObject.GetComponentsInChildren<Edge>());
-				Dijkstra = new Dijkstra<Edge, Node2>(_edges);
 			}
 			return _edges;
 		}
@@ -34,7 +33,6 @@ public class Graph : MonoBehaviour {
 	public void Reset () {
 		_edges = null;
 		_nodes = null;
-		Dijkstra = new Dijkstra<Edge, Node2>(_edges);
 	}
 
 	public void CleanUp() {
@@ -70,7 +68,6 @@ public class Graph : MonoBehaviour {
 		edge.To = to;
 		edge.Straighten ();
 		edge.graph = this;
-		Dijkstra = new Dijkstra<Edge, Node2>(_edges);
 		return edge;
 	}
 

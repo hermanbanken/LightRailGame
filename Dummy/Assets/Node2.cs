@@ -32,10 +32,15 @@ public class Node2 : MonoBehaviour {
 				e.UpdatePositions();
 		}
 	}
+
+	public Vector2 screenPosition(){
+		var sp = Camera.main.WorldToScreenPoint (this.position + this.transform.parent.position);
+		return new Vector2 (sp.x, sp.y);
+	}
 	
 	public bool SelectableGUI(){
 		var w = 20f;
-		var sp = Camera.main.WorldToScreenPoint(this.position + this.transform.parent.position);
+		var sp = screenPosition();
 		return GUI.Button (new Rect (sp.x - w/2, Screen.height - (sp.y + w/2), w, w), "");
 	}
 }
