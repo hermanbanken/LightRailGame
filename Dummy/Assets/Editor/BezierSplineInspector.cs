@@ -96,8 +96,7 @@ public class BezierSplineInspector : Editor {
 	}
 
 	public static Vector3 ShowPoint(BezierSpline spline, int index, Transform handleTransform, Quaternion handleRotation, BezierSplineInspector self){
-		//Vector3 point = spline.GetControlPoint (index);
-		Vector3 point = handleTransform.TransformPoint(spline.GetControlPoint(index));
+		Vector3 point = spline.GetControlPoint (index);
 		float size = HandleUtility.GetHandleSize(point);
 		if (index == 0) {
 			size *= 2f;
@@ -111,11 +110,10 @@ public class BezierSplineInspector : Editor {
 		}
 		if (self != null && self.selectedIndex == index) {
 			EditorGUI.BeginChangeCheck();
-			point = Handles.DoPositionHandle(point, handleRotation);
 			if (EditorGUI.EndChangeCheck()) {
 				Undo.RecordObject(spline, "Move Point");
 				EditorUtility.SetDirty(spline);
-				spline.SetControlPoint(index, handleTransform.InverseTransformPoint(point));
+				spline.SetControlPoint(index, point);
 			}
 		}
 		return point;
