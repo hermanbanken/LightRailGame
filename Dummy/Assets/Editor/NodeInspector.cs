@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEditor;
 using System.Linq;
 
-[CustomEditor(typeof(Node2))]
+[CustomEditor(typeof(Node))]
 public class NodeInspector : Editor {
 
 	private const int stepsPerCurve = 10;
@@ -12,13 +12,13 @@ public class NodeInspector : Editor {
 	private const float pickSize = 0.06f;
 
 	public override void OnInspectorGUI () {
-		Node2 node = target as Node2;
+		Node node = target as Node;
 		Graph graph = node.graph;
 		var existingEdges 	   = graph.edges.Where (e => e != null && e.From == node);
 		var allreadyConnected  = existingEdges.Select (e => e.To);
 		var possibleConnection = graph.nodes.Where (n => n != node).Where (n => !allreadyConnected.Contains (n));
 
-		foreach (Node2 n in possibleConnection) {
+		foreach (Node n in possibleConnection) {
 			if (GUILayout.Button ("Connect to node "+n.gameObject.name)) {
 				Undo.RecordObject (graph, "Connect nodes");
 				Edge e = graph.AddEdge(node, n);
@@ -29,10 +29,10 @@ public class NodeInspector : Editor {
 	}
 	
 	public void OnSceneGUI () {
-		NodeInspector.OnSceneGUI (target as Node2);
+		NodeInspector.OnSceneGUI (target as Node);
 	}
 
-	public static void OnSceneGUI (Node2 node) {
+	public static void OnSceneGUI (Node node) {
 		Transform handleTransform = node.graph.gameObject.transform;
 		Vector3 point = handleTransform.TransformPoint(node.position);
 		Quaternion handleRotation = Tools.pivotRotation == PivotRotation.Local ? handleTransform.rotation : Quaternion.identity;

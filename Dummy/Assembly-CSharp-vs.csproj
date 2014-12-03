@@ -60,7 +60,6 @@
      <Compile Include="Assets\MeshAlongSpline.cs" />
      <Compile Include="Assets\Mouse.cs" />
      <Compile Include="Assets\Node.cs" />
-     <Compile Include="Assets\Node2.cs" />
      <Compile Include="Assets\SplineDecorator.cs" />
      <Compile Include="Assets\SplineWalker.cs" />
      <Compile Include="Assets\SplineWalkerMode.cs" />

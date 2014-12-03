@@ -6,11 +6,11 @@ using System.Linq;
 public static class GUIs
 {
 	private static bool stateSelectPath = false;
-	private static List<Node2> newPath = new List<Node2>();
+	private static List<Node> newPath = new List<Node>();
 
 	public static void CancelReroute(this LightRailGame game, Train train){
 		stateSelectPath = false;
-		newPath = new List<Node2> ();
+		newPath = new List<Node> ();
 	}
 
 	public static void TrainGUI(this LightRailGame game, Train train)

@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System;
@@ -7,9 +7,9 @@ using System.Linq;
 public static class TarjanAlgorithm {
 
 	// http://en.wikipedia.org/wiki/Tarjan%27s_strongly_connected_components_algorithm
-	public static IList<IList<Node2>> Cycles(this Graph g){
+	public static IList<IList<Node>> Cycles(this Graph g){
 		var t = new TarjanInstance (g);
-		foreach(Node2 n in g.nodes) {
+		foreach(Node n in g.nodes) {
 			if(!t.indexes.ContainsKey(n)){
 				t.strongConnect(n);
 			}
@@ -20,19 +20,19 @@ public static class TarjanAlgorithm {
 	private class TarjanInstance {
 		public Graph g;
 		public int index = 1;
-		public IDictionary<Node2,int> indexes;
-		public IDictionary<Node2,int> lowlink;
-		public List<Node2> Stack = new List<Node2>();
-		public IList<IList<Node2>> Cycles = new List<IList<Node2>> ();
+		public IDictionary<Node,int> indexes;
+		public IDictionary<Node,int> lowlink;
+		public List<Node> Stack = new List<Node>();
+		public IList<IList<Node>> Cycles = new List<IList<Node>> ();
 
 		public TarjanInstance(Graph g){
 			this.g = g;
-			indexes = new Dictionary<Node2, int>();
-			lowlink = new Dictionary<Node2, int>();
+			indexes = new Dictionary<Node, int>();
+			lowlink = new Dictionary<Node, int>();
 		}
 	}
 
-	private static void strongConnect (this TarjanInstance s, Node2 n)
+	private static void strongConnect (this TarjanInstance s, Node n)
 	{
 		s.indexes [n] = s.index;
 		s.lowlink [n] = s.index;

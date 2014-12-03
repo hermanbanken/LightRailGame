@@ -24,8 +24,8 @@ public class EdgeInspector : BezierSplineInspector {
 		Edge e = target as Edge;
 		
 		//		Editor
-		e.From = EditorGUILayout.ObjectField(e.From, typeof(Node2), true) as Node2;
-		e.To = EditorGUILayout.ObjectField(e.To, typeof(Node2), true) as Node2;
+		e.From = EditorGUILayout.ObjectField(e.From, typeof(Node), true) as Node;
+		e.To = EditorGUILayout.ObjectField(e.To, typeof(Node), true) as Node;
 	}
 
 }

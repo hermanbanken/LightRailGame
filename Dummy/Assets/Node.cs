@@ -2,87 +2,45 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
-[ExecuteInEditMode]
 public class Node : MonoBehaviour {
+	
+	private Graph _graph;
+	private GUIElement button;
 
-	public GameObject nextNode;
-	public List<GameObject> nextNodes = new List<GameObject> ();
-	public Material RailWayMaterial;
-	private IEnumerable<LineRenderer> lines = new List<LineRenderer>();
-	private Vector3 from;
-	private Vector3 to;
-
-	// Use this for initialization
-	void Start () {
-		from = this.transform.position;
-		if (nextNode != null)
-			to = nextNode.transform.position;
-		else
-			to = from;
-
-		CreateLine ();
+	public Graph graph {
+		get { 
+			if(this._graph == null){
+				this._graph = GameObject.FindObjectOfType<Graph>();
+			}
+			return this._graph;
+		}
+		set {
+			this._graph = value;
+		}
 	}
 
-	void Reset(){
-		nextNodes = new List<GameObject> ();
+	public Vector3 position {
+		get {
+			return gameObject.transform.position;
+		}
+		set {
+			gameObject.transform.position = value;
+			// Update positions of connected Edges
+			foreach(Edge e in graph.edges.Where (e => e != null).Where (e => e.From == this || e.To == this))
+				e.UpdatePositions();
+		}
 	}
 
-	void CreateLine(){
-		if (nextNodes.Count == 0)
-			nextNodes.Add (nextNode);
-
-		lines = nextNodes.Select ((go, i) => {
-			var lineParent = i == 0 ? gameObject : new GameObject(gameObject.name + " extra line", new [] { typeof(LineRenderer) });
-			var line = lineParent.GetComponent<LineRenderer> () ?? lineParent.AddComponent("LineRenderer") as LineRenderer;
-			line.SetVertexCount(2);
-			line.material = RailWayMaterial;
-			line.SetWidth(0.6f, 0.6f);
-			line.SetPosition(0, this.transform.position);
-			line.SetPosition(1, go.transform.position);
-			return line;
-		}).ToList();
+	public Vector2 screenPosition(){
+		var sp = Camera.main.WorldToScreenPoint (this.position + this.transform.parent.position);
+		return new Vector2 (sp.x, sp.y);
 	}
 	
-	// Update is called once per frame
-	void Update () {
-		if (lines == null) {
-			CreateLine ();
-		}
-		return;
-//		if (from != this.transform.position) {
-//			from = this.transform.position;
-//			line.SetPosition(0, from);
-//		}
-//		if (nextNode != null && to != nextNode.transform.position) {
-//			to = nextNode.transform.position;
-//			line.SetPosition(1, to);
-//		}
+	public bool SelectableGUI(){
+		var w = 20f;
+		var sp = screenPosition();
+		return GUI.Button (new Rect (sp.x - w/2, Screen.height - (sp.y + w/2), w, w), "");
 	}
-
-	// Previous way of moving: using the defined line between a waypoint and the next waypoint
-	public Node PositionOnLineReturningOverflow(float unitsFromStart, out float newUnitsFromStart, out Vector3 position, out Vector3 destination){
-		position = to;
-		destination = to;
-
-		if (to == from) {
-			newUnitsFromStart = 0;
-			return this;
-		}
-
-		float overflow = unitsFromStart - (to - from).magnitude;
-
-		if (overflow > 0 && nextNode != null && nextNode.GetComponent<Node> () != null) {
-			return nextNode.GetComponent<Node> ().PositionOnLineReturningOverflow (overflow, out newUnitsFromStart, out position, out destination);
-		} else if (overflow > 0) {
-			position = to;
-			newUnitsFromStart = (to - from).magnitude;
-			return this;
-		}
-
-		newUnitsFromStart = unitsFromStart;
-		position = from + (to - from).normalized * unitsFromStart;
-		return this;
-	}
-	
 }

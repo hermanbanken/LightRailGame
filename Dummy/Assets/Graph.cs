@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,8 +6,8 @@ using System.Linq;
 public class Graph : MonoBehaviour {
 
 	private List<Edge> _edges;
-	private List<Node2> _nodes;
-	public Dijkstra<Edge,Node2> Dijkstra { get { return new Dijkstra<Edge, Node2> (_edges); } }
+	private List<Node> _nodes;
+	public Dijkstra<Edge,Node> Dijkstra { get { return new Dijkstra<Edge, Node> (_edges); } }
 
 	[SerializeField]
 	public Transform Decoration;
@@ -21,10 +21,10 @@ public class Graph : MonoBehaviour {
 		}
 	}
 
-	public IEnumerable<Node2> nodes {
+	public IEnumerable<Node> nodes {
 		get {
 			if(_nodes == null || _nodes.Any (n => n == null) || _nodes.Count == 0){
-				_nodes = new List<Node2>(this.gameObject.GetComponentsInChildren<Node2>());
+				_nodes = new List<Node>(this.gameObject.GetComponentsInChildren<Node>());
 			}
 			return _nodes;
 		}
@@ -45,18 +45,18 @@ public class Graph : MonoBehaviour {
 			_edges.RemoveAt(r);
 	}
 
-	public Node2 AddNode ()
+	public Node AddNode ()
 	{
 		GameObject go = new GameObject ();
 		go.transform.parent = this.gameObject.transform;
-		Node2 node = go.AddComponent<Node2> ();
+		Node node = go.AddComponent<Node> ();
 		_nodes.Add (node);
 		go.name = "Node "+nodes.Count();
 		node.graph = this;
 		return node;
 	}
 
-	public Edge AddEdge (Node2 from, Node2 to)
+	public Edge AddEdge (Node from, Node to)
 	{
 		GameObject go = new GameObject ();
 		go.transform.parent = this.gameObject.transform;

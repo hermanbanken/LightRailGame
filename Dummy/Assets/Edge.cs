@@ -11,19 +11,19 @@ public interface IEdge<TNode> where TNode : class {
 	float Cost { get; }
 }
 
-public class Edge : BezierSpline, IEdge<Node2>
+public class Edge : BezierSpline, IEdge<Node>
 {
 	[SerializeField]
-	private Node2 _from;
+	private Node _from;
 	[SerializeField]
-	private Node2 _to;
+	private Node _to;
 
 	private bool highlighted;
 	private LineRenderer highlight;
 
 	public float Cost { get { return this.GetLength (); } }
 
-	public Node2 From {
+	public Node From {
 		get { return _from; }
 		set {
 			// Convert Node position to World-relative-space and then to Spline-relative-space (this)
@@ -36,7 +36,7 @@ public class Edge : BezierSpline, IEdge<Node2>
 			EditorUtility.SetDirty(this);
 		}
 	}
-	public Node2 To  {
+	public Node To  {
 		get { return _to; }
 		set { 
 			// Convert Node position to World-relative-space and then to Spline-relative-space (this)

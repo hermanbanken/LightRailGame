@@ -81,7 +81,7 @@ public class LightRailGame : MonoBehaviour {
 
 	private void StartGame(){
 		var routes = graph.Cycles ();
-		foreach (IList<Node2> route in routes) {
+		foreach (IList<Node> route in routes) {
 			Debug.Log ("Cycle of length "+route.Count+": "+route.Select (n => n.name).Aggregate ("", (f, n) => f.Length == 0 ? n : f + "," + n));
 			IEnumerable<Edge> edges = route.Select((n, i) => graph.edges.First(e => e.From == n && e.To == route[(i+1)%route.Count]));
 

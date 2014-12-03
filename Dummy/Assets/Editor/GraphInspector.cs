@@ -23,7 +23,7 @@ public class GraphInspector : Editor {
 
 		if (GUILayout.Button ("Add Node")) {
 			Undo.RecordObject (graph, "Add Node");
-			Node2 n = graph.AddNode ();
+			Node n = graph.AddNode ();
 			EditorUtility.SetDirty (graph);
 			EditorUtility.SetDirty (n);
 		}
