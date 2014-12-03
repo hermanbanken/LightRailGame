@@ -35,8 +35,11 @@ public static class GUIs
 			if (GUILayout.Button (!stateSelectPath ? "Re-route" : "Cancel re-route")) {
 				if(stateSelectPath)
 					game.CancelReroute(train);
-				else 
+				else  {
 					stateSelectPath = true;
+					// As we cannot deviate from current Edge, at this edge as starting Path
+					newPath = new List<Node>(new [] { train.Path[train.currentStation].From, train.Path[train.currentStation].To });
+				}
 			}
 
 			if (GUILayout.Button ("Close dialog")) {
@@ -63,10 +66,13 @@ public static class GUIs
 				var from = newPath.LastOrDefault() ?? train.Path.Select(e => e.From).Skip(train.currentStation).First();
 				var subpath = game.graph.Dijkstra.Plan(from, node);
 				if(subpath.Count() == 0){
+					// TODO Play beeper sound
 					Debug.LogWarning("No route exists; Now play Beeper sound");
 					// No path
 				} else {
 					newPath.AddRange(subpath.Skip(subpath.First() == newPath.LastOrDefault() ? 1 : 0));
+					// TODO If completed, then update train.Path
+					// TODO Show nice visualisation of selected waypoints
 				}
 			}
 			// here: Extend path to make it feasible
