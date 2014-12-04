@@ -15,7 +15,7 @@ public class Train : MonoBehaviour {
 	public float desiredSpeed = 10f;
 	private float position = 0f;
 
-	public List<Edge> Path = new List<Edge>();
+	public IList<Edge> Path = new List<Edge>();
 	public int currentStation;
 
 	// Use this for initialization
@@ -34,20 +34,10 @@ public class Train : MonoBehaviour {
 		FixedUpdate ();
 	}
 
-	public void SetPath(IList<GameObject> path){
-		Debug.Log("Current station was "+this.Path[currentStation].name);
-//		var p = path.ToList ();
-//		var whereToStart = p.Where ((go, i) => {
-//			var next = path [(i + 1) % path.Count];
-//			if (go != this.Path [currentStation] && next != this.Path [currentStation])
-//					return false;
-//			var direction = (go.transform.position - next.transform.position).normalized;
-//			return true;
-//		}).First ();
-//
-//		this.Path = path.ToList();
-//		this.currentStation = path.IndexOf (whereToStart);
-//		Debug.Log("Current station is now "+Path[currentStation].name);
+	public void UpdatePath(IList<Edge> path){
+		this.currentStation = path.IndexOf (this.Path [currentStation]);
+		this.Path = path;
+		// TODO update re-routing visual path
 	}
 
 	// Update is called once per frame

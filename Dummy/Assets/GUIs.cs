@@ -56,28 +56,24 @@ public static class GUIs
 				game.CancelReroute(train);
 			GUILayout.EndArea ();
 
-			var node = train.Path.Select((edge) => edge.To).FirstOrDefault((to) => to.SelectableGUI());
-			// Completed path
-			if(newPath.Count > 0 && node == newPath[0]){
-				Debug.Log ("Old "+train.Path.ToStr());
-				Debug.Log ("New "+newPath.ToStr());
-				// TODO If completed, then update train.Path
-				train.SetPath(newPath.Select (e => e.gameObject).ToList());
-				stateSelectPath = false;
-			}
+			var node = game.graph.edges.Select((edge) => edge.To).FirstOrDefault((to) => to.SelectableGUI());
+
 			// Add node
-			else if(node != null){
+			if(node != null){
+				// Find last station
 				var from = (newPath.LastOrDefault() ?? train.Path.Skip(train.currentStation).First()).To;
+				// Do Dijkstra route plan
 				var subpath = game.graph.Dijkstra.Plan(from, node);
 
+				// No path was found
 				if(subpath.Count() == 0){
 					// TODO Play beeper sound
 					Debug.LogWarning("No route exists; Now play Beeper sound");
-					// No path
 				} else {
-					// Subpath contianed only intermediate and the end node, not the start: add start
+					// Subpath contianed only intermediate/end nodes, not the start, so: add start
 					subpath = new [] { from }.Concat(subpath);
-					Debug.Log ("Path from "+from + " to " + node + " == " + subpath.ToStr());
+
+					// Add new edges
 					newPath.AddRange(subpath.EachPair((a, b) => {
 						return game.graph.edges.FirstOrDefault(e => e.From == a && e.To == b);
 					}).Where (e => e != null));
@@ -85,20 +81,26 @@ public static class GUIs
 					// Redraw line
 					game.LineMaster.HideLine(selectedPath);
 					selectedPath = null;
+				}
 
+				// Completed path
+				if(newPath.Count > 1 && node == newPath.First().From){			
+					Debug.Log ("Old "+train.Path.ToStr());
+					Debug.Log ("New "+newPath.ToStr());
+					// TODO If completed, then update train.Path
+					train.UpdatePath(newPath.ToList());
+					stateSelectPath = false;
 				}
 			}
-			// here: Extend path to make it feasible
-			// here: Draw partial new path
 		}
 		
 		if (selectedPath == null && stateSelectPath) {
 			// TODO Show nice visualisation of selected waypoints
 			selectedPath = new CombinedLine (newPath.Cast<ILine> ());				
 			game.LineMaster.ShowLine (selectedPath, new LineOptions {
-			widths = new [] { 1f, 1f },
-			colors = new [] { Color.blue, Color.green },
-			offset = Vector3.back
+				widths = new [] { 1f, 1f },
+				colors = new [] { Color.blue, Color.green },
+				offset = Vector3.back
 			});
 		} else if (!stateSelectPath && selectedPath != null) {
 			game.LineMaster.HideLine(selectedPath);
