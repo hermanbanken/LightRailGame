@@ -2,30 +2,35 @@
 using System.Collections;
 using System;
 
-public class Pairs {
+public class Obstacle {
 	public GameObject block;
 	public GameObject button;
 	public GameObject timerDisplay;
-	public string typeName;
-	public float lifetime;
-	public DateTime? destroyedAt = null;
+	public ObstacleType type;
+	public TimeSpan timeToResolve;
+	public DateTime? userActionedAt = null;
 
-	public Pairs(string typeName){
-		this.typeName = typeName;
-		switch (typeName) {
-		case "car":
+	Action<Obstacle> onUserActioned;
+	
+	public Obstacle(ObstacleType type, Action<Obstacle> onUserActioned){
+		this.onUserActioned = onUserActioned;
+
+		this.type = type;
+		switch (type) {
+		case ObstacleType.Car:
 			this.block = GameObject.CreatePrimitive (PrimitiveType.Capsule);
-			this.lifetime = 2f;
+			this.timeToResolve = TimeSpan.FromSeconds(2f);
 			break;
-		case "tree":
+		case ObstacleType.Tree:
 			this.block = GameObject.CreatePrimitive (PrimitiveType.Cube);
-			this.lifetime = 3f;
+			this.timeToResolve = TimeSpan.FromSeconds(3f);
 			break;
-		case "barrel":
+		case ObstacleType.Barrel:
 			this.block = GameObject.CreatePrimitive (PrimitiveType.Cylinder);
-			this.lifetime = 4f;
+			this.timeToResolve = TimeSpan.FromSeconds(4f);
 			break;
 		}
+
 		this.timerDisplay = new GameObject ("timer");
 		this.timerDisplay.AddComponent<GUIText> ();
 		this.timerDisplay.guiText.font =  (Font)Resources.GetBuiltinResource(typeof(Font), "Arial.ttf");
@@ -34,24 +39,25 @@ public class Pairs {
 		this.button = GameObject.CreatePrimitive (PrimitiveType.Cube);
 		this.button.transform.position = new Vector3 (this.block.transform.position.x + 2, this.block.transform.position.y, 1);
 		this.timerDisplay.guiText.transform.position = Camera.main.WorldToViewportPoint (this.block.transform.position);
-		UnityEngine.Object.Destroy(this.block.GetComponent<Collider>());
+		UnityEngine.Object.Destroy(this.button.GetComponent<Collider>());
 	}
 
 	public void Tick(){
-		if (this.destroyedAt == null || this.timerDisplay == null || this.timerDisplay.guiText == null)
+		// Not yet actioned || resolved
+		if (this.userActionedAt == null || this.timerDisplay == null || this.timerDisplay.guiText == null)
 			return;
-		var sinceDestroy = (DateTime.Now - this.destroyedAt);
-		var remaining = TimeSpan.FromSeconds (lifetime) - sinceDestroy.Value;
+		// Else update timer
+		var sinceDestroy = (DateTime.Now - this.userActionedAt);
+		var remaining = timeToResolve - sinceDestroy.Value;
 		this.timerDisplay.guiText.text = remaining.Minutes.ToString("D2") + ":" + remaining.Seconds.ToString("D2") + "." + remaining.Milliseconds.ToString("D3");
-
 	}
 
-	public void Destroy(){
-
-		this.destroyedAt = DateTime.Now;
+	public void DoUserAction(){
+		this.onUserActioned (this);
+		this.userActionedAt = DateTime.Now;
 		this.timerDisplay.guiText.enabled = true;
 		GameObject.Destroy (this.button);
-		GameObject.Destroy (this.block, this.lifetime);
-		GameObject.Destroy (this.timerDisplay,this.lifetime);
+		GameObject.Destroy (this.block, (float) this.timeToResolve.TotalSeconds);
+		GameObject.Destroy (this.timerDisplay, (float) this.timeToResolve.TotalSeconds);
 	}
 }
