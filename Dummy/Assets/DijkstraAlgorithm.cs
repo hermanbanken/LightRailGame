@@ -44,6 +44,7 @@ public class Dijkstra<E,N> where E : IEdge<N> where N : class {
 			t = prev[t];
 		}
 
+		S.Reverse ();
 		return S;
 	}
 }

@@ -57,6 +57,7 @@
      <Compile Include="Assets\HUDFPS.cs" />
      <Compile Include="Assets\LightRailGame.cs" />
      <Compile Include="Assets\Line.cs" />
+     <Compile Include="Assets\LineDrawMaster.cs" />
      <Compile Include="Assets\MeshAlongSpline.cs" />
      <Compile Include="Assets\Mouse.cs" />
      <Compile Include="Assets\Node.cs" />

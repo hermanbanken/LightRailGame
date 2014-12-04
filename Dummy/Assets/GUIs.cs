@@ -6,11 +6,12 @@ using System.Linq;
 public static class GUIs
 {
 	private static bool stateSelectPath = false;
-	private static List<Node> newPath = new List<Node>();
+	private static List<Edge> newPath = new List<Edge>();
+	private static ILine selectedPath = null;
 
 	public static void CancelReroute(this LightRailGame game, Train train){
 		stateSelectPath = false;
-		newPath = new List<Node> ();
+		newPath = new List<Edge> ();
 	}
 
 	public static void TrainGUI(this LightRailGame game, Train train)
@@ -38,7 +39,7 @@ public static class GUIs
 				else  {
 					stateSelectPath = true;
 					// As we cannot deviate from current Edge, at this edge as starting Path
-					newPath = new List<Node>(new [] { train.Path[train.currentStation].From, train.Path[train.currentStation].To });
+					newPath = new List<Edge>(new [] { train.Path[train.currentStation] });
 				}
 			}
 
@@ -58,25 +59,85 @@ public static class GUIs
 			var node = train.Path.Select((edge) => edge.To).FirstOrDefault((to) => to.SelectableGUI());
 			// Completed path
 			if(newPath.Count > 0 && node == newPath[0]){
-				train.SetPath(newPath.Cast<GameObject>().ToList());
+				Debug.Log ("Old "+train.Path.ToStr());
+				Debug.Log ("New "+newPath.ToStr());
+				// TODO If completed, then update train.Path
+				train.SetPath(newPath.Select (e => e.gameObject).ToList());
 				stateSelectPath = false;
 			}
 			// Add node
 			else if(node != null){
-				var from = newPath.LastOrDefault() ?? train.Path.Select(e => e.From).Skip(train.currentStation).First();
+				var from = (newPath.LastOrDefault() ?? train.Path.Skip(train.currentStation).First()).To;
 				var subpath = game.graph.Dijkstra.Plan(from, node);
+
 				if(subpath.Count() == 0){
 					// TODO Play beeper sound
 					Debug.LogWarning("No route exists; Now play Beeper sound");
 					// No path
 				} else {
-					newPath.AddRange(subpath.Skip(subpath.First() == newPath.LastOrDefault() ? 1 : 0));
-					// TODO If completed, then update train.Path
-					// TODO Show nice visualisation of selected waypoints
+					// Subpath contianed only intermediate and the end node, not the start: add start
+					subpath = new [] { from }.Concat(subpath);
+					Debug.Log ("Path from "+from + " to " + node + " == " + subpath.ToStr());
+					newPath.AddRange(subpath.EachPair((a, b) => {
+						return game.graph.edges.FirstOrDefault(e => e.From == a && e.To == b);
+					}).Where (e => e != null));
+
+					// Redraw line
+					game.LineMaster.HideLine(selectedPath);
+					selectedPath = null;
+
 				}
 			}
 			// here: Extend path to make it feasible
 			// here: Draw partial new path
+		}
+		
+		if (selectedPath == null && stateSelectPath) {
+			// TODO Show nice visualisation of selected waypoints
+			selectedPath = new CombinedLine (newPath.Cast<ILine> ());				
+			game.LineMaster.ShowLine (selectedPath, new LineOptions {
+			widths = new [] { 1f, 1f },
+			colors = new [] { Color.blue, Color.green },
+			offset = Vector3.back
+			});
+		} else if (!stateSelectPath && selectedPath != null) {
+			game.LineMaster.HideLine(selectedPath);
+			selectedPath = null;
+		} 
+	}
+}
+
+public static class Extensions {
+	public static string ToStr(this IEnumerable<Node> self){
+		return "Path = " + self.Select(n => n.ToString()).Aggregate("", (s,n) => s+"|"+n) + ";";
+	}
+	public static string ToStr(this IEnumerable<Edge> self){
+		return "Path = " + self.Select(e => e.From.ToString()+"->"+e.To.ToString()).Aggregate("", (s,n) => s+"|"+n) + ";";
+	}
+
+	public static IEnumerable<TResult> EachPair<TSource, TResult>(this IEnumerable<TSource> source,
+	                                                        Func<TSource, TSource, TResult> transformation)
+	{
+		if (source == null) throw new ArgumentNullException("source");
+		if (transformation == null) throw new ArgumentNullException("transformation");
+		return EachPairImpl(source, transformation);
+	}
+
+	private static IEnumerable<TResult> EachPairImpl<TSource, TResult>(IEnumerable<TSource> source, Func<TSource, TSource, TResult> f)
+	{
+		using (var i = source.GetEnumerator())
+		{
+			TSource prev = default(TSource);
+			bool first = true;
+
+			while(i.MoveNext()){
+				if(first){
+					first = false;
+				} else {
+					yield return f(prev, i.Current);
+				}
+				prev = i.Current;
+			}
 		}
 	}
 }

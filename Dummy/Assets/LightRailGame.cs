@@ -8,6 +8,7 @@ public class LightRailGame : MonoBehaviour {
 	public bool paused = false;
 	private Train selected;
 	private IList<Node> selectedWaypoints = new List<Node>();
+	public readonly LineDrawMaster LineMaster = LineDrawMaster.getInstance();
 
 	private LineRenderer selectionLine;
 	private bool selectionIsRound = false;
@@ -43,7 +44,11 @@ public class LightRailGame : MonoBehaviour {
 				// Select
 				if(selected == null){
 					selected = train;
-					train.Path.ForEach((ed) => ed.SetHighlighted(true));
+					var line = LineMaster.ShowLine(new CombinedLine(train.Path.AsEnumerable().Cast<ILine>()), new LineOptions {
+						widths = new [] { .6f, .6f },
+						colors = new [] { Color.blue, Color.red },
+						offset = Vector3.back
+					});
 				}
 				// Deselect
 				else if(selected == train){
@@ -67,7 +72,7 @@ public class LightRailGame : MonoBehaviour {
 	}
 	
 	private void OnDeselect(){
-		selected.Path.ForEach((ed) => ed.SetHighlighted(false));
+		LineMaster.RemoveAll ();
 		this.CancelReroute(selected);
 		selected = null;
 		paused = selected != null;

@@ -21,6 +21,10 @@ public class Node : MonoBehaviour {
 		}
 	}
 
+	public String ToString(){
+		return this.gameObject.name;
+	}
+
 	public Vector3 position {
 		get {
 			return gameObject.transform.position;
@@ -41,6 +45,7 @@ public class Node : MonoBehaviour {
 	public bool SelectableGUI(){
 		var w = 20f;
 		var sp = screenPosition();
+		GUI.Label(new Rect (sp.x - w/2, Screen.height - (sp.y + w/2), w, w), this.ToString().Replace("(Node)", "").Replace("Node ", ""));
 		return GUI.Button (new Rect (sp.x - w/2, Screen.height - (sp.y + w/2), w, w), "");
 	}
 }

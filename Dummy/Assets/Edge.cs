@@ -11,15 +11,17 @@ public interface IEdge<TNode> where TNode : class {
 	float Cost { get; }
 }
 
-public class Edge : BezierSpline, IEdge<Node>
+public interface ILine {
+	float GetUnitLength();
+	Vector3 GetUnitPosition(float t);
+}
+
+public class Edge : BezierSpline, IEdge<Node>, ILine
 {
 	[SerializeField]
 	private Node _from;
 	[SerializeField]
 	private Node _to;
-
-	private bool highlighted;
-	private LineRenderer highlight;
 
 	public float Cost { get { return this.GetLength (); } }
 
@@ -98,22 +100,14 @@ public class Edge : BezierSpline, IEdge<Node>
 		EditorUtility.SetDirty (this);
 	}
 
-	public void SetHighlighted(bool highlighted){
-		if (!highlighted) {
-			highlight.enabled = false;
-		} else {
-			if(this.highlight == null){
-				var go = new GameObject();
-				go.transform.parent = this.transform;
-				this.highlight = go.AddComponent<LineRenderer>();
-				this.highlight.material.color = Color.red;
-				this.highlight.SetVertexCount(100);
-				for(int i = 0; i < 100; i++){
-					this.highlight.SetPosition(i, this.GetPoint(i/100f)+Vector3.back);
-				}
-			}
-			this.highlight.enabled = true;
-		}
-		this.highlighted = highlighted;
+	#region ILine implementation
+	public float GetUnitLength ()
+	{
+		return this.GetLength ();
 	}
+	Vector3 ILine.GetUnitPosition (float t)
+	{
+		return this.GetPoint(this.GetPositionOfUnitPoint(t));
+	}
+	#endregion
 }
