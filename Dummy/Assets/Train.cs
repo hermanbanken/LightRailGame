@@ -77,10 +77,17 @@ public class Train : MonoBehaviour {
 		float t = current.GetPositionOfUnitPoint (unitsFromStation);
 		Vector3 pos = current.GetPoint (t);
 		Vector3 rot = current.GetDirection (t);
+		var q = Quaternion.LookRotation(rot);
+
+	//	q.w = 90;
+
+		//q.x = 90;
+		//q.w = 0; 
+		//q.z = 90;
 
 		pos.z -= 1;
 		this.transform.position = pos;
-		this.transform.rotation = Quaternion.LookRotation(rot);
+		this.transform.rotation = q;
 
 	    this.position = unitsFromStation;
 	}
