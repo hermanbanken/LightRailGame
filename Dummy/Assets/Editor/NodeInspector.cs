@@ -39,10 +39,14 @@ public class NodeInspector : Editor {
 
 		EditorGUI.BeginChangeCheck();
 		var p0 = Handles.DoPositionHandle(point, handleRotation);
-		if (EditorGUI.EndChangeCheck()) {
-			Undo.RecordObject(node, "Move Node");
-			EditorUtility.SetDirty(node);
+		if (EditorGUI.EndChangeCheck()) 
+		{
+			var affectedEdges = node.graph.edges.Where(e => e.From == node || e.To == node).ToList();
+			Undo.RecordObjects(new Object[] { node }.Concat(affectedEdges.Cast<Object>()).ToArray(), "Move Node");
 			node.position = handleTransform.InverseTransformPoint(p0);
+			EditorUtility.SetDirty(node);
+			affectedEdges.ForEach(e => EditorUtility.SetDirty(e));
+
 			point = p0;
 		}
 		
