@@ -28,6 +28,9 @@ public class LightRailGame : MonoBehaviour {
 		if (LineRendererMaterial == null)
 			Debug.LogWarning ("You did not set the Material of the LineRenderer. Please go to the Inspector of the LightRailGame object and set its material");
 	
+		// Do not show FPS in non-dev Build
+		GameObject.Find ("FPS").SetActive (Debug.isDebugBuild);
+
 		// Get Graph
 		graph = GameObject.FindObjectOfType<Graph> ();
 
