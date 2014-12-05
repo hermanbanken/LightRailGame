@@ -88,7 +88,15 @@ public class LightRailGame : MonoBehaviour {
 		var routes = graph.Cycles ();
 		foreach (IList<Node> route in routes) {
 			Debug.Log ("Cycle of length "+route.Count+": "+route.Select (n => n.name).Aggregate ("", (f, n) => f.Length == 0 ? n : f + "," + n));
-			IEnumerable<Edge> edges = route.Select((n, i) => graph.edges.First(e => e.From == n && e.To == route[(i+1)%route.Count]));
+			var edges = route.Concat(route.Take(1)).EachPair((a, b) => {
+				var edge = graph.edges.FirstOrDefault(e => e.From == a && e.To == b);
+				if(edge == null) Debug.Log ("No edge from "+a+ " to " + b);
+				return edge;
+			}).ToList();
+			Debug.Log ("Of the cycle "+edges.Count(e => e == null)+" edges were not defined");
+
+			if(edges.Count(e => e == null) > 0) 
+				continue;
 
 			GameObject go = new GameObject();
 			var model = Instantiate(Train, Vector3.zero, Quaternion.LookRotation(Vector3.down)) as Transform;
