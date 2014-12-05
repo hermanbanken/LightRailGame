@@ -88,14 +88,16 @@ public class ObstacleBlockage : AbstractIncident, IIncident {
 						SolutionBlockages.Maintenance, SolutionBlockages.SwitchManually
 					};	
 			}
-			else (this.obstacle.type == ObstacleType.Derailment) {
+			else {
 					return new [] {
 						SolutionBlockages.Crane, SolutionBlockages.EmergencyServices,
 					};
+			}
 	}
 
 	#endregion
 }
+
 // For tramcar incident we implement four different types: Drunken passenger, angry mob, women in labour and stench on board
 public class TramCarIncident : AbstractIncident, IIncident {
 	Train self;
