@@ -12,6 +12,7 @@ public class PauseExit : MonoBehaviour {
 	}
 	public void ExitGame () 
 	{ 
+		Time.timeScale = 1;
 		Application.LoadLevel ("Start");
 
 	}

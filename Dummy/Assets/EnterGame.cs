@@ -6,7 +6,7 @@ public class EnterGame : MonoBehaviour {
 	void OnMouseDown()
 	{
 		Application.LoadLevel ("Scene");
-		Time.timeScale = 1;
+		//Time.timeScale = 1;
 		
 	
 	}
