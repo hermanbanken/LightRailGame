@@ -2,7 +2,7 @@
 using System.Collections;
 using System;
 
-public class Obstacle {
+public class Obstacle : MonoBehaviour {
 	public GameObject Wrapper;
 	public GameObject block;
 	public GameObject button;
@@ -13,7 +13,7 @@ public class Obstacle {
 
 	Action<Obstacle> onUserActioned;
 	
-	public Obstacle(Vector3 position, ObstacleType type, Action<Obstacle> onUserActioned){
+	public void init(Vector3 position, ObstacleType type, Action<Obstacle> onUserActioned){
 		this.onUserActioned = onUserActioned;
 
 		this.type = type;
@@ -32,7 +32,8 @@ public class Obstacle {
 			break;
 		}
 
-		Wrapper = new GameObject ("Obstacle");
+		Wrapper = gameObject;
+		gameObject.name = "Obstacle";
 		timerDisplay = new GameObject ("timer");
 		button = GameObject.CreatePrimitive (PrimitiveType.Cube);
 

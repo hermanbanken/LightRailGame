@@ -30,7 +30,8 @@ public class ObstacleMaster : MonoBehaviour {
 		Edge edge = game.graph.edges.ElementAt(rnd.Next(0, game.graph.edges.Count ()-1));
 		Vector3 pos = edge.GetPoint ((float)rnd.NextDouble ());
 
-		Obstacle obstacle = new Obstacle (pos, ObstacleType.Car, onUserActioned);
+		Obstacle obstacle = new GameObject ().AddComponent<Obstacle> ();
+		obstacle.init(pos, ObstacleType.Car, onUserActioned);
 		obstacles.Add (obstacle);
 		obstaclesPos.Add (obstacle.block.transform.position);
 		if(onOccur != null) onOccur (obstacle);

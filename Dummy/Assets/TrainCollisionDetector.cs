@@ -8,10 +8,17 @@ public class TrainCollisionDetector : MonoBehaviour
 	Train reportTo;
 	
 	void OnCollisionEnter(Collision col){
-		if (col.gameObject.GetComponentInParent<Train> () != null) {
+		var obs = col.gameObject.GetComponentInParent<Obstacle> ();
+		if (obs != null) {
+			reportTo.speed = 0;
+			reportTo.Incident(new ObstacleIncident(obs));
+		}
+
+		var other = col.gameObject.GetComponentInParent<Train> ();
+		if (other != null) {
 			Debug.Log("Collision on "+gameObject.name + " with "+col.gameObject.name);
-			col.gameObject.GetComponentInParent<Train>().speed = 0.0f;
-			reportTo.speed = -0.1f;
+			reportTo.speed = 0f;
+			reportTo.Incident(new TrainCollisionIndicent(reportTo, other));
 		}
 	}
 
