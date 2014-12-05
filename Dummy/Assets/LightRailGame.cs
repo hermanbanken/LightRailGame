@@ -14,6 +14,7 @@ public class LightRailGame : MonoBehaviour {
 	private bool selectionIsRound = false;
 	private bool mouseDown = false;
 	public Graph graph;
+	public ObstacleMaster Obstacles;
 
 	private Mouse mouse = new Mouse ();
 
@@ -21,15 +22,19 @@ public class LightRailGame : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		selectionLine = gameObject.GetComponent<LineRenderer> ();
-		if (selectionLine == null) {
-			selectionLine = gameObject.AddComponent("LineRenderer") as LineRenderer;
-		}
-		selectionLine.SetVertexCount (0);
-		selectionLine.SetColors(new Color(0,0,255,10), new Color(0,0,255,200));
-		selectionLine.SetWidth(0.5f, 0.5f);
-
+		// Get Graph
 		graph = GameObject.FindObjectOfType<Graph> ();
+
+		// Initialize obstacle's
+		Obstacles = gameObject.GetComponent<ObstacleMaster>() ?? gameObject.AddComponent<ObstacleMaster> ();
+		Obstacles.init (obstacle => {
+			Debug.Log("An obstacle was placed.");
+		},obstacle => {
+			Debug.Log("An obstacle was actioned by the user.");
+		},obstacle => {
+			Debug.Log("An obstacle was resolved.");
+		});
+
 		StartGame ();
 	}
 

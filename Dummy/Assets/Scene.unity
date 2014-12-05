@@ -3149,6 +3149,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   paused: 0
   graph: {fileID: 0}
+  Obstacles: {fileID: 0}
   Train: {fileID: 400000, guid: f0e52cacd2e114f91a37aa4c75fcb0d5, type: 2}
 --- !u!4 &2135025056
 Transform:

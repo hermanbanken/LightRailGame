@@ -7,14 +7,18 @@ using System;
 public class ObstacleMaster : MonoBehaviour {
 	List<Obstacle> obstacles = new List<Obstacle>();
 	List<Vector3> obstaclesPos = new List<Vector3>();
+	System.Random rnd = new System.Random ();
+	LightRailGame game;
 
 	Action<Obstacle> onOccur;
-
 	Action<Obstacle> onUserActioned;
-
 	Action<Obstacle> onResolved;
 
-	public ObstacleMaster(Action<Obstacle> onOccur, Action<Obstacle> onUserActioned, Action<Obstacle> onResolved) : base() {
+	void Start (){
+		game = GetComponent<LightRailGame> ();
+	}
+
+	public void init(Action<Obstacle> onOccur, Action<Obstacle> onUserActioned, Action<Obstacle> onResolved) {
 		this.onResolved = onResolved;
 		this.onUserActioned = onUserActioned;
 		this.onOccur = onOccur;
@@ -22,10 +26,14 @@ public class ObstacleMaster : MonoBehaviour {
 	}
 
 	void running (){
-		Obstacle obstacle = new Obstacle (ObstacleType.Car, onUserActioned);
+		// Get random position
+		Edge edge = game.graph.edges.ElementAt(rnd.Next(0, game.graph.edges.Count ()-1));
+		Vector3 pos = edge.GetPoint ((float)rnd.NextDouble ());
+
+		Obstacle obstacle = new Obstacle (pos, ObstacleType.Car, onUserActioned);
 		obstacles.Add (obstacle);
 		obstaclesPos.Add (obstacle.block.transform.position);
-		onOccur (obstacle);
+		if(onOccur != null) onOccur (obstacle);
 	}
 
 	void Update (){
@@ -34,7 +42,11 @@ public class ObstacleMaster : MonoBehaviour {
 
 		// Resolve obstacles
 		var resolved = obstacles.Where (p => p.userActionedAt + p.timeToResolve < DateTime.Now).ToList ();
-		resolved.ForEach((ob) => { obstacles.Remove(ob); onResolved(ob); });
+		resolved.ForEach((ob) => { 
+			obstacles.Remove(ob);
+			if(onResolved != null)
+				onResolved(ob); 
+		});
 
 		if(Input.GetMouseButtonDown(0)){
 			RaycastHit hit;
