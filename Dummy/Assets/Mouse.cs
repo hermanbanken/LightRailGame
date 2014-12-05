@@ -15,7 +15,7 @@ public class Mouse {
 		if (!down && Input.GetMouseButtonDown (0)) {
 			Events.Enqueue(new MouseClick(Input.mousePosition));
 			down = true;
-			ScoreManager.score++;
+			//ScoreManager.score++;
 		}
 
 		// End of click
