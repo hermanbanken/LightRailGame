@@ -46,6 +46,7 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\AbstractIncident.cs" />
      <Compile Include="Assets\Bezier.cs" />
      <Compile Include="Assets\BezierControlPointMode.cs" />
      <Compile Include="Assets\BezierCurve.cs" />
@@ -56,6 +57,8 @@
      <Compile Include="Assets\GUIs.cs" />
      <Compile Include="Assets\Graph.cs" />
      <Compile Include="Assets\HUDFPS.cs" />
+     <Compile Include="Assets\IIncident.cs" />
+     <Compile Include="Assets\Indicent.cs" />
      <Compile Include="Assets\LightRailGame.cs" />
      <Compile Include="Assets\Line.cs" />
      <Compile Include="Assets\LineDrawMaster.cs" />

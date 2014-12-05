@@ -15,6 +15,7 @@ public abstract class AbstractIncident : IIncident {
 		if (resolved.HasValue)
 			return resolved.Value;
 		resolved = solutionChosenAt.HasValue && solutionChosenAt.Value + solution.ResolveTime < DateTime.Now && UnityEngine.Random.value < solution.SuccessRatio;
+		Debug.Log("Incident was "+(resolved.Value ? "" : "NOT ") + "resolved");
 		return resolved.Value;
 	}
 

@@ -2,11 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 public class LightRailGame : MonoBehaviour {
 
 	public bool paused = false;
 	private Train selected;
+	private Action<Train> selectedTrainPathChangeAction;
+
 	public readonly LineDrawMaster LineMaster = LineDrawMaster.getInstance();
 
 	private LineRenderer selectionLine;
@@ -46,11 +49,19 @@ public class LightRailGame : MonoBehaviour {
 				// Select
 				if(selected == null){
 					selected = train;
-					var line = LineMaster.ShowLine(new CombinedLine(train.Path.AsEnumerable().Cast<ILine>()), new LineOptions {
-						widths = new [] { .6f, .6f },
-						colors = new [] { Color.blue, Color.red },
-						offset = Vector3.back
-					});
+					ILine line = null;
+					selectedTrainPathChangeAction = changedTrain => {
+						if(line != null) 
+							LineMaster.HideLine(line);
+						line = new CombinedLine(changedTrain.Path.AsEnumerable().Cast<ILine>());
+						LineMaster.ShowLine(line, new LineOptions {
+							widths = new [] { .6f, .6f },
+							colors = new [] { Color.blue, Color.red },
+							offset = Vector3.back
+						});
+					};
+					train.OnPathChange += selectedTrainPathChangeAction;
+					selectedTrainPathChangeAction(train);
 				}
 				// Deselect
 				else if(selected == train){
@@ -76,6 +87,7 @@ public class LightRailGame : MonoBehaviour {
 	private void OnDeselect(){
 		LineMaster.RemoveAll ();
 		this.CancelReroute(selected);
+		selected.OnPathChange -= selectedTrainPathChangeAction;
 		selected = null;
 		paused = selected != null;
 	}

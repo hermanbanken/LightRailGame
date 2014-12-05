@@ -10,6 +10,7 @@ public class TrainCollisionDetector : MonoBehaviour
 	void OnCollisionEnter(Collision col){
 		var obs = col.gameObject.GetComponentInParent<Obstacle> ();
 		if (obs != null) {
+			Debug.Log("Collision with obstacle with "+gameObject.name + " with "+col.gameObject.name);
 			reportTo.speed = 0;
 			reportTo.Incident(new ObstacleIncident(obs));
 		}

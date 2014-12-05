@@ -19,6 +19,8 @@ public class Train : MonoBehaviour {
 	public IList<Edge> Path = new List<Edge>();
 	public int currentStation;
 
+	public event Action<Train> OnPathChange;
+
 	// Use this for initialization
 	void Start () {
 		lightRailGame = GameObject.Find("LightRailGame").GetComponent<LightRailGame> ();
@@ -38,18 +40,22 @@ public class Train : MonoBehaviour {
 	public void UpdatePath(IList<Edge> path){
 		this.currentStation = path.IndexOf (this.Path [currentStation]);
 		this.Path = path;
-		// TODO update re-routing visual path
+
+		if (OnPathChange != null)
+			OnPathChange (this);
 	}
 
 	// Update is called once per frame
 	void FixedUpdate () {
 		// Clean resolved incidents
-		if (incident != null && incident.IsResolved ())
+		if (incident != null && incident.IsResolved ()) {
 			incident = null;
-
+		}
+	
 		// Don't move tram if the game is paused or an incident exists
-		if (lightRailGame.paused && incident != null)
+		if (lightRailGame.paused || incident != null) {
 			return;
+		}
 
 		// New way of moving: move along Path defined in Train class
 		if (Path.Count > 0) {
