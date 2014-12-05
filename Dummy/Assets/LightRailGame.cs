@@ -7,6 +7,8 @@ using System;
 public class LightRailGame : MonoBehaviour {
 
 	public bool paused = false;
+
+	public Obstacle ClickedObstacle;
 	private Train selected;
 	private Action<Train> selectedTrainPathChangeAction;
 
@@ -106,6 +108,17 @@ public class LightRailGame : MonoBehaviour {
 	void OnGUI(){
 		if (selected != null)
 			this.TrainGUI (selected);
+
+		// Handle Obstacle clicks
+		if (ClickedObstacle != null) {
+			// If user chooses an action this is true
+			if(ClickedObstacle.Incident.IncidentGUI()){
+				ClickedObstacle.timeToResolve = ClickedObstacle.Incident.GetChosenSolution().ResolveTime;
+				// TODO only succeed sometimes: check success ratio and throw a dice here :)
+				ClickedObstacle.DoUserAction();
+				ClickedObstacle = null;
+			}
+		}
 	}
 
 	private void StartGame(){

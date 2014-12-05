@@ -14,9 +14,10 @@ public abstract class AbstractIncident : IIncident {
 	{
 		if (resolved.HasValue)
 			return resolved.Value;
-		resolved = solutionChosenAt.HasValue && solutionChosenAt.Value + solution.ResolveTime < DateTime.Now && UnityEngine.Random.value < solution.SuccessRatio;
-		Debug.Log("Incident was "+(resolved.Value ? "" : "NOT ") + "resolved");
-		return resolved.Value;
+		if (solutionChosenAt.HasValue && solutionChosenAt.Value + solution.ResolveTime < DateTime.Now) {
+			resolved = solutionChosenAt.HasValue && solutionChosenAt.Value + solution.ResolveTime < DateTime.Now; // TODO randomness here: && UnityEngine.Random.value < solution.SuccessRatio;
+		}
+		return resolved.HasValue && resolved.Value;
 	}
 
 	abstract public IEnumerable<ISolution> PossibleActions ();
@@ -30,6 +31,11 @@ public abstract class AbstractIncident : IIncident {
 			this.solution = solution;
 			this.solutionChosenAt = DateTime.Now;
 		}
+	}
+
+	public ISolution GetChosenSolution ()
+	{
+		return solution;
 	}
 
 	#endregion

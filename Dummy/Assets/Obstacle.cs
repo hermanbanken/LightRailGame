@@ -3,18 +3,24 @@ using System.Collections;
 using System;
 
 public class Obstacle : MonoBehaviour {
+	// Set at mouse event
+	public DateTime? userActionedAt = null;
+
+	// Initialized
 	public GameObject Wrapper;
 	public GameObject block;
 	public GameObject button;
 	public GameObject timerDisplay;
-	public ObstacleType type;
 	public TimeSpan timeToResolve;
-	public DateTime? userActionedAt = null;
-
+	
+	// Set by init
+	public ObstacleType type;
+	public IIncident Incident;
 	Action<Obstacle> onUserActioned;
 	
 	public void init(Vector3 position, ObstacleType type, Action<Obstacle> onUserActioned){
 		this.onUserActioned = onUserActioned;
+		Incident = new ObstacleIncident (this);
 
 		this.type = type;
 		switch (type) {

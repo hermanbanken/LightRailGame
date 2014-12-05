@@ -73,7 +73,7 @@ public class ObstacleMaster : MonoBehaviour {
 				Obstacle obstacle = obstacles.FirstOrDefault(p => p.button == hit.collider.gameObject);
 				// Button was hit
 				if(obstacle != null){
-					obstacle.DoUserAction();
+					game.ClickedObstacle = obstacle;
 				}
 			}
 		}

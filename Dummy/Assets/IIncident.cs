@@ -8,6 +8,7 @@ public interface IIncident
 	bool IsResolved();
 	IEnumerable<ISolution> PossibleActions();
 	void SetChosenSolution (ISolution solution);
+	ISolution GetChosenSolution ();
 }
 
 public interface ISolution {
