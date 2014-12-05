@@ -14,13 +14,57 @@ public static class GUIs
 		newPath = new List<Edge> ();
 	}
 
+	private static void CenterInScreen(int w, int h, out int top_x, out int left_y){
+		top_x = Screen.width / 2 - w / 2;
+		left_y = Screen.height / 2 - h / 2;
+	}
+
+	/**
+	 * Show incident GUI, returns true only if the user clicked the button
+	 */
+	public static void IncidentGUI(this IIncident incident){
+		int w = 400, h = 200;
+		int x, y;
+		CenterInScreen(w, h, out x, out y);
+
+		GUI.Box (new Rect (x - 5, y - 5, w + 10, h + 10), "");
+		GUILayout.BeginArea (new Rect (x, y, w, h));
+
+		GUILayout.Label ("An incident occured. How would you like to resolve this issue?");
+		
+		GUILayout.BeginHorizontal();
+		GUILayout.Label ("Action");
+		GUILayout.Label ("Duration", GUILayout.Width(50));
+		GUILayout.Label ("Succes%", GUILayout.Width(60));
+		GUILayout.EndHorizontal();
+
+		GUILayout.BeginScrollView (Vector2.zero);
+		foreach (ISolution s in incident.PossibleActions()) {
+			GUILayout.BeginHorizontal();
+			if(GUILayout.Button (s.ProposalText)){
+				incident.SetChosenSolution(s);
+				return true;
+			}
+			GUILayout.Label (((int) s.ResolveTime.TotalSeconds) + " sec.", GUILayout.Width(50));
+			GUILayout.Label (((int)(s.SuccessRatio*100)+"%"), GUILayout.Width(60));
+			GUILayout.EndHorizontal();
+		}
+		GUILayout.EndScrollView();
+
+		GUILayout.EndArea ();
+		return false;
+	}
+
+	/**
+	 * Show Train menu GUI
+	 */
 	public static void TrainGUI(this LightRailGame game, Train train)
 	{
 		if (!stateSelectPath) {
-			var w = 120;
-			var h = 200;
-			var x = Screen.width / 2 - w / 2;
-			var y = Screen.height / 2 - h / 2;
+			int w = 120, h = 200;
+			int x, y;
+			CenterInScreen(w, h, out x, out y);
+
 			var maxSpeed = 10;
 			GUI.Box (new Rect (x - 5, y - 5, w + 10, h + 10), "");
 			GUILayout.BeginArea (new Rect (x, y, w, h));
