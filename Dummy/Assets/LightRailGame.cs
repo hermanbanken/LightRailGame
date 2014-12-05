@@ -20,8 +20,14 @@ public class LightRailGame : MonoBehaviour {
 
 	public Transform Train;
 
+	// Set Line for Unity to package in Build
+	public Material LineRendererMaterial;
+
 	// Use this for initialization
 	void Start () {
+		if (LineRendererMaterial == null)
+			Debug.LogWarning ("You did not set the Material of the LineRenderer. Please go to the Inspector of the LightRailGame object and set its material");
+	
 		// Get Graph
 		graph = GameObject.FindObjectOfType<Graph> ();
 
@@ -55,6 +61,7 @@ public class LightRailGame : MonoBehaviour {
 							LineMaster.HideLine(line);
 						line = new CombinedLine(changedTrain.Path.AsEnumerable().Cast<ILine>());
 						LineMaster.ShowLine(line, new LineOptions {
+							materials = new [] { LineRendererMaterial },
 							widths = new [] { .6f, .6f },
 							colors = new [] { Color.blue, Color.red },
 							offset = Vector3.back

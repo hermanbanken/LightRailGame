@@ -82,9 +82,7 @@ public class LineDrawMaster {
 
 public class LineOptions {
 	public Vector3 offset = Vector3.zero;
-	public Material[] materials = new [] {
-		new Material(Shader.Find("Particles/Additive")) { }
-	};
+	public Material[] materials = new Material[] {};
 	public Color[] colors = new [] { Color.red, Color.blue };
 	public float[] widths = new [] { 1f, 1f };
 }

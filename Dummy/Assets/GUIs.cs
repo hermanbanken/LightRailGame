@@ -98,6 +98,7 @@ public static class GUIs
 			// TODO Show nice visualisation of selected waypoints
 			selectedPath = new CombinedLine (newPath.Cast<ILine> ());				
 			game.LineMaster.ShowLine (selectedPath, new LineOptions {
+				materials = new [] { game.LineRendererMaterial },
 				widths = new [] { 1f, 1f },
 				colors = new [] { Color.blue, Color.green },
 				offset = Vector3.back
