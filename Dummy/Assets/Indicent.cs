@@ -31,9 +31,8 @@ public class SolutionBlockages {
 public class TrainCollisionBlockage : AbstractIncident, IIncident {
 	Train self;
 	Train other;
-	Obstacle another;
 
-	public TrainCollisionBlockage (Train self, Train other, Obstacle another)
+	public TrainCollisionBlockage (Train self, Train other)
 	{
 		this.other = other;
 		this.self = self;
@@ -43,7 +42,7 @@ public class TrainCollisionBlockage : AbstractIncident, IIncident {
 	public override IEnumerable<ISolution> PossibleActions ()
 	{
 		// Depending on this.self and this.other we can also change the possible actions
-		if (other) {
+		if (other == null) {
 			return new [] {
 				SolutionBlockages.EmergencyServices, SolutionBlockages.ContinueAnyway, SolutionBlockages.Backup
 			};
@@ -133,6 +132,8 @@ public class TramCarIncident : AbstractIncident, IIncident {
 				SolutionIncidents.Ventilate, SolutionIncidents.Calm,
 			};
 		}
+
+		return new ISolution[] {};
 	}
 	#endregion
 }

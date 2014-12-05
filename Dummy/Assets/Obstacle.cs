@@ -20,7 +20,7 @@ public class Obstacle : MonoBehaviour {
 	
 	public void init(Vector3 position, ObstacleType type, Action<Obstacle> onUserActioned){
 		this.onUserActioned = onUserActioned;
-		Incident = new ObstacleIncident (this);
+		Incident = new ObstacleBlockage (this);
 
 		this.type = type;
 		switch (type) {

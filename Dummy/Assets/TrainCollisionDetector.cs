@@ -19,7 +19,7 @@ public class TrainCollisionDetector : MonoBehaviour
 		if (other != null) {
 			Debug.Log("Collision on "+gameObject.name + " with "+col.gameObject.name);
 			reportTo.speed = 0f;
-			reportTo.Incident(new TrainCollisionIndicent(reportTo, other));
+			reportTo.Incident(new TrainCollisionBlockage(reportTo, other));
 		}
 	}
 
