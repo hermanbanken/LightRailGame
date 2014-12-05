@@ -22,7 +22,7 @@ public static class GUIs
 	/**
 	 * Show incident GUI, returns true only if the user clicked the button
 	 */
-	public static void IncidentGUI(this IIncident incident){
+	public static bool IncidentGUI(this IIncident incident){
 		int w = 400, h = 200;
 		int x, y;
 		CenterInScreen(w, h, out x, out y);
