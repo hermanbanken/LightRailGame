@@ -38,16 +38,21 @@ public class NodeInspector : Editor {
 		Quaternion handleRotation = Tools.pivotRotation == PivotRotation.Local ? handleTransform.rotation : Quaternion.identity;
 
 		EditorGUI.BeginChangeCheck();
-		var p0 = Handles.DoPositionHandle(handleTransform.TransformPoint(node.position), handleRotation);
-		if (EditorGUI.EndChangeCheck()) {
-			Undo.RecordObject(node, "Move Node");
-			EditorUtility.SetDirty(node);
+		var p0 = Handles.DoPositionHandle(point, handleRotation);
+		if (EditorGUI.EndChangeCheck()) 
+		{
+			var affectedEdges = node.graph.edges.Where(e => e.From == node || e.To == node).ToList();
+			Undo.RecordObjects(new Object[] { node }.Concat(affectedEdges.Cast<Object>()).ToArray(), "Move Node");
 			node.position = handleTransform.InverseTransformPoint(p0);
+			EditorUtility.SetDirty(node);
+			affectedEdges.ForEach(e => EditorUtility.SetDirty(e));
+
+			point = p0;
 		}
 		
 		Handles.color = Color.green;
 		float size = HandleUtility.GetHandleSize(node.position) * 2f;
-		if (Handles.Button(handleTransform.TransformPoint(node.position), handleRotation, size * handleSize, size * pickSize, Handles.DotCap)) {
+		if (Handles.Button(point, handleRotation, size * handleSize, size * pickSize, Handles.DotCap)) {
 			// Show buttons to connect to other nodes
 			// Select node?
 		}

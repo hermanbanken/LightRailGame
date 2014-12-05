@@ -835,7 +835,7 @@ GameObject:
   - 132: {fileID: 303439114}
   - 114: {fileID: 303439113}
   m_Layer: 0
-  m_Name: GUI Text
+  m_Name: FPS
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4047,8 +4047,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   paused: 0
+  ClickedObstacle: {fileID: 0}
   graph: {fileID: 0}
+  Obstacles: {fileID: 0}
   Train: {fileID: 400000, guid: f0e52cacd2e114f91a37aa4c75fcb0d5, type: 2}
+  LineRendererMaterial: {fileID: 2100000, guid: a2b8ffcef2a2e499d935dcd18956be2c,
+    type: 2}
 --- !u!4 &2135025056
 Transform:
   m_ObjectHideFlags: 0

@@ -14,9 +14,12 @@ public class Train : MonoBehaviour {
 	public float speed = 0;
 	public float desiredSpeed = 10f;
 	private float position = 0f;
+	public IIncident incident;
 
 	public IList<Edge> Path = new List<Edge>();
 	public int currentStation;
+
+	public event Action<Train> OnPathChange;
 
 	// Use this for initialization
 	void Start () {
@@ -37,13 +40,22 @@ public class Train : MonoBehaviour {
 	public void UpdatePath(IList<Edge> path){
 		this.currentStation = path.IndexOf (this.Path [currentStation]);
 		this.Path = path;
-		// TODO update re-routing visual path
+
+		if (OnPathChange != null)
+			OnPathChange (this);
 	}
 
 	// Update is called once per frame
 	void FixedUpdate () {
-		if (lightRailGame.paused)
+		// Clean resolved incidents
+		if (incident != null && incident.IsResolved ()) {
+			incident = null;
+		}
+	
+		// Don't move tram if the game is paused or an incident exists
+		if (lightRailGame.paused || incident != null) {
 			return;
+		}
 
 		// New way of moving: move along Path defined in Train class
 		if (Path.Count > 0) {
@@ -80,5 +92,10 @@ public class Train : MonoBehaviour {
 	}
 	public void Select(){
 		this.gameObject.GetComponentInChildren<MeshRenderer>().material.color = Color.blue;
+	}
+
+	public void Incident (IIncident incident)
+	{
+		this.incident = incident;
 	}
 }

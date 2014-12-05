@@ -46,6 +46,7 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\AbstractIncident.cs" />
      <Compile Include="Assets\Bezier.cs" />
      <Compile Include="Assets\BezierControlPointMode.cs" />
      <Compile Include="Assets\BezierCurve.cs" />
