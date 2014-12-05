@@ -21,7 +21,7 @@ public class Node : MonoBehaviour {
 		}
 	}
 
-	public String ToString(){
+	public override String ToString(){
 		return this.gameObject.name;
 	}
 

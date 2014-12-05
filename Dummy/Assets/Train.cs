@@ -88,7 +88,7 @@ public class Train : MonoBehaviour {
 		this.gameObject.GetComponentInChildren<MeshRenderer>().material.color = Color.blue;
 	}
 
-	public void Incident (IIncident indicent)
+	public void Incident (IIncident incident)
 	{
 		this.incident = incident;
 	}

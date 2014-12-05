@@ -7,12 +7,9 @@ public class LightRailGame : MonoBehaviour {
 
 	public bool paused = false;
 	private Train selected;
-	private IList<Node> selectedWaypoints = new List<Node>();
 	public readonly LineDrawMaster LineMaster = LineDrawMaster.getInstance();
 
 	private LineRenderer selectionLine;
-	private bool selectionIsRound = false;
-	private bool mouseDown = false;
 	public Graph graph;
 	public ObstacleMaster Obstacles;
 
