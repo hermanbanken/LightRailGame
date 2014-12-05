@@ -83,6 +83,13 @@ public class ObstacleMaster : MonoBehaviour {
 public enum ObstacleType {
 	Car,
 	Tree,
-	Barrel
+	Barrel,
+	Derailment,
+	Defect,
+	SwitchDefect,
+	DrunkenPassenger,
+	AngryMob, 
+	WomenInLabour,
+	StenchOnBoard
 }
 
