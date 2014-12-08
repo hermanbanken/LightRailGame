@@ -170,7 +170,7 @@ public static class Extensions {
 		return EachPairImpl(source, transformation);
 	}
 
-	private static IEnumerable<TResult> EachPairImpl<TSource, TResult>(IEnumerable<TSource> source, Func<TSource, TSource, TResult> f)
+private static IEnumerable<TResult> EachPairImpl<TSource, TResult>(IEnumerable<TSource> source, Func<TSource, TSource, TResult> f)
 	{
 		using (var i = source.GetEnumerator())
 		{

@@ -9,10 +9,12 @@ public class Obstacle : MonoBehaviour {
 	// Initialized
 	public GameObject Wrapper;
 	public GameObject block;
-	public GameObject button;
+	//public GameObject button;
 	public GameObject timerDisplay;
+	public Vector3 buttonPosition;
 	public TimeSpan timeToResolve;
-	
+
+
 	// Set by init
 	public ObstacleType type;
 	public IIncident Incident;
@@ -41,25 +43,17 @@ public class Obstacle : MonoBehaviour {
 		Wrapper = gameObject;
 		gameObject.name = "Obstacle";
 		timerDisplay = new GameObject ("timer");
-		button = GameObject.CreatePrimitive (PrimitiveType.Cube);
-
 		Wrapper.transform.position = position;
 
 		block.transform.parent = Wrapper.transform;
 		timerDisplay.transform.parent = Wrapper.transform;
-		button.transform.parent = Wrapper.transform;
-
-		button.transform.localPosition = Vector3.zero;
-		block.transform.localPosition = Vector3.zero;
 		timerDisplay.transform.localPosition = Vector3.zero;
-
+		block.transform.localPosition = Vector3.zero;
 		timerDisplay.AddComponent<GUIText> ();
-		timerDisplay.transform.localPosition = new Vector3 (2f, 0f, -2f);
 		timerDisplay.guiText.enabled = false;
-		timerDisplay.guiText.font = (Font)Resources.GetBuiltinResource(typeof(Font), "Arial.ttf");
-		timerDisplay.guiText.transform.position = Camera.main.WorldToViewportPoint (Wrapper.transform.position);
 	}
 
+	// Deprecated, remove soon
 	public void Tick(){
 		// Not yet actioned || resolved
 		if (userActionedAt == null || timerDisplay == null || timerDisplay.guiText == null)
@@ -68,7 +62,18 @@ public class Obstacle : MonoBehaviour {
 		// Else update timer
 		var sinceDestroy = (DateTime.Now - userActionedAt);
 		var remaining = timeToResolve - sinceDestroy.Value;
-		timerDisplay.guiText.text = remaining.Minutes.ToString("D2") + ":" + remaining.Seconds.ToString("D2") + "." + remaining.Milliseconds.ToString("D3");
+		timerDisplay.guiText.text = remaining.Minutes.ToString("D2") + ":" + remaining.Seconds.ToString("D2") + "." + (remaining.Milliseconds/100).ToString("D1");
+	}
+
+	public string ButtonText(){
+		// Not yet actioned || resolved
+		if (userActionedAt == null || timerDisplay == null || timerDisplay.guiText == null)
+			return "";
+		
+		// Else update timer
+		var sinceDestroy = (DateTime.Now - userActionedAt);
+		var remaining = timeToResolve - sinceDestroy.Value;
+		return remaining.Minutes.ToString("D2") + ":" + remaining.Seconds.ToString("D2") + "." + (remaining.Milliseconds/100).ToString("D1");
 	}
 
 	public void DoUserAction(){
@@ -78,9 +83,28 @@ public class Obstacle : MonoBehaviour {
 		userActionedAt = DateTime.Now;
 		timerDisplay.guiText.enabled = true;
 
-		GameObject.Destroy (button);
 		GameObject.Destroy (block, (float) timeToResolve.TotalSeconds);
 		GameObject.Destroy (timerDisplay, (float) timeToResolve.TotalSeconds);
 		GameObject.Destroy (Wrapper, (float) timeToResolve.TotalSeconds);
+	}
+
+	public Vector2 screenPosition(Vector3? pos = null){
+		if (!pos.HasValue)
+			pos = this.Wrapper.transform.position;
+		var sp = Camera.main.WorldToScreenPoint (pos.Value);
+		return new Vector2 (sp.x, sp.y);
+	}
+
+	public bool DrawGUI ()
+	{
+		// Draw button at correct position, look at Re-route GUIs.TrainGUI, where buttons are drawn at Node's position
+		if (Wrapper != null){
+		var obsPos = Wrapper.transform.position;
+		var buttonPos = obsPos; // get from Master
+		}
+		var w = 60f;
+		var sp = screenPosition(buttonPosition);
+		return GUI.Button (new Rect (sp.x - w/2, Screen.height - (sp.y + w/2), w, w/2), ButtonText());
+		
 	}
 }
