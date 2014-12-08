@@ -4,9 +4,9 @@ using System;
 
 public class Obstacle : MonoBehaviour {
 	// Set at mouse event
-	public DateTime? userActionedAt = null;
+	public float? userActionedAt = null; // Seconds since userActioned
 
-	// Initialized
+	//  Initialized
 	public GameObject Wrapper;
 	public GameObject block;
 	public GameObject button;
@@ -66,8 +66,8 @@ public class Obstacle : MonoBehaviour {
 			return;
 
 		// Else update timer
-		var sinceDestroy = (DateTime.Now - userActionedAt);
-		var remaining = timeToResolve - sinceDestroy.Value;
+		var sinceDestroy = (Time.time - userActionedAt.Value);
+		var remaining = timeToResolve - TimeSpan.FromSeconds(sinceDestroy);
 		timerDisplay.guiText.text = remaining.Minutes.ToString("D2") + ":" + remaining.Seconds.ToString("D2") + "." + remaining.Milliseconds.ToString("D3");
 	}
 
@@ -75,7 +75,7 @@ public class Obstacle : MonoBehaviour {
 		if(onUserActioned != null)
 			onUserActioned (this);
 
-		userActionedAt = DateTime.Now;
+		userActionedAt = Time.time;
 		timerDisplay.guiText.enabled = true;
 
 		GameObject.Destroy (button);
