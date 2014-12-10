@@ -2,7 +2,6 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
 using System;
 
 public interface IEdge<TNode> where TNode : class {
@@ -35,7 +34,6 @@ public class Edge : BezierSpline, IEdge<Node>, ILine
 				return;
 			this.points[0] = pos;
 			_from = value;
-			EditorUtility.SetDirty(this);
 		}
 	}
 	public Node To  {
@@ -48,7 +46,6 @@ public class Edge : BezierSpline, IEdge<Node>, ILine
 				return;
 			this.points[this.points.Length-1] = pos;
 			_to = value;
-			EditorUtility.SetDirty(this);
 		}
 	}
 
@@ -69,7 +66,6 @@ public class Edge : BezierSpline, IEdge<Node>, ILine
 		set {
 			if(this._graph != value){
 				this._graph = value;
-				EditorUtility.SetDirty(this);
 			}
 		}
 	}
@@ -97,7 +93,6 @@ public class Edge : BezierSpline, IEdge<Node>, ILine
 		for (int i = 1; i < this.points.Length - 1; i++) {
 			this.points[i] = this.points[0] + i * step;
 		}
-		EditorUtility.SetDirty (this);
 	}
 
 	#region ILine implementation

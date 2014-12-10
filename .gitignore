@@ -2,3 +2,9 @@
 *.mdb
 *.userprefs
 */Temp/*
+
+# Ignore builds
+*.app*
+*.exe*
+*.sln
+*.csproj

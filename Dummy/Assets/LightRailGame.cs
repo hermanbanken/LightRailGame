@@ -2,34 +2,51 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 public class LightRailGame : MonoBehaviour {
 
 	public bool paused = false;
+
+	public Obstacle ClickedObstacle;
 	private Train selected;
-	private IList<Node> selectedWaypoints = new List<Node>();
+	private Action<Train> selectedTrainPathChangeAction;
+
 	public readonly LineDrawMaster LineMaster = LineDrawMaster.getInstance();
 
 	private LineRenderer selectionLine;
-	private bool selectionIsRound = false;
-	private bool mouseDown = false;
 	public Graph graph;
+	public ObstacleMaster Obstacles;
 
 	private Mouse mouse = new Mouse ();
 
 	public Transform Train;
 
+	// Set Line for Unity to package in Build
+	public Material LineRendererMaterial;
+
 	// Use this for initialization
 	void Start () {
-		selectionLine = gameObject.GetComponent<LineRenderer> ();
-		if (selectionLine == null) {
-			selectionLine = gameObject.AddComponent("LineRenderer") as LineRenderer;
-		}
-		selectionLine.SetVertexCount (0);
-		selectionLine.SetColors(new Color(0,0,255,10), new Color(0,0,255,200));
-		selectionLine.SetWidth(0.5f, 0.5f);
+		if (LineRendererMaterial == null)
+			Debug.LogWarning ("You did not set the Material of the LineRenderer. Please go to the Inspector of the LightRailGame object and set its material");
+	
+		// Do not show FPS in non-dev Build
+		GameObject.Find ("FPS").SetActive (Debug.isDebugBuild);
 
+		// Get Graph
 		graph = GameObject.FindObjectOfType<Graph> ();
+
+		// Initialize obstacle's
+		Obstacles = gameObject.GetComponent<ObstacleMaster>() ?? gameObject.AddComponent<ObstacleMaster> ();
+		Obstacles.init (obstacle => {
+			Debug.Log("An obstacle was placed.");
+		},obstacle => {
+			Debug.Log("An obstacle was actioned by the user.");
+		},obstacle => {
+			Debug.Log("An obstacle was resolved.");
+			ScoreManager.score++;
+		});
+
 		StartGame ();
 	}
 
@@ -44,11 +61,20 @@ public class LightRailGame : MonoBehaviour {
 				// Select
 				if(selected == null){
 					selected = train;
-					var line = LineMaster.ShowLine(new CombinedLine(train.Path.AsEnumerable().Cast<ILine>()), new LineOptions {
-						widths = new [] { .6f, .6f },
-						colors = new [] { Color.blue, Color.red },
-						offset = Vector3.back
-					});
+					ILine line = null;
+					selectedTrainPathChangeAction = changedTrain => {
+						if(line != null) 
+							LineMaster.HideLine(line);
+						line = new CombinedLine(changedTrain.Path.AsEnumerable().Cast<ILine>());
+						LineMaster.ShowLine(line, new LineOptions {
+							materials = new [] { LineRendererMaterial },
+							widths = new [] { .6f, .6f },
+							colors = new [] { Color.blue, Color.red },
+							offset = Vector3.back
+						});
+					};
+					train.OnPathChange += selectedTrainPathChangeAction;
+					selectedTrainPathChangeAction(train);
 				}
 				// Deselect
 				else if(selected == train){
@@ -74,6 +100,7 @@ public class LightRailGame : MonoBehaviour {
 	private void OnDeselect(){
 		LineMaster.RemoveAll ();
 		this.CancelReroute(selected);
+		selected.OnPathChange -= selectedTrainPathChangeAction;
 		selected = null;
 		paused = selected != null;
 	}
@@ -82,13 +109,32 @@ public class LightRailGame : MonoBehaviour {
 	void OnGUI(){
 		if (selected != null)
 			this.TrainGUI (selected);
+
+		// Handle Obstacle clicks
+		if (ClickedObstacle != null) {
+			// If user chooses an action this is true
+			if(ClickedObstacle.Incident.IncidentGUI()){
+				ClickedObstacle.timeToResolve = ClickedObstacle.Incident.GetChosenSolution().ResolveTime;
+				// TODO only succeed sometimes: check success ratio and throw a dice here :)
+				ClickedObstacle.DoUserAction();
+				ClickedObstacle = null;
+			}
+		}
 	}
 
 	private void StartGame(){
 		var routes = graph.Cycles ();
 		foreach (IList<Node> route in routes) {
 			Debug.Log ("Cycle of length "+route.Count+": "+route.Select (n => n.name).Aggregate ("", (f, n) => f.Length == 0 ? n : f + "," + n));
-			IEnumerable<Edge> edges = route.Select((n, i) => graph.edges.First(e => e.From == n && e.To == route[(i+1)%route.Count]));
+			var edges = route.Concat(route.Take(1)).EachPair((a, b) => {
+				var edge = graph.edges.FirstOrDefault(e => e.From == a && e.To == b);
+				if(edge == null) Debug.Log ("No edge from "+a+ " to " + b);
+				return edge;
+			}).ToList();
+			Debug.Log ("Of the cycle "+edges.Count(e => e == null)+" edges were not defined");
+
+			if(edges.Count(e => e == null) > 0) 
+				continue;
 
 			GameObject go = new GameObject();
 			var model = Instantiate(Train, Vector3.zero, Quaternion.LookRotation(Vector3.down)) as Transform;
