@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic; 
 using System.Linq;
@@ -67,7 +67,7 @@ public class ObstacleMaster : MonoBehaviour {
 		obstacles.ForEach(p => { if (p != null) p.Tick(); });
 
 		// Resolve obstacles
-		var resolved = obstacles.Where (p => p.userActionedAt + p.timeToResolve < DateTime.Now).ToList ();
+		var resolved = obstacles.Where (p => p.userActionedAt + p.timeToResolve.TotalSeconds < Time.time).ToList ();
 		resolved.ForEach((ob) => { 
 			obstacles.Remove(ob);
 			if(onResolved != null)

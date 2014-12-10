@@ -44,6 +44,7 @@ public class LightRailGame : MonoBehaviour {
 			Debug.Log("An obstacle was actioned by the user.");
 		},obstacle => {
 			Debug.Log("An obstacle was resolved.");
+			ScoreManager.score++;
 		});
 
 		StartGame ();

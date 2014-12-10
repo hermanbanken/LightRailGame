@@ -1,20 +1,19 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System;
 
 public class Obstacle : MonoBehaviour {
 	// Set at mouse event
-	public DateTime? userActionedAt = null;
+	public float? userActionedAt = null; // Seconds since userActioned
 
-	// Initialized
+	//  Initialized
 	public GameObject Wrapper;
 	public GameObject block;
 	//public GameObject button;
 	public GameObject timerDisplay;
 	public Vector3 buttonPosition;
 	public TimeSpan timeToResolve;
-
-
+	
 	// Set by init
 	public ObstacleType type;
 	public IIncident Incident;
@@ -60,9 +59,9 @@ public class Obstacle : MonoBehaviour {
 			return;
 
 		// Else update timer
-		var sinceDestroy = (DateTime.Now - userActionedAt);
-		var remaining = timeToResolve - sinceDestroy.Value;
-		timerDisplay.guiText.text = remaining.Minutes.ToString("D2") + ":" + remaining.Seconds.ToString("D2") + "." + (remaining.Milliseconds/100).ToString("D1");
+		var sinceDestroy = (Time.time - userActionedAt.Value);
+		var remaining = timeToResolve - TimeSpan.FromSeconds(sinceDestroy);
+		timerDisplay.guiText.text = remaining.Minutes.ToString("D2") + ":" + remaining.Seconds.ToString("D2") + "." + remaining.Milliseconds.ToString("D3");
 	}
 
 	public string ButtonText(){
@@ -80,7 +79,7 @@ public class Obstacle : MonoBehaviour {
 		if(onUserActioned != null)
 			onUserActioned (this);
 
-		userActionedAt = DateTime.Now;
+		userActionedAt = Time.time;
 		timerDisplay.guiText.enabled = true;
 
 		GameObject.Destroy (block, (float) timeToResolve.TotalSeconds);

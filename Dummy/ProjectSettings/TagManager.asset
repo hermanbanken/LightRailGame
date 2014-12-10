@@ -45,3 +45,7 @@ TagManager:
     userID: 0
     uniqueID: 0
     locked: 0
+  - name: menu
+    userID: 1
+    uniqueID: 2723017841
+    locked: 0
