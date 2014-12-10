@@ -70,8 +70,8 @@ public class Obstacle : MonoBehaviour {
 			return "";
 		
 		// Else update timer
-		var sinceDestroy = (DateTime.Now - userActionedAt);
-		var remaining = timeToResolve - sinceDestroy.Value;
+		var sinceDestroy = (Time.time - userActionedAt);
+		var remaining = timeToResolve - TimeSpan.FromSeconds(sinceDestroy.Value);
 		return remaining.Minutes.ToString("D2") + ":" + remaining.Seconds.ToString("D2") + "." + (remaining.Milliseconds/100).ToString("D1");
 	}
 
