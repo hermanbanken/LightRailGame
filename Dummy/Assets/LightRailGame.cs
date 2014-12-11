@@ -53,8 +53,28 @@ public class LightRailGame : MonoBehaviour {
 	// Update is called once per frame
 	void FixedUpdate () {
 		mouse.OnFrame ();
+
+		if(Input.mouseScrollDelta.magnitude > 0){
+			Debug.Log ("Scrolled: "+Input.mouseScrollDelta);
+			Camera.main.orthographicSize += Input.mouseScrollDelta.y;
+		}
+
 		while (mouse.Events.Any()) {
 			var e = mouse.Events.Dequeue();
+
+			var background = this.GetComponentAtScreen2DPosition<BoxCollider2D>(e.position);
+			if(background != null && background.gameObject.name == "Quad"){
+				var lastPos = e.position;
+				e.OnDrag += (Vector3 newPos) => {
+					// Pan background using the new mouse position
+					var diff = newPos - lastPos;
+					Camera.main.transform.Translate(-diff, Space.World);
+					lastPos = newPos;
+				};
+				Debug.Log ("Background click!!!");
+				// Background was clicked
+			}
+			Debug.Log (background != null ? background.gameObject.name : "No background click!!");
 
 			var train = GetComponentAtScreenPosition<Train>(e.position, true);
 			if(train != null){
@@ -160,6 +180,17 @@ public class LightRailGame : MonoBehaviour {
 				GetComponentAtScreenPosition<T>(position+new Vector3(0,0), false) ?? 
                 GetComponentAtScreenPosition<T>(position+new Vector3(0,.2f), false);
 		}
+		return null;
+	}
+
+	private T GetComponentAtScreen2DPosition<T> (Vector3 position) where T : Component{
+		Ray ray = Camera.main.ScreenPointToRay( position );
+		RaycastHit2D hit = Physics2D.Raycast(transform.position, -Vector2.up);
+
+		if (hit!=null && hit.collider != null)
+		{
+			return hit.collider.GetComponent<T>() ?? hit.collider.GetComponentInParent<T>();
+		}     
 		return null;
 	}
 
