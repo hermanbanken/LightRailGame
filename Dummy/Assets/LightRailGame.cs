@@ -136,12 +136,14 @@ public class LightRailGame : MonoBehaviour {
 			if(edges.Count(e => e == null) > 0) 
 				continue;
 
-			GameObject go = new GameObject();
-			var model = Instantiate(Train, Vector3.zero, Quaternion.LookRotation(Vector3.down)) as Transform;
-			model.localScale = new Vector3(3, 3, 3);
-			model.parent = go.transform;
-			Train train = go.AddComponent<Train>();
-			train.Path = edges.ToList();
+			for(int i = 0; i < edges.Count(); i++){
+				GameObject go = new GameObject();
+				var model = Instantiate(Train, Vector3.zero, Quaternion.LookRotation(Vector3.down)) as Transform;
+				model.localScale = new Vector3(2, 2, 2);
+				model.parent = go.transform;
+				Train train = go.AddComponent<Train>();
+				train.Path = edges.Skip(i).Concat(edges.Take(i)).ToList();
+			}
 		}
 	}
 
