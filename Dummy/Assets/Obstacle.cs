@@ -51,19 +51,7 @@ public class Obstacle : MonoBehaviour {
 		timerDisplay.AddComponent<GUIText> ();
 		timerDisplay.guiText.enabled = false;
 	}
-
-	// Deprecated, remove soon
-	public void Tick(){
-		// Not yet actioned || resolved
-		if (userActionedAt == null || timerDisplay == null || timerDisplay.guiText == null)
-			return;
-
-		// Else update timer
-		var sinceDestroy = (Time.time - userActionedAt.Value);
-		var remaining = timeToResolve - TimeSpan.FromSeconds(sinceDestroy);
-		timerDisplay.guiText.text = remaining.Minutes.ToString("D2") + ":" + remaining.Seconds.ToString("D2") + "." + remaining.Milliseconds.ToString("D3");
-	}
-
+	
 	public string ButtonText(){
 		// Not yet actioned || resolved
 		if (userActionedAt == null || timerDisplay == null || timerDisplay.guiText == null)

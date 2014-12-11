@@ -14,6 +14,8 @@ public class ObstacleMaster : MonoBehaviour {
 	Action<Obstacle> onUserActioned;
 	Action<Obstacle> onResolved;
 
+	float? LastObstacle = null;
+
 	void Start (){
 		game = GetComponent<LightRailGame> ();
 	}
@@ -22,7 +24,6 @@ public class ObstacleMaster : MonoBehaviour {
 		this.onResolved = onResolved;
 		this.onUserActioned = onUserActioned;
 		this.onOccur = onOccur;
-		InvokeRepeating ("running", 5F,5F);
 	}
 
 	void OnGUI(){
@@ -32,8 +33,8 @@ public class ObstacleMaster : MonoBehaviour {
 			game.ClickedObstacle = clickedObs;
 		}
 	}
-
-	void running (){
+	
+	void PlaceNewObstacle (){
 		// Get random position
 		Edge edge = game.graph.edges.ElementAt(rnd.Next(0, game.graph.edges.Count ()-1));
 		float randT = (float)rnd.NextDouble ();
@@ -50,7 +51,6 @@ public class ObstacleMaster : MonoBehaviour {
 
 		if(onOccur != null) onOccur (obstacle);
 	}
-	
 
 	public static Vector3 getButtonPosition(Vector3 pos, Vector3 dir, float distance){
 		Vector3 a = new Vector3 ();
@@ -61,10 +61,14 @@ public class ObstacleMaster : MonoBehaviour {
 		b.y = pos.y + distance * dir.x / (float)Math.Sqrt (dir.x * dir.x + dir.y * dir.y);
 		a.z = b.z = -4.5f;
 		return (a.magnitude < b.magnitude) ? a : b;
-		}
+	}
+
 	void Update (){
-		// Tick
-		obstacles.ForEach(p => { if (p != null) p.Tick(); });
+		// Introduce obstacles
+		if (!LastObstacle.HasValue || LastObstacle.Value + 5 < Time.time) {
+			LastObstacle = Time.time;
+			PlaceNewObstacle();
+		}
 
 		// Resolve obstacles
 		var resolved = obstacles.Where (p => p.userActionedAt + p.timeToResolve.TotalSeconds < Time.time).ToList ();
@@ -73,8 +77,6 @@ public class ObstacleMaster : MonoBehaviour {
 			if(onResolved != null)
 				onResolved(ob); 
 		});
-
-
 	}
 }
 
