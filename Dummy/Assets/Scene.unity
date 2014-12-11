@@ -162,7 +162,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   points:
-  - {x: -30.6640244, y: -46.8299484, z: -8}
+  - {x: -30.6640244, y: -46.8299484, z: -4}
   - {x: -13.1772385, y: -46.9296417, z: -4}
   - {x: 6.03701591, y: -46.7718582, z: -4}
   - {x: 24.3359756, y: -46.8299484, z: -4}
@@ -1160,7 +1160,7 @@ MonoBehaviour:
   - {x: 27.3359756, y: 48.1700516, z: -4}
   - {x: 12.7263031, y: 48.1901932, z: -4}
   - {x: -.34383738, y: 48.0453568, z: -4}
-  - {x: -12.6640224, y: 48.1700516, z: -8}
+  - {x: -12.6640224, y: 48.1700516, z: -4}
   modes: 0000000000000000
   loop: 0
   _from: {fileID: 325324489}
@@ -1804,7 +1804,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   points:
-  - {x: -12.6640224, y: 48.1700516, z: -8}
+  - {x: -12.6640224, y: 48.1700516, z: -4}
   - {x: -8.66402245, y: 40.5033836, z: -6.66666651}
   - {x: -4.66402245, y: 32.8367195, z: -5.33333302}
   - {x: -.664022446, y: 25.1700516, z: -4}
@@ -2720,7 +2720,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1372389037}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -30, y: -46, z: 0}
+  m_LocalPosition: {x: -30, y: -46, z: 4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1367576509}
@@ -2921,7 +2921,7 @@ MonoBehaviour:
   - {x: -71.6640167, y: -46.8299484, z: -4}
   - {x: -58.5307274, y: -46.956398, z: -4}
   - {x: -45.1441231, y: -46.9426651, z: -4}
-  - {x: -30.6640244, y: -46.8299484, z: -8}
+  - {x: -30.6640244, y: -46.8299484, z: -4}
   modes: 0000000000000000
   loop: 0
   _from: {fileID: 1995277296}
@@ -3146,7 +3146,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   points:
-  - {x: -30.6640244, y: -46.8299484, z: -8}
+  - {x: -30.6640244, y: -46.8299484, z: -4}
   - {x: -20.8012276, y: -39.8139572, z: -4}
   - {x: -10.320406, y: -32.3819923, z: -4}
   - {x: -.664022446, y: -25.4312515, z: -4}
@@ -3534,7 +3534,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1814185989}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -12, y: 49, z: 0}
+  m_LocalPosition: {x: -12, y: 49, z: 4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1367576509}
@@ -3579,7 +3579,6 @@ MonoBehaviour:
   m_Script: {fileID: 1301386320, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Priority: 3
   ignoreReversedGraphics: 1
   blockingObjects: 0
   m_BlockingMask:
@@ -3963,7 +3962,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   points:
-  - {x: -12.6640224, y: 48.1700516, z: -8}
+  - {x: -12.6640224, y: 48.1700516, z: -4}
   - {x: -33.1413422, y: 47.9950562, z: -4}
   - {x: -52.5075607, y: 47.9692154, z: -4}
   - {x: -71.6640167, y: 48.1700516, z: -4}

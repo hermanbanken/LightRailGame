@@ -6,3 +6,5 @@
 # Ignore builds
 *.app*
 *.exe*
+*.sln
+*.csproj
