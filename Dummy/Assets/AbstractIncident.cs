@@ -25,15 +25,12 @@ public abstract class AbstractIncident : IIncident {
 	public void SetChosenSolution (ISolution solution)
 	{
 		if (IsResolved ()) {
-			Debug.Log ("Incident already resolved");
 			// Already resolved, unmodifyable
-		} else if (solution == null || CountDownValue ().HasValue && CountDownValue ().Value == TimeSpan.Zero) {
-			Debug.Log ("Setting solution on incident");
+		} else if (this.solution == null || CountDownValue ().HasValue && CountDownValue ().Value == TimeSpan.Zero) {
 			this.resolved = null;
 			this.solution = solution;
 			this.solutionChosenAt = Time.time;
-		} else
-			Debug.LogWarning ("Can't change indicent while evaluating: "+solution.ProposalText);
+		}
 	}
 
 	public ISolution GetChosenSolution ()
