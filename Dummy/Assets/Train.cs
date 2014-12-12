@@ -128,7 +128,6 @@ public class Train : MonoBehaviour {
 		var cL = current.GetLength ();
 
 		var desiredSpeed = this.desiredSpeed;
-		var distanceToStandStill = speed / 2 * (speed / maxAcc);
 
 		/* check for stations/traffic lights/end of track here */
 		Edge _track; int _t;
@@ -144,13 +143,6 @@ public class Train : MonoBehaviour {
 		} else
 		if (traffic != null && NeedBreak (traffic.MaxSpeed (this), cL - position)) {
 			desiredSpeed = traffic.MaxSpeed (this);
-		}
-
-		if (isEndOfPath) {
-			// Do we need to brake already?
-			if(position + distanceToStandStill > current.GetLength()){
-				desiredSpeed = 0;
-			}
 		}
 
 		var diff = desiredSpeed - this.speed;
