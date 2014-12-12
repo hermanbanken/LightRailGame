@@ -55,18 +55,22 @@ public class LightRailGame : MonoBehaviour {
 		StartGame ();
 	}
 
-	// Update is called once per frame
+	/**
+	 * Handle mouse/scrolling/events
+	 */
 	void FixedUpdate () {
 		mouse.OnFrame ();
 
+		// Do scrolling
 		if(Input.mouseScrollDelta.magnitude > 0){
-			Debug.Log ("Scrolled: "+Input.mouseScrollDelta);
 			Camera.main.orthographicSize += Input.mouseScrollDelta.y;
 		}
 
+		// Handle all mouse events
 		while (mouse.Events.Any()) {
 			var e = mouse.Events.Dequeue();
 
+			// Handle panning
 			var background = this.GetComponentAtScreen2DPosition<BoxCollider2D>(e.position);
 			if(background != null && background.gameObject.name == "Quad"){
 				var lastPos = e.position;
@@ -81,6 +85,7 @@ public class LightRailGame : MonoBehaviour {
 			}
 			Debug.Log (background != null ? background.gameObject.name : "No background click!!");
 
+			// Handle train clicks
 			var train = GetComponentAtScreenPosition<Train>(e.position, true);
 			if(train != null){
 				// Select
@@ -107,6 +112,7 @@ public class LightRailGame : MonoBehaviour {
 				}
 			}
 
+			// Handle GUI element clicks
 			var gui = GetComponentAtScreenPosition<GUIElement>(e.position, true);
 			if(gui != null){
 				Debug.Log("GUI ELEMENT CLICKED!");
@@ -144,6 +150,7 @@ public class LightRailGame : MonoBehaviour {
 		}
 	}
 
+	// On start: lookup cycles, add trams
 	private void StartGame(){
 		var routes = graph.Cycles ();
 		foreach (IList<Node> route in routes) {
@@ -196,69 +203,4 @@ public class LightRailGame : MonoBehaviour {
 		return null;
 	}
 
-//	private void DragStart(Vector3 position){
-//		Ray ray = Camera.main.ScreenPointToRay( position );
-//		RaycastHit hit;
-//		if(Physics.Raycast(ray, out hit)){
-//			Train select = hit.collider.GetComponentInParent<Train>();
-//			Debug.Log ("Hit @ " + position + " : " + (select == null ? "no train" : select.name));
-//			if(select != null){
-//				if(selected != null)
-//					DragEnd(position);
-//				paused = true;
-//				selected = select;
-//				selectionIsRound = false;
-//				updateDragPath();
-//			}
-//		}
-//	}
-//
-//	public void DragMove(Vector3 position){
-//		Ray ray = Camera.main.ScreenPointToRay( position );
-//		RaycastHit hit;
-//		if(Physics.Raycast(ray, out hit)){
-//			Node node = hit.collider.gameObject.GetComponent<Node>();
-//			if(node != null && (selectedWaypoints.Count == 0 || selectedWaypoints[selectedWaypoints.Count-1] != node)){
-//				selectedWaypoints.Add(node);
-//				selectionIsRound = false;
-//				updateDragPath();
-//			}
-//			Train train = hit.collider.GetComponentInParent<Train>();
-//			if(train != null && selected == train && !selectionIsRound){
-//				selectionIsRound = true;
-//				updateDragPath();
-//			}
-//		}
-//	}
-//
-//	private void DragEnd(Vector3 position){
-//		if (selectionIsRound) {
-//			selected.SetPath(selectedWaypoints.Select(wp => wp.gameObject).ToList());
-//			Debug.Log ("Changed path!!!!" + selectedWaypoints);
-//		}
-//
-//		if(selected != null)
-//			selected.Deselect();
-//		selected = null;
-//		paused = false;
-//		selectedWaypoints = new List<Node> ();
-//		selectionIsRound = false;
-//		updateDragPath ();
-//	}
-//
-//	private void updateDragPath ()
-//	{
-//		var up = new Vector3 (0, 0, -0.25f);
-//		selectionLine.SetVertexCount (selected == null ? 0 : selectedWaypoints.Count + 1 + (selectionIsRound ? 1 : 0));
-//		if (selected != null) {
-//			int i = 0;
-//			selectionLine.SetPosition(i++, selected.gameObject.transform.position + up);
-//			foreach(Node p in selectedWaypoints){
-//				selectionLine.SetPosition(i++, p.gameObject.transform.position + up);
-//			}
-//			if(selectionIsRound){
-//				selectionLine.SetPosition(i, selected.transform.position + up);
-//			}
-//		}
-//	}
 }
