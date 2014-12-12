@@ -22,6 +22,7 @@ public class Node : MonoBehaviour {
 	}
 
 	public void Start(){
+		// TODO remove this random assingment if Pawel add new complex Map's
 		if(UnityEngine.Random.value > 0.5)
 			gameObject.AddComponent<Station> ();
 		else 
