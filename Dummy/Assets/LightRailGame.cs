@@ -12,6 +12,8 @@ public class LightRailGame : MonoBehaviour {
 	private Train selected;
 	private Action<Train> selectedTrainPathChangeAction;
 
+	public static ScoreManager ScoreManager;
+
 	public readonly LineDrawMaster LineMaster = LineDrawMaster.getInstance();
 
 	private LineRenderer selectionLine;
@@ -32,6 +34,9 @@ public class LightRailGame : MonoBehaviour {
 	
 		// Do not show FPS in non-dev Build
 		GameObject.Find ("FPS").SetActive (Debug.isDebugBuild);
+
+		// Attach scoreManager
+		ScoreManager = GameObject.FindObjectOfType<ScoreManager> ();
 
 		// Get Graph
 		graph = GameObject.FindObjectOfType<Graph> ();
@@ -129,13 +134,10 @@ public class LightRailGame : MonoBehaviour {
 	void OnGUI(){
 		if (selected != null)
 			this.TrainGUI (selected);
-
 		// Handle Obstacle clicks
-		if (ClickedObstacle != null) {
+		else if (ClickedObstacle != null) {
 			// If user chooses an action this is true
 			if(ClickedObstacle.Incident.IncidentGUI()){
-				ClickedObstacle.timeToResolve = ClickedObstacle.Incident.GetChosenSolution().ResolveTime;
-				// TODO only succeed sometimes: check success ratio and throw a dice here :)
 				ClickedObstacle.DoUserAction();
 				ClickedObstacle = null;
 			}

@@ -12,7 +12,6 @@ public class Obstacle : MonoBehaviour {
 	//public GameObject button;
 	public GameObject timerDisplay;
 	public Vector3 buttonPosition;
-	public TimeSpan timeToResolve;
 	
 	// Set by init
 	public ObstacleType type;
@@ -27,15 +26,12 @@ public class Obstacle : MonoBehaviour {
 		switch (type) {
 		case ObstacleType.Car:
 			this.block = GameObject.CreatePrimitive (PrimitiveType.Capsule);
-			this.timeToResolve = TimeSpan.FromSeconds(2f);
 			break;
 		case ObstacleType.Tree:
 			this.block = GameObject.CreatePrimitive (PrimitiveType.Cube);
-			this.timeToResolve = TimeSpan.FromSeconds(3f);
 			break;
 		case ObstacleType.Barrel:
 			this.block = GameObject.CreatePrimitive (PrimitiveType.Cylinder);
-			this.timeToResolve = TimeSpan.FromSeconds(4f);
 			break;
 		}
 
@@ -51,15 +47,24 @@ public class Obstacle : MonoBehaviour {
 		timerDisplay.AddComponent<GUIText> ();
 		timerDisplay.guiText.enabled = false;
 	}
+
+	void Update(){
+		if (Incident.IsResolved() && block != null) {
+			GameObject.Destroy (block);
+			GameObject.Destroy (timerDisplay);
+			GameObject.Destroy (Wrapper);
+		}
+
+		this.timerDisplay.guiText.text = ButtonText ();
+	}
 	
 	public string ButtonText(){
 		// Not yet actioned || resolved
-		if (userActionedAt == null || timerDisplay == null || timerDisplay.guiText == null)
-			return "";
+		if (!Incident.CountDownValue().HasValue)
+			return "handle";
 		
 		// Else update timer
-		var sinceDestroy = (Time.time - userActionedAt);
-		var remaining = timeToResolve - TimeSpan.FromSeconds(sinceDestroy.Value);
+		var remaining = Incident.CountDownValue ().Value;
 		return remaining.Minutes.ToString("D2") + ":" + remaining.Seconds.ToString("D2") + "." + (remaining.Milliseconds/100).ToString("D1");
 	}
 
@@ -69,10 +74,6 @@ public class Obstacle : MonoBehaviour {
 
 		userActionedAt = Time.time;
 		timerDisplay.guiText.enabled = true;
-
-		GameObject.Destroy (block, (float) timeToResolve.TotalSeconds);
-		GameObject.Destroy (timerDisplay, (float) timeToResolve.TotalSeconds);
-		GameObject.Destroy (Wrapper, (float) timeToResolve.TotalSeconds);
 	}
 
 	public Vector2 screenPosition(Vector3? pos = null){

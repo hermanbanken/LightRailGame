@@ -17,7 +17,7 @@ public class Train : MonoBehaviour {
 	public IIncident incident;
 
 	public IList<Edge> Path = new List<Edge>();
-	public int currentStation;
+	public int currentTrack;
 
 	public event Action<Train> OnPathChange;
 
@@ -38,9 +38,16 @@ public class Train : MonoBehaviour {
 	}
 
 	public void UpdatePath(IList<Edge> path){
-		this.currentStation = path.IndexOf (this.Path [currentStation]);
+		var prev = this.Path;
+		this.currentTrack = path.IndexOf (this.Path [currentTrack]);
 		this.Path = path;
 
+		// Send events
+		LightRailGame.ScoreManager.DoReroute (new ScoreManager.RerouteEventArgs { 
+			Train = this,
+			Route = path,
+			PreviousRoute = prev 
+		});
 		if (OnPathChange != null)
 			OnPathChange (this);
 	}
@@ -66,26 +73,47 @@ public class Train : MonoBehaviour {
 	}
 
 	/**
+	 * Get next track segment, if there is any
+	 */
+	public bool TryGetNextTrack(out int nextTrack, out Edge track) {
+		var nI = (currentTrack + 1) % Path.Count;
+		if (Path [currentTrack].To == Path [nI].From) {
+			nextTrack = nI;
+			track = Path[nI];
+			return true;
+		}
+		track = Path [currentTrack];
+		nextTrack = currentTrack;
+		return false;
+	}
+
+	/**
 	 * Update position of Train
 	 */
 	public void UpdateToNextPosition(float unitsFromStation){
-		Edge current = Path [currentStation];
+		Edge current = Path [currentTrack];
 
 		while (current.GetLength () < unitsFromStation) {
-			Debug.Log ("Train went onto new Edge");
 			unitsFromStation -= current.GetLength();
-			currentStation = (currentStation + 1) % Path.Count;
-			current = Path[currentStation];
+			var previous = current;
+			if(!TryGetNextTrack(out this.currentTrack, out current)){
+				// At end of defined Path
+				return;
+			}
+
+			// Send Event
+			LightRailGame.ScoreManager.DoNextSegment(new ScoreManager.NextSegmentEventArgs { Train = this, PreviousSegment = previous, Segment = current });
 		}
 
+		// Update transform
 		float t = current.GetPositionOfUnitPoint (unitsFromStation);
 		Vector3 pos = current.GetPoint (t);
 		Vector3 rot = current.GetDirection (t);
-
 		pos.z -= 1;
 		this.transform.position = pos;
 		this.transform.rotation = Quaternion.LookRotation(rot);
 
+		// Store new unit position
 	    this.position = unitsFromStation;
 	}
 
@@ -96,12 +124,29 @@ public class Train : MonoBehaviour {
 	 * keeping Stations, Traffic Lights and Trains ahead in mind
 	 */
 	private float acceleration(){
-		Edge current = Path [currentStation];
+		Edge current = Path [currentTrack];
+		var cL = current.GetLength ();
 
 		var desiredSpeed = this.desiredSpeed;
+		var distanceToStandStill = speed / 2 * (speed / maxAcc);
 
-		if (current.To != null /* check for stations/traffic lights here */) {
-			var distanceToStandStill = speed / 2 * (speed / maxAcc);
+		/* check for stations/traffic lights/end of track here */
+		Edge _track; int _t;
+		var isEndOfPath = !TryGetNextTrack (out _t, out _track);
+		var station = current.To.gameObject.GetComponent<Station> ();
+		var traffic = current.To.gameObject.GetComponent<TrafficLight> ();
+
+		if (isEndOfPath && NeedBreak (0, cL - position)) {
+			desiredSpeed = 0;
+		} else
+		if (station != null && NeedBreak (station.MaxSpeed (this), cL - position)) {
+			desiredSpeed = station.MaxSpeed (this);
+		} else
+		if (traffic != null && NeedBreak (traffic.MaxSpeed (this), cL - position)) {
+			desiredSpeed = traffic.MaxSpeed (this);
+		}
+
+		if (isEndOfPath) {
 			// Do we need to brake already?
 			if(position + distanceToStandStill > current.GetLength()){
 				desiredSpeed = 0;
@@ -110,6 +155,12 @@ public class Train : MonoBehaviour {
 
 		var diff = desiredSpeed - this.speed;
 		return diff > 0 ? Math.Min (diff, maxAcc) : Math.Max (diff, -maxAcc);
+	}
+
+	private bool NeedBreak(float speed, float distanceUntilSpeed){
+		var accTime = (this.speed - speed) / maxAcc;
+		var avgSpeed = (this.speed + speed) / 2;
+		return distanceUntilSpeed < avgSpeed * accTime;
 	}
 
 	public void Incident (IIncident incident)

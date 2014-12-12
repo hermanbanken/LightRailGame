@@ -43,9 +43,9 @@ public class Station : MonoBehaviour, IStop {
 
 	public float MaxSpeed (Train train)
 	{
-		if (IsPresent (train))
+		//if (IsPresent (train))
 			return 0f;
-		return 0.5f;
+		//return 0.5f;
 	}
 
 	#endregion

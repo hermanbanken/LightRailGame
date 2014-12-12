@@ -5,11 +5,12 @@ using System;
 
 public class Mouse {
 
-	private bool down = false;
+	private bool down;
 	public Queue<MouseEvent> Events = new Queue<MouseEvent>();
 	private MouseEvent Last;
 
 	public Mouse(){
+		down = false;
 	}
 
 	public void OnFrame(){
@@ -42,7 +43,8 @@ public abstract class MouseEvent {
 
 	public event Action<Vector3> OnDrag;
 	public void HandleDrag(Vector3 newPosition){
-		OnDrag (newPosition);
+		if(OnDrag != null)
+			OnDrag (newPosition);
 	}
 }
 

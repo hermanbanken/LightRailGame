@@ -71,7 +71,7 @@ public class ObstacleMaster : MonoBehaviour {
 		}
 
 		// Resolve obstacles
-		var resolved = obstacles.Where (p => p.userActionedAt + p.timeToResolve.TotalSeconds < Time.time).ToList ();
+		var resolved = obstacles.Where (p => p.Incident.IsResolved()).ToList ();
 		resolved.ForEach((ob) => { 
 			obstacles.Remove(ob);
 			if(onResolved != null)

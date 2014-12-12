@@ -6,6 +6,7 @@ using System;
 public interface IIncident
 {
 	bool IsResolved();
+	TimeSpan? CountDownValue();
 	IEnumerable<ISolution> PossibleActions();
 	void SetChosenSolution (ISolution solution);
 	ISolution GetChosenSolution ();
