@@ -14,7 +14,9 @@ public class Train : MonoBehaviour {
 	public float speed = 0;
 	public float desiredSpeed = 10f;
 	private float position = 0f;
+
 	public IIncident incident;
+	public IStop stop;
 
 	public IList<Edge> Path = new List<Edge>();
 	public int currentTrack;
@@ -58,17 +60,28 @@ public class Train : MonoBehaviour {
 		if (incident != null && incident.IsResolved ()) {
 			incident = null;
 		}
+
+		// Leave stops, if possible
+		if (stop != null && stop.TryLeave(this)) {
+			stop = null;
+		}
 	
 		// Don't move tram if the game is paused or an incident exists
-		if (lightRailGame.paused || incident != null) {
+		if (lightRailGame.paused || incident != null || Path.Count == 0 || stop != null) {
 			return;
 		}
 
-		// New way of moving: move along Path defined in Train class
-		if (Path.Count > 0) {
-			UpdateToNextPosition(position + speed * Time.deltaTime);
+		// Stop at stops
+		Edge e = Path [currentTrack];
+		if (position + speed * Time.deltaTime > e.GetLength()){
+			stop = (IStop) e.To.GetComponent<Station>() ?? (IStop) e.To.GetComponent<TrafficLight>();
+			if(stop != null){
+				stop.Arrive(this);
+			}
 		}
 
+		// New way of moving: move along Path defined in Train class
+		UpdateToNextPosition(position + speed * Time.deltaTime);
 		this.speed = this.speed + acceleration () * Time.deltaTime;
 	}
 
@@ -128,7 +141,6 @@ public class Train : MonoBehaviour {
 		var cL = current.GetLength ();
 
 		var desiredSpeed = this.desiredSpeed;
-		var distanceToStandStill = speed / 2 * (speed / maxAcc);
 
 		/* check for stations/traffic lights/end of track here */
 		Edge _track; int _t;
@@ -144,13 +156,6 @@ public class Train : MonoBehaviour {
 		} else
 		if (traffic != null && NeedBreak (traffic.MaxSpeed (this), cL - position)) {
 			desiredSpeed = traffic.MaxSpeed (this);
-		}
-
-		if (isEndOfPath) {
-			// Do we need to brake already?
-			if(position + distanceToStandStill > current.GetLength()){
-				desiredSpeed = 0;
-			}
 		}
 
 		var diff = desiredSpeed - this.speed;
