@@ -62,10 +62,12 @@ public class Train : MonoBehaviour {
 			UpdateToNextPosition(position + speed * Time.deltaTime);
 		}
 
-		if (Math.Abs (this.speed - this.desiredSpeed) > 0.0001)
-			this.speed = this.speed + (this.desiredSpeed - this.speed) * Time.deltaTime / 2;
+		this.speed = this.speed + acceleration () * Time.deltaTime;
 	}
 
+	/**
+	 * Update position of Train
+	 */
 	public void UpdateToNextPosition(float unitsFromStation){
 		Edge current = Path [currentStation];
 
@@ -87,11 +89,27 @@ public class Train : MonoBehaviour {
 	    this.position = unitsFromStation;
 	}
 
-	public void Deselect(){
-		this.gameObject.GetComponentInChildren<MeshRenderer>().material.color = Color.gray;
-	}
-	public void Select(){
-		this.gameObject.GetComponentInChildren<MeshRenderer>().material.color = Color.blue;
+	private float maxAcc = 3;
+
+	/**
+	 * Get the desired Acceleration,
+	 * keeping Stations, Traffic Lights and Trains ahead in mind
+	 */
+	private float acceleration(){
+		Edge current = Path [currentStation];
+
+		var desiredSpeed = this.desiredSpeed;
+
+		if (current.To != null /* check for stations/traffic lights here */) {
+			var distanceToStandStill = speed / 2 * (speed / maxAcc);
+			// Do we need to brake already?
+			if(position + distanceToStandStill > current.GetLength()){
+				desiredSpeed = 0;
+			}
+		}
+
+		var diff = desiredSpeed - this.speed;
+		return diff > 0 ? Math.Min (diff, maxAcc) : Math.Max (diff, -maxAcc);
 	}
 
 	public void Incident (IIncident incident)
