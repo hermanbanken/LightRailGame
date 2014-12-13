@@ -27,11 +27,16 @@ public abstract class AbstractIncident : IIncident {
 		if (resolved.HasValue)
 			return resolved.Value;
 		if (solutionChosenAt.HasValue && solutionChosenAt.Value + solution.ResolveTime.TotalSeconds < Time.time) {
-			resolved = solutionChosenAt.HasValue && solutionChosenAt.Value + solution.ResolveTime.TotalSeconds < Time.time; // TODO randomness here: && UnityEngine.Random.value < solution.SuccessRatio;
-			// Fire event
-			var listeners = OnResolved;
-			if(resolved.Value == true && listeners != null){
-				listeners(this);
+			// Add randomness, solution might fail:
+			if(UnityEngine.Random.value < solution.SuccessRatio){
+				resolved = true;
+				// Fire event
+				var listeners = OnResolved;
+				if(resolved.Value == true && listeners != null){
+					listeners(this);
+				}
+			} else {
+				resolved = false;
 			}
 		}
 		return resolved.HasValue && resolved.Value;
