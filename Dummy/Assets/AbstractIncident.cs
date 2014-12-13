@@ -4,9 +4,21 @@ using System.Collections.Generic;
 using System;
 
 public abstract class AbstractIncident : IIncident {
+
+	public event Action<IIncident> OnResolved;
+	public event Action<IIncident> OnUserAction;
 	private ISolution solution;
 	private float? solutionChosenAt;
 	private bool? resolved = null;
+
+	public AbstractIncident(){
+		Debug.Log ("AbstractIncident constructor called");
+		// Fire occur event
+		LightRailGame.ScoreManager.DoOccur(this);
+		// Track events
+		this.OnUserAction += LightRailGame.ScoreManager.DoUserAction;
+		this.OnResolved += LightRailGame.ScoreManager.DoResolved;
+	}
 
 	#region IIncident implementation
 
@@ -16,6 +28,11 @@ public abstract class AbstractIncident : IIncident {
 			return resolved.Value;
 		if (solutionChosenAt.HasValue && solutionChosenAt.Value + solution.ResolveTime.TotalSeconds < Time.time) {
 			resolved = solutionChosenAt.HasValue && solutionChosenAt.Value + solution.ResolveTime.TotalSeconds < Time.time; // TODO randomness here: && UnityEngine.Random.value < solution.SuccessRatio;
+			// Fire event
+			var listeners = OnResolved;
+			if(resolved.Value == true && listeners != null){
+				listeners(this);
+			}
 		}
 		return resolved.HasValue && resolved.Value;
 	}
@@ -30,6 +47,11 @@ public abstract class AbstractIncident : IIncident {
 			this.resolved = null;
 			this.solution = solution;
 			this.solutionChosenAt = Time.time;
+			// Fire event
+			var listeners = OnUserAction;
+			if(listeners != null){
+				listeners(this);
+			}
 		}
 	}
 

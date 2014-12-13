@@ -77,6 +77,10 @@ public class Train : MonoBehaviour {
 			stop = (IStop) e.To.GetComponent<Station>() ?? (IStop) e.To.GetComponent<TrafficLight>();
 			if(stop != null){
 				stop.Arrive(this);
+				LightRailGame.ScoreManager.DoStopVisit(new ScoreManager.StopVisitEventArgs() {
+					Train = this,
+					Stop = stop
+				});
 			}
 		}
 
@@ -114,7 +118,8 @@ public class Train : MonoBehaviour {
 				return;
 			}
 
-			// Send Event
+			// Send Events
+			LightRailGame.ScoreManager.DoNodeVisit(new ScoreManager.NodeVisitEventArgs { Train = this, Node = current.From });
 			LightRailGame.ScoreManager.DoNextSegment(new ScoreManager.NextSegmentEventArgs { Train = this, PreviousSegment = previous, Segment = current });
 		}
 

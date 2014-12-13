@@ -27,7 +27,7 @@ public class ScoreManager : MonoBehaviour
 	/* Events */
 	public event EventHandler<NextSegmentEventArgs> OnNextSegment;
 	public event EventHandler<NodeVisitEventArgs> OnNodeVisit;
-	public event EventHandler<StationVisitEventArgs> OnStationVisit;
+	public event EventHandler<StopVisitEventArgs> OnStopVisit;
 	public event EventHandler<StationDueEventArgs> OnStationDue;
 	public event Action<IIncident> OnOccur;
 	public event Action<IIncident> OnUserAction;
@@ -49,9 +49,9 @@ public class ScoreManager : MonoBehaviour
 			handler (this, e);
 	}
 
-	public virtual void DoStationVisit (StationVisitEventArgs e)
+	public virtual void DoStopVisit (StopVisitEventArgs e)
 	{
-		var handler = OnStationVisit;
+		var handler = OnStopVisit;
 		if (handler != null)
 			handler (this, e);
 	}
@@ -103,9 +103,9 @@ public class ScoreManager : MonoBehaviour
 		public Node Node { get; set; }
 	}
 	
-	public class StationVisitEventArgs : EventArgs {
+	public class StopVisitEventArgs : EventArgs {
 		public Train Train { get; set; }
-		public Station Station { get; set; }
+		public IStop Stop { get; set; }
 	}
 	
 	public class StationDueEventArgs : EventArgs {

@@ -5,6 +5,8 @@ using System;
 
 public interface IIncident
 {
+	event Action<IIncident> OnResolved;
+	event Action<IIncident> OnUserAction;
 	bool IsResolved();
 	TimeSpan? CountDownValue();
 	IEnumerable<ISolution> PossibleActions();
