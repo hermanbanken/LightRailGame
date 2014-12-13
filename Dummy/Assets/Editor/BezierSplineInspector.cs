@@ -21,19 +21,8 @@ public class BezierSplineInspector : Editor {
 	public override void OnInspectorGUI () {
 		spline = target as BezierSpline;
 		EditorGUI.BeginChangeCheck();
-		bool loop = EditorGUILayout.Toggle("Loop", spline.Loop);
-		if (EditorGUI.EndChangeCheck()) {
-			Undo.RecordObject(spline, "Toggle Loop");
-			EditorUtility.SetDirty(spline);
-			spline.Loop = loop;
-		}
 		if (selectedIndex >= 0 && selectedIndex < spline.ControlPointCount) {
 			DrawSelectedPointInspector();
-		}
-		if (GUILayout.Button("Add Curve")) {
-			Undo.RecordObject(spline, "Add Curve");
-			spline.AddCurve();
-			EditorUtility.SetDirty(spline);
 		}
 		if (GUILayout.Button ("Set all Z to 0")) {
 			Undo.RecordObject(spline, "Set all Z to 0");
@@ -80,18 +69,6 @@ public class BezierSplineInspector : Editor {
 			
 			Handles.DrawBezier(p0, p3, p1, p2, Color.white, null, 2f);
 			p0 = p3;
-		}
-		//ShowDirections();
-	}
-
-	private void ShowDirections () {
-		Handles.color = Color.green;
-		Vector3 point = spline.GetPoint(0f);
-		Handles.DrawLine(point, point + spline.GetDirection(0f) * directionScale);
-		int steps = stepsPerCurve * spline.CurveCount;
-		for (int i = 1; i <= steps; i++) {
-			point = spline.GetPoint(i / (float)steps);
-			Handles.DrawLine(point, point + spline.GetDirection(i / (float)steps) * directionScale);
 		}
 	}
 

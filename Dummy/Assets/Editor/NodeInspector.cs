@@ -28,34 +28,51 @@ public class NodeInspector : Editor {
 		}
 	}
 	
-	public void OnSceneGUI () {
-		NodeInspector.OnSceneGUI (target as Node);
-	}
-
-	public static void OnSceneGUI (Node node) {
+	/**
+	 * Draw Node GUI as part of the Graph GUI
+	 * 
+	 * Returns true if this node was clicked
+	 */
+	public static bool OnGraphSceneGUI(Node node, bool selected = true){
 		Transform handleTransform = node.graph.gameObject.transform;
 		Vector3 point = handleTransform.TransformPoint(node.position);
 		Quaternion handleRotation = Tools.pivotRotation == PivotRotation.Local ? handleTransform.rotation : Quaternion.identity;
 
-		EditorGUI.BeginChangeCheck();
-		var p0 = Handles.DoPositionHandle(point, handleRotation);
-		if (EditorGUI.EndChangeCheck()) 
-		{
-			var affectedEdges = node.graph.edges.Where(e => e.From == node || e.To == node).ToList();
-			Undo.RecordObjects(new Object[] { node }.Concat(affectedEdges.Cast<Object>()).ToArray(), "Move Node");
-			node.position = handleTransform.InverseTransformPoint(p0);
-			EditorUtility.SetDirty(node);
-			affectedEdges.ForEach(e => EditorUtility.SetDirty(e));
+		if (selected) {
 
-			point = p0;
+			EditorGUI.BeginChangeCheck ();
+			var p0 = Handles.DoPositionHandle (point, handleRotation);
+			if (EditorGUI.EndChangeCheck ()) 
+			{
+				// Gather edges
+				var affectedEdges = node.graph.edges.Where (e => e.From == node || e.To == node).ToList ();
+
+				// Save state
+				Undo.RecordObjects (new Object[] { node }.Concat (affectedEdges.Cast<Object> ()).ToArray (), "Move Node");
+
+				// Update state
+				node.position = handleTransform.InverseTransformPoint (p0);
+				EditorUtility.SetDirty (node);
+				affectedEdges.ForEach (e => {
+					if(e.To == node)
+						e.To = node;
+					if(e.From == node)
+						e.From = node;
+					EditorUtility.SetDirty (e);
+				});
+
+				point = p0;
+			}
+
 		}
 		
 		Handles.color = Color.green;
 		float size = HandleUtility.GetHandleSize(node.position) * 2f;
-		if (Handles.Button(point, handleRotation, size * handleSize, size * pickSize, Handles.DotCap)) {
-			// Show buttons to connect to other nodes
-			// Select node?
-		}
+		return Handles.Button(point, handleRotation, size * handleSize, size * pickSize, Handles.DotCap);
+	}
+	
+	public void OnSceneGUI () {
+		NodeInspector.OnGraphSceneGUI (target as Node);
 	}
 
 }
