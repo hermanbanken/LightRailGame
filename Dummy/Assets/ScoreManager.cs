@@ -29,6 +29,7 @@ public class ScoreManager : MonoBehaviour
 	public event EventHandler<NodeVisitEventArgs> OnNodeVisit;
 	public event EventHandler<StopVisitEventArgs> OnStopVisit;
 	public event EventHandler<StationDueEventArgs> OnStationDue;
+	public event EventHandler<StationDueEventArgs> OnStationOk;
 	public event Action<IIncident> OnOccur;
 	public event Action<IIncident> OnUserAction;
 	public event Action<IIncident> OnResolved;
@@ -59,6 +60,13 @@ public class ScoreManager : MonoBehaviour
 	public virtual void DoStationDue (StationDueEventArgs e)
 	{
 		var handler = OnStationDue;
+		if (handler != null)
+			handler (this, e);
+	}
+
+	public virtual void DoStationOk (StationDueEventArgs e)
+	{
+		var handler = OnStationOk;
 		if (handler != null)
 			handler (this, e);
 	}
