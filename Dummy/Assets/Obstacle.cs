@@ -15,6 +15,7 @@ public class Obstacle : MonoBehaviour {
 	
 	// Set by init
 	public ObstacleType type;
+	[SerializeField]
 	public IIncident Incident;
 	Action<Obstacle> onUserActioned;
 	
@@ -49,7 +50,7 @@ public class Obstacle : MonoBehaviour {
 	}
 
 	void Update(){
-		if (Incident.IsResolved() && block != null) {
+		if (Incident != null && Incident.IsResolved() && block != null) {
 			GameObject.Destroy (block);
 			GameObject.Destroy (timerDisplay);
 			GameObject.Destroy (Wrapper);
@@ -86,10 +87,6 @@ public class Obstacle : MonoBehaviour {
 	public bool DrawGUI ()
 	{
 		// Draw button at correct position, look at Re-route GUIs.TrainGUI, where buttons are drawn at Node's position
-		if (Wrapper != null){
-		var obsPos = Wrapper.transform.position;
-		var buttonPos = obsPos; // get from Master
-		}
 		var w = 60f;
 		var sp = screenPosition(buttonPosition);
 		return GUI.Button (new Rect (sp.x - w/2, Screen.height - (sp.y + w/2), w, w/2), ButtonText());
