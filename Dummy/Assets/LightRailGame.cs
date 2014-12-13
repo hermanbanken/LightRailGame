@@ -64,6 +64,7 @@ public class LightRailGame : MonoBehaviour {
 		// Do scrolling
 		if(Input.mouseScrollDelta.magnitude > 0){
 			Camera.main.orthographicSize += Input.mouseScrollDelta.y;
+			Camera.main.orthographicSize = Math.Max(3f, Camera.main.orthographicSize);
 		}
 
 		// Handle all mouse events
@@ -71,19 +72,18 @@ public class LightRailGame : MonoBehaviour {
 			var e = mouse.Events.Dequeue();
 
 			// Handle panning
+			var speed = 0.1f;
 			var background = this.GetComponentAtScreen2DPosition<BoxCollider2D>(e.position);
 			if(background != null && background.gameObject.name == "Quad"){
 				var lastPos = e.position;
 				e.OnDrag += (Vector3 newPos) => {
 					// Pan background using the new mouse position
 					var diff = newPos - lastPos;
-					Camera.main.transform.Translate(-diff, Space.World);
+					Camera.main.transform.Translate(-diff.x*speed, -diff.y*speed, 0, Space.World);
 					lastPos = newPos;
 				};
-				Debug.Log ("Background click!!!");
-				// Background was clicked
+				return;
 			}
-			Debug.Log (background != null ? background.gameObject.name : "No background click!!");
 
 			// Handle train clicks
 			var train = GetComponentAtScreenPosition<Train>(e.position, true);
