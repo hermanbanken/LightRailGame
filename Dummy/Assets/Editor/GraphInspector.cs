@@ -13,11 +13,6 @@ public class GraphInspector : Editor {
 
 		graph.CleanUp ();
 
-		if (graph.Decoration = EditorGUILayout.ObjectField ("Path Decoration", graph.Decoration, typeof(Transform), true) as Transform) {
-			Undo.RecordObject (graph, "Set Decoration");
-			EditorUtility.SetDirty (graph);
-		}
-
 		GUILayout.TextField ("Node Count: " + graph.nodes.Count());
 		GUILayout.TextField ("Edge Count: " + graph.edges.Count());
 

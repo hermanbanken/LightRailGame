@@ -8,10 +8,7 @@ public class Graph : MonoBehaviour {
 	private List<Edge> _edges;
 	private List<Node> _nodes;
 	public Dijkstra<Edge,Node> Dijkstra { get { return new Dijkstra<Edge, Node> (_edges); } }
-
-	[SerializeField]
-	public Transform Decoration;
-
+	
 	public IEnumerable<Edge> edges {
 		get {
 			if(_edges == null || _edges.Any (e => e == null) || _edges.Count == 0){
