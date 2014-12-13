@@ -3798,7 +3798,6 @@ MonoBehaviour:
   State: 1
   quad: {fileID: 0}
   sphere: {fileID: 0}
-  orange: {r: 1, g: .699999988, b: 0, a: 1}
 --- !u!1 &1874791252
 GameObject:
   m_ObjectHideFlags: 0
