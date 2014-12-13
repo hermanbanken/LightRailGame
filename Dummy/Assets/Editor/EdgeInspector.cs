@@ -53,6 +53,12 @@ public class EdgeInspector : BezierSplineInspector {
 			p0 = p3;
 		}
 
+		// Arrow for direction
+		Handles.color = Color.green;
+		var halfWay = .5f;
+		var halfWP = edge.GetPoint(halfWay);
+		Handles.ConeCap (0, halfWP, Quaternion.LookRotation (edge.GetDirection (halfWay)), HandleUtility.GetHandleSize(halfWP) * 0.3f);
+
 		return newSelection;
 	}
 

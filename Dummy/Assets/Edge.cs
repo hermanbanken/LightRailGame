@@ -105,4 +105,12 @@ public class Edge : BezierSpline, IEdge<Node>, ILine
 		return this.GetPoint(this.GetPositionOfUnitPoint(t));
 	}
 	#endregion
+
+	public void Reverse ()
+	{
+		this.points.Reverse();
+		var f = this._from;
+		this._from = this._to;
+		this._to = f;
+	}
 }
