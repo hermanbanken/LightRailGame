@@ -76,7 +76,7 @@ public class LightRailGame : MonoBehaviour {
 
 		// Do scrolling
 		if(Input.mouseScrollDelta.magnitude > 0){
-			Camera.main.orthographicSize += Input.mouseScrollDelta.y;
+			Camera.main.orthographicSize -= Input.mouseScrollDelta.y;
 			Camera.main.orthographicSize = Math.Max(3f, Camera.main.orthographicSize);
 		}
 
