@@ -6,9 +6,11 @@ using System;
 
 public class LightRailGame : MonoBehaviour {
 
-	public bool paused = false;
-
+	[HideInInspector,NonSerialized]
+	public bool paused = false;	
+	[HideInInspector,NonSerialized]
 	public Obstacle ClickedObstacle;
+
 	private Train selected;
 	private Action<Train> selectedTrainPathChangeAction;
 
@@ -18,6 +20,8 @@ public class LightRailGame : MonoBehaviour {
 
 	private LineRenderer selectionLine;
 	public Graph graph;
+
+	[HideInInspector,NonSerialized]
 	public ObstacleMaster Obstacles;
 
 	private Mouse mouse = new Mouse ();
@@ -26,6 +30,15 @@ public class LightRailGame : MonoBehaviour {
 
 	// Set Line for Unity to package in Build
 	public Material LineRendererMaterial;
+
+	[SerializeField]
+	public List<LineSchedule> Schedule = new List<LineSchedule> ();
+
+	public class LineSchedule
+	{
+		public int TramCount;
+		public List<Node> WayPoints;
+	}
 
 	// Use this for initialization
 	void Start () {
