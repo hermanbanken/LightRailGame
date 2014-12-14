@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using System.Runtime.Serialization;
 
 public class LightRailGame : MonoBehaviour {
 
@@ -33,12 +34,6 @@ public class LightRailGame : MonoBehaviour {
 
 	[SerializeField]
 	public List<LineSchedule> Schedule = new List<LineSchedule> ();
-
-	public class LineSchedule
-	{
-		public int TramCount;
-		public List<Node> WayPoints;
-	}
 
 	// Use this for initialization
 	void Start () {
@@ -216,4 +211,9 @@ public class LightRailGame : MonoBehaviour {
 		return null;
 	}
 
+	public static LightRailGame GetInstance(){
+		return GameObject.FindObjectOfType<LightRailGame>();
+	}
+
 }
+
