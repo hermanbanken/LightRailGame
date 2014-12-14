@@ -2,18 +2,27 @@
 using System.Collections;
 using UnityEditor;
 using System.Linq;
+using System;
 
 [CustomEditor(typeof(Graph))]
 public class GraphInspector : Editor {
-	
+
 	private Graph graph;
 	private Edge selectedEdge;
 	private int? selectedIndex;
 	private Node selectedNode;
 	private bool selectionIsNode = false;
 	private bool subFieldFold = true;
+	private LineSchedule selectedLineSchedule;
 
 	private bool nodeConnectionMode = false;
+
+	public GraphInspector(){
+		OnSelectLine += line => {
+			selectedLineSchedule = line;
+			this.Repaint ();
+		};
+	}
 
 	public override void OnInspectorGUI () {
 		graph = target as Graph;
@@ -95,5 +104,11 @@ public class GraphInspector : Editor {
 			selectedIndex = clickedEdgeIndex.index;
 			this.Repaint ();
 		}
+	}
+	
+	public static event Action<LineSchedule> OnSelectLine;
+	public static void SelectedLine(LineSchedule line){
+		var evt = OnSelectLine;
+		if (evt != null) evt (line);
 	}
 }

@@ -14,13 +14,24 @@ public class LightRailGame : MonoBehaviour {
 
 	private Train selected;
 	private Action<Train> selectedTrainPathChangeAction;
-
-	public static ScoreManager ScoreManager;
-
+	
 	public readonly LineDrawMaster LineMaster = LineDrawMaster.getInstance();
 
 	private LineRenderer selectionLine;
-	public Graph graph;
+
+	private Graph _graph;
+	[HideInInspector]
+	public Graph graph { 
+		get { return _graph ?? (_graph = GameObject.FindObjectOfType<Graph> ()); } 
+		set { _graph = value; } 
+	}
+	
+	private static ScoreManager _scoreManager;
+	[HideInInspector]
+	public static ScoreManager ScoreManager { 
+		get { return _scoreManager ?? (_scoreManager = GameObject.FindObjectOfType<ScoreManager> ()); } 
+		set { _scoreManager = value; } 
+	}
 
 	[HideInInspector,NonSerialized]
 	public ObstacleMaster Obstacles;
@@ -34,20 +45,15 @@ public class LightRailGame : MonoBehaviour {
 
 	[SerializeField]
 	public List<LineSchedule> Schedule = new List<LineSchedule> ();
-
+	
 	// Use this for initialization
 	void Start () {
+		Debug.Log ("Start LRG");
 		if (LineRendererMaterial == null)
 			Debug.LogWarning ("You did not set the Material of the LineRenderer. Please go to the Inspector of the LightRailGame object and set its material");
 	
 		// Do not show FPS in non-dev Build
 		GameObject.Find ("FPS").SetActive (Debug.isDebugBuild);
-
-		// Attach scoreManager
-		ScoreManager = GameObject.FindObjectOfType<ScoreManager> ();
-
-		// Get Graph
-		graph = GameObject.FindObjectOfType<Graph> ();
 
 		// Initialize obstacle's
 		Obstacles = gameObject.GetComponent<ObstacleMaster>() ?? gameObject.AddComponent<ObstacleMaster> ();
