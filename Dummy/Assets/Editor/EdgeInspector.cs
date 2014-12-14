@@ -19,10 +19,26 @@ public class EdgeInspector : BezierSplineInspector {
 	public override void OnInspectorGUI () {
 		base.OnInspectorGUI ();
 		Edge e = target as Edge;
-		
+		OnInspectorGUI (this, e);
+	}
+
+	public static void OnInspectorGUI(Editor editor, Edge edge){
 		// Editor
-		e.From = EditorGUILayout.ObjectField(e.From, typeof(Node), true) as Node;
-		e.To = EditorGUILayout.ObjectField(e.To, typeof(Node), true) as Node;
+		edge.From = EditorGUILayout.ObjectField(edge.From, typeof(Node), true) as Node ?? edge.From;
+		edge.To = EditorGUILayout.ObjectField(edge.To, typeof(Node), true) as Node ?? edge.To;
+
+		if (GUILayout.Button ("Reverse Edge")) {
+			Undo.RecordObject (edge, "Reverse Edge");
+			edge.Reverse();
+			EditorUtility.SetDirty (edge);
+		}
+
+		if(GUILayout.Button ("Remove Edge")){
+			Undo.DestroyObjectImmediate (edge.gameObject);
+			edge.graph.RemoveEdge(edge);
+			EditorUtility.SetDirty (edge.graph);
+			editor.Repaint();
+		}
 	}
 
 	/**
@@ -51,14 +67,26 @@ public class EdgeInspector : BezierSplineInspector {
 			
 			Handles.DrawBezier(p0, p3, p1, p2, Color.white, null, 2f);
 			p0 = p3;
+
+			var d = HandleUtility.DistancePointBezier(Input.mousePosition, p0, p3, p1, p2);
+			if(Input.GetMouseButtonDown(0) && d < 10f){
+				Debug.Log ("D " + d);
+			}
 		}
 
 		// Arrow for direction
-		Handles.color = Color.green;
+		Handles.color = selectedIndex.HasValue ? Color.yellow : Color.blue;
 		var halfWay = .5f;
 		var halfWP = edge.GetPoint(halfWay);
-		Handles.ConeCap (0, halfWP, Quaternion.LookRotation (edge.GetDirection (halfWay)), HandleUtility.GetHandleSize(halfWP) * 0.3f);
+		var size = HandleUtility.GetHandleSize (halfWP) * 0.2f;
+		if (Handles.Button (halfWP, Quaternion.LookRotation (edge.GetDirection (halfWay)), size, size, Handles.ConeCap)) {
+			Debug.Log ("Select edge");
+			return -1;
+		}
 
+		//			Undo.RecordObject(edge, "Switch Edge Direction");
+		//			//edge.Reverse();
+		//			EditorUtility.SetDirty(edge);
 		return newSelection;
 	}
 

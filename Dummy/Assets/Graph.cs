@@ -53,6 +53,17 @@ public class Graph : MonoBehaviour {
 		return node;
 	}
 
+	public void RemoveNode (Node node)
+	{
+		var removed = _edges.Where(e => e.To == node || e.From == node).ToArray();
+		foreach (Edge e in removed) {
+			_edges.Remove(e);
+			DestroyImmediate (e.gameObject);
+		}
+		_nodes.Remove (node);
+		DestroyImmediate (node.gameObject);
+	}
+
 	public Edge AddEdge (Node from, Node to)
 	{
 		GameObject go = new GameObject ();
@@ -68,4 +79,9 @@ public class Graph : MonoBehaviour {
 		return edge;
 	}
 
+	public void RemoveEdge (Edge edge)
+	{
+		_edges.Remove (edge);
+		DestroyImmediate (edge.gameObject);
+	}
 }

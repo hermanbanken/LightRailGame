@@ -71,6 +71,8 @@ public class Edge : BezierSpline, IEdge<Node>, ILine
 	}
 	
 	public void Awake(){
+		if (this.points == null)
+			this.Reset ();
 		this.GetLength ();
 	}
 
@@ -108,7 +110,7 @@ public class Edge : BezierSpline, IEdge<Node>, ILine
 
 	public void Reverse ()
 	{
-		this.points.Reverse();
+		this.points = this.points.Reverse<Vector3> ().ToArray ();
 		var f = this._from;
 		this._from = this._to;
 		this._to = f;

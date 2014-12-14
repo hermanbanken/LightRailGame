@@ -13,18 +13,29 @@ public class NodeInspector : Editor {
 
 	public override void OnInspectorGUI () {
 		Node node = target as Node;
+		OnInspectorGUI (this, node);
+	}
+
+	public static void OnInspectorGUI(Editor editor, Node node){
 		Graph graph = node.graph;
 		var existingEdges 	   = graph.edges.Where (e => e != null && e.From == node);
 		var allreadyConnected  = existingEdges.Select (e => e.To);
 		var possibleConnection = graph.nodes.Where (n => n != node).Where (n => !allreadyConnected.Contains (n));
 
+		if(editor as NodeInspector != null)
 		foreach (Node n in possibleConnection) {
 			if (GUILayout.Button ("Connect to node "+n.gameObject.name)) {
-				Undo.RecordObject (graph, "Connect nodes");
 				Edge e = graph.AddEdge(node, n);
-				EditorUtility.SetDirty (e);
+				Undo.RegisterCreatedObjectUndo(e.gameObject, "Add Edge");
 				EditorUtility.SetDirty (graph);
 			}
+		}
+
+		if(GUILayout.Button ("Remove Node")){
+			graph.RemoveNode(node);
+			Undo.DestroyObjectImmediate (node.gameObject);
+			EditorUtility.SetDirty (graph);
+			editor.Repaint();
 		}
 	}
 	
@@ -72,6 +83,7 @@ public class NodeInspector : Editor {
 	}
 	
 	public void OnSceneGUI () {
+		Tools.current = Tool.None;
 		NodeInspector.OnGraphSceneGUI (target as Node);
 	}
 
