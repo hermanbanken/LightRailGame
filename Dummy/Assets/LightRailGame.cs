@@ -48,7 +48,6 @@ public class LightRailGame : MonoBehaviour {
 	
 	// Use this for initialization
 	void Start () {
-		Debug.Log ("Start LRG");
 		if (LineRendererMaterial == null)
 			Debug.LogWarning ("You did not set the Material of the LineRenderer. Please go to the Inspector of the LightRailGame object and set its material");
 	

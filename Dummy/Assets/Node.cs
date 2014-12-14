@@ -74,4 +74,9 @@ public class Node : MonoBehaviour {
 	public static bool operator !=(Node a, Node b){
 		return !(a == b);
 	}
+
+	public override int GetHashCode ()
+	{
+		return GetInstanceID ();
+	}
 }

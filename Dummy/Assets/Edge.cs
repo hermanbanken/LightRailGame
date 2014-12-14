@@ -141,4 +141,9 @@ public class Edge : BezierSpline, IEdge<Node>, ILine
 	public static bool operator !=(Edge a, Edge b){
 		return !(a == b);
 	}
+	
+	public override int GetHashCode ()
+	{
+		return GetInstanceID ();
+	}
 }
