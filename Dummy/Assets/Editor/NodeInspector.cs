@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEditor;
 using System.Linq;
+using System;
 
 [CustomEditor(typeof(Node))]
 public class NodeInspector : Editor {
@@ -10,28 +11,69 @@ public class NodeInspector : Editor {
 	private const float directionScale = 0.5f;
 	private const float handleSize = 0.04f;
 	private const float pickSize = 0.06f;
+	protected static int nodePickerIndex = 0;
 
 	public override void OnInspectorGUI () {
 		Node node = target as Node;
+		EditorGUILayout.HelpBox ("You selected a single Node gameObject. By selecting the complete Graph, you will get better overview and more controls", MessageType.Warning);
 		OnInspectorGUI (this, node);
 	}
 
-	public static void OnInspectorGUI(Editor editor, Node node){
+	public static void OnInspectorGUI(Editor editor, Node node, Action onConnectTo = null){
 		Graph graph = node.graph;
 		var existingEdges 	   = graph.edges.Where (e => e != null && e.From == node);
 		var allreadyConnected  = existingEdges.Select (e => e.To);
 		var possibleConnection = graph.nodes.Where (n => n != node).Where (n => !allreadyConnected.Contains (n));
 
-		if(editor as NodeInspector != null)
-		foreach (Node n in possibleConnection) {
-			if (GUILayout.Button ("Connect to node "+n.gameObject.name)) {
-				Edge e = graph.AddEdge(node, n);
-				Undo.RegisterCreatedObjectUndo(e.gameObject, "Add Edge");
-				EditorUtility.SetDirty (graph);
+		// Station toggle
+		var isStation = node.GetComponent<Station>() != null;
+		if(isStation != GUILayout.Toggle(isStation, "Is Station?")){
+			if(isStation){
+				Undo.DestroyObjectImmediate(node.GetComponent<Station>());
+			} else {
+				Undo.AddComponent<Station>(node.gameObject);
 			}
+			editor.Repaint();
 		}
+		
+		// Traffic Light toggle
+		var isTraffic = node.GetComponent<TrafficLight>() != null;
+		if(isTraffic != GUILayout.Toggle(isTraffic, "Is Traffic Light?")){
+			if(isTraffic){
+				Undo.DestroyObjectImmediate(node.GetComponent<TrafficLight>());
+			} else {
+				Undo.AddComponent<TrafficLight>(node.gameObject);
+			}
+			editor.Repaint();
+		}
+		
+		EditorGUILayout.Space ();
+		GUILayout.Label ("Create new edge by connecting to another node:");
+		// Show buttons for each other node to connect to
+		GUILayout.BeginHorizontal ();
+		if (GUILayout.Button ("Connect to:")) {
+			Edge e = graph.AddEdge (node, possibleConnection.ElementAt(nodePickerIndex));
+			Undo.RegisterCreatedObjectUndo (e.gameObject, "Add Edge");
+			EditorUtility.SetDirty (graph);
+		}
+		nodePickerIndex = EditorGUILayout.Popup(Math.Min(nodePickerIndex, possibleConnection.Count()-1), possibleConnection.Select(n => n.gameObject.name).ToArray());
 
-		if(GUILayout.Button ("Remove Node")){
+		GUILayout.EndHorizontal ();
+		GUILayout.BeginHorizontal ();
+		if(GUILayout.Button ("Connect to: click & then select node in scene") && onConnectTo != null){
+			onConnectTo();
+		}
+		GUILayout.EndHorizontal ();
+
+		EditorGUILayout.Space ();
+
+		var bg = GUI.backgroundColor;
+		var fg = GUI.contentColor;
+		GUI.backgroundColor = Color.red;
+		GUI.contentColor = Color.white;
+
+		// Remove button, removes node and attached edges
+		if(GUILayout.Button ("Remove Node and attached Edges")){
 			Undo.IncrementCurrentGroup();
 			var remove = graph.edges.Where(e => e.To == node || e.From == node).ToArray();
 			foreach(Edge e in remove){
@@ -43,6 +85,10 @@ public class NodeInspector : Editor {
 			Undo.CollapseUndoOperations(Undo.GetCurrentGroup());
 			editor.Repaint();
 		}
+
+		GUI.backgroundColor = bg;
+		GUI.contentColor = fg;
+
 	}
 	
 	/**
@@ -65,7 +111,7 @@ public class NodeInspector : Editor {
 				var affectedEdges = node.graph.edges.Where (e => e.From == node || e.To == node).ToList ();
 
 				// Save state
-				Undo.RecordObjects (new Object[] { node }.Concat (affectedEdges.Cast<Object> ()).ToArray (), "Move Node");
+				Undo.RecordObjects (new UnityEngine.Object[] { node }.Concat (affectedEdges.Cast<UnityEngine.Object> ()).ToArray (), "Move Node");
 
 				// Update state
 				node.position = handleTransform.InverseTransformPoint (p0);

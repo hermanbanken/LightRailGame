@@ -19,13 +19,16 @@ public class EdgeInspector : BezierSplineInspector {
 	public override void OnInspectorGUI () {
 		base.OnInspectorGUI ();
 		Edge e = target as Edge;
+		EditorGUILayout.HelpBox ("You selected a single Edge gameObject. By selecting the complete Graph, you will get better overview and more controls", MessageType.Warning);
 		OnInspectorGUI (this, e);
 	}
 
 	public static void OnInspectorGUI(Editor editor, Edge edge){
 		// Editor
-		edge.From = EditorGUILayout.ObjectField(edge.From, typeof(Node), true) as Node ?? edge.From;
-		edge.To = EditorGUILayout.ObjectField(edge.To, typeof(Node), true) as Node ?? edge.To;
+		edge.From = EditorGUILayout.ObjectField("From", edge.From, typeof(Node), true) as Node ?? edge.From;
+		edge.To = EditorGUILayout.ObjectField("To", edge.To, typeof(Node), true) as Node ?? edge.To;
+
+		GUILayout.BeginHorizontal ();
 
 		if (GUILayout.Button ("Reverse Edge")) {
 			Undo.RecordObject (edge, "Reverse Edge");
@@ -33,6 +36,14 @@ public class EdgeInspector : BezierSplineInspector {
 			EditorUtility.SetDirty (edge);
 		}
 
+		if (GUILayout.Button ("Split Edge")) {
+			
+		}
+
+		var bg = GUI.backgroundColor;
+		var fg = GUI.contentColor;
+		GUI.backgroundColor = Color.red;
+		GUI.contentColor = Color.white;
 		if(GUILayout.Button ("Remove Edge")){
 			var g = edge.graph;
 			edge.graph.RemoveEdge(edge);
@@ -40,6 +51,10 @@ public class EdgeInspector : BezierSplineInspector {
 			EditorUtility.SetDirty(g);
 			editor.Repaint();
 		}
+		GUI.backgroundColor = bg;
+		GUI.contentColor = fg;
+
+		GUILayout.EndHorizontal ();
 	}
 
 	/**
