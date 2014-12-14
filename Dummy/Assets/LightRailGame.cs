@@ -164,28 +164,26 @@ public class LightRailGame : MonoBehaviour {
 		}
 	}
 
-	// On start: lookup cycles, add trams
+	// On start: form routes, add trams
 	private void StartGame(){
-		var routes = graph.Cycles ();
-		foreach (IList<Node> route in routes) {
-			Debug.Log ("Cycle of length "+route.Count+": "+route.Select (n => n.name).Aggregate ("", (f, n) => f.Length == 0 ? n : f + "," + n));
-			var edges = route.Concat(route.Take(1)).EachPair((a, b) => {
-				var edge = graph.edges.FirstOrDefault(e => e.From == a && e.To == b);
-				if(edge == null) Debug.Log ("No edge from "+a+ " to " + b);
-				return edge;
-			}).ToList();
-			Debug.Log ("Of the cycle "+edges.Count(e => e == null)+" edges were not defined");
+		var edges = graph.edges.ToArray ();
 
-			if(edges.Count(e => e == null) > 0) 
-				continue;
+		foreach (LineSchedule line in Schedule) {
+			var path = line.RouteFromWayPoints(edges);
 
-			for(int i = 0; i < edges.Count(); i++){
-				GameObject go = new GameObject();
-				var model = Instantiate(Train, Vector3.zero, Quaternion.LookRotation(Vector3.down)) as Transform;
-				model.localScale = new Vector3(2, 2, 2);
-				model.parent = go.transform;
-				Train train = go.AddComponent<Train>();
-				train.Path = edges.Skip(i).Concat(edges.Take(i)).ToList();
+			// Add Trams
+			if(path.Count > 0){
+				var totalLength = path.Sum(e => e.GetUnitLength());
+				var segment = (1f / line.TramCount) * totalLength;
+				for(int i = 0; i < line.TramCount; i++){
+					GameObject go = new GameObject();
+					var model = Instantiate(Train, Vector3.zero, Quaternion.LookRotation(Vector3.down)) as Transform;
+					model.localScale = new Vector3(2, 2, 2);
+					model.parent = go.transform;
+					Train train = go.AddComponent<Train>();
+					train.Path = path;
+					train.SetPosition(segment * i);
+				}
 			}
 		}
 	}
@@ -195,7 +193,7 @@ public class LightRailGame : MonoBehaviour {
 		RaycastHit hit;
 		if (Physics.Raycast (ray, out hit)) {
 			return hit.collider.GetComponent<T>() ?? hit.collider.GetComponentInParent<T>();
-		}     
+		}
 		if (increaseTouchRadius) {
 			return 
 				GetComponentAtScreenPosition<T>(position+new Vector3(.2f,.2f), false) ??

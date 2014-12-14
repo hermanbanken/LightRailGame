@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEditor;
 using System.Linq;
 using System;
+using System.Collections.Generic;
 
 [CustomEditor(typeof(Graph))]
 public class GraphInspector : Editor {
@@ -13,22 +14,23 @@ public class GraphInspector : Editor {
 	private Node selectedNode;
 	private bool selectionIsNode = false;
 	private bool subFieldFold = true;
+
 	private LineSchedule selectedLineSchedule;
+	private IList<Edge> selectedLineScheduleEdges;
 
 	private bool nodeConnectionMode = false;
-
-	public GraphInspector(){
-		OnSelectLine += line => {
-			selectedLineSchedule = line;
-			this.Repaint ();
-		};
+	
+	void OnEnable(){
+		graph = target as Graph;
+		graph.CleanUp ();
+		OnSelectLine += OnTramLineSelection;
+		OnSelectLine(LinesWindow.SelectedLine ());
+	}
+	void OnDisable(){
+		OnSelectLine -= OnTramLineSelection;
 	}
 
 	public override void OnInspectorGUI () {
-		graph = target as Graph;
-
-		graph.CleanUp ();
-
 		EditorGUILayout.BeginHorizontal ();
 		GUILayout.Label("Elements");
 		EditorGUI.BeginDisabledGroup (true);
@@ -81,7 +83,7 @@ public class GraphInspector : Editor {
 		}
 				
 		// Draw Node GUI and detect clicks
-		var clickedNode = graph.nodes.FirstOrDefault (n => NodeInspector.OnGraphSceneGUI (n, selectionIsNode && n == this.selectedNode));
+		var clickedNode = graph.nodes.FirstOrDefault (n => NodeInspector.OnGraphSceneGUI (n, nodeColor (n), selectionIsNode && n == this.selectedNode));
 		if (clickedNode != null) {
 			if(nodeConnectionMode){
 				nodeConnectionMode = false;
@@ -97,7 +99,11 @@ public class GraphInspector : Editor {
 			return;
 
 		// Draw Edge GUI and detect clicks
-		var clickedEdgeIndex = graph.edges.Select (e => new { edge = e, index = EdgeInspector.OnGraphSceneGUI (e, selectionIsNode || selectedEdge != e ? null : selectedIndex) }).ToList ().FirstOrDefault (t => t.index.HasValue);
+		var clickedEdgeIndex = graph.edges.Select (e => new { 
+				edge = e, 
+				index = EdgeInspector.OnGraphSceneGUI (e, edgeColor (e), selectionIsNode || selectedEdge != e ? null : selectedIndex) 
+			}).ToList ()
+			.FirstOrDefault (t => t.index.HasValue);
 		if (clickedEdgeIndex != null) {
 			selectionIsNode = false;
 			selectedEdge = clickedEdgeIndex.edge;
@@ -110,5 +116,18 @@ public class GraphInspector : Editor {
 	public static void SelectedLine(LineSchedule line){
 		var evt = OnSelectLine;
 		if (evt != null) evt (line);
+	}
+
+	private void OnTramLineSelection(LineSchedule line){
+		selectedLineSchedule = line;
+		selectedLineScheduleEdges = line == null ? null : line.RouteFromWayPoints(graph.edges.ToList());
+		SceneView.RepaintAll();
+	}
+
+	private Color nodeColor(Node n){
+		return selectedLineSchedule != null && selectedLineSchedule.WayPoints.Any (no => no.GetInstanceID() == n.GetInstanceID()) ? Color.red : Color.green;
+	}
+	private Color edgeColor(Edge e){
+		return selectedLineScheduleEdges != null && selectedLineScheduleEdges.Any (ed => ed.GetInstanceID() == e.GetInstanceID()) ? Color.red : Color.white;
 	}
 }

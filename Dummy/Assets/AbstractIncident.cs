@@ -12,7 +12,6 @@ public abstract class AbstractIncident : IIncident {
 	private bool? resolved = null;
 
 	public AbstractIncident(){
-		Debug.Log ("AbstractIncident constructor called");
 		// Fire occur event
 		LightRailGame.ScoreManager.DoOccur(this);
 		// Track events

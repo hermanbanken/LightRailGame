@@ -47,6 +47,19 @@ public class Dijkstra<E,N> where E : IEdge<N> where N : class {
 		S.Reverse ();
 		return S;
 	}
+
+	public IEnumerable<E> PlanRoute(N from, N to){
+		var points = Plan (from, to).GetEnumerator();
+		var last = points.Current;
+		while (points.MoveNext()) {
+			var edge = edges.FirstOrDefault(e => e.From == last && e.To == points.Current);
+			if(edge == null)
+				break;
+			else
+				yield return edge;
+			last = points.Current;
+		}
+	}
 }
 
 public static class LinqExt {

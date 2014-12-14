@@ -96,7 +96,7 @@ public class NodeInspector : Editor {
 	 * 
 	 * Returns true if this node was clicked
 	 */
-	public static bool OnGraphSceneGUI(Node node, bool selected = true){
+	public static bool OnGraphSceneGUI(Node node, Color nodeColor, bool selected = true){
 		Transform handleTransform = node.graph.gameObject.transform;
 		Vector3 point = handleTransform.TransformPoint(node.position);
 		Quaternion handleRotation = Tools.pivotRotation == PivotRotation.Local ? handleTransform.rotation : Quaternion.identity;
@@ -129,14 +129,14 @@ public class NodeInspector : Editor {
 
 		}
 		
-		Handles.color = Color.green;
+		Handles.color = nodeColor;
 		float size = HandleUtility.GetHandleSize(node.position) * 2f;
 		return Handles.Button(point, handleRotation, size * handleSize, size * pickSize, Handles.DotCap);
 	}
 	
 	public void OnSceneGUI () {
 		Tools.current = Tool.None;
-		NodeInspector.OnGraphSceneGUI (target as Node);
+		NodeInspector.OnGraphSceneGUI (target as Node, Color.green);
 	}
 
 }

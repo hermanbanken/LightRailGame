@@ -65,7 +65,7 @@ public class EdgeInspector : BezierSplineInspector {
 	 * 
 	 * Returns non-null index value if Control Point of this edge was clicked
 	 */
-	public static int? OnGraphSceneGUI(Edge edge, int? selectedIndex = null){
+	public static int? OnGraphSceneGUI(Edge edge, Color edgeColor, int? selectedIndex = null){
 		var handleTransform = edge.transform;
 		var handleRotation = Tools.pivotRotation == PivotRotation.Local ? handleTransform.rotation : Quaternion.identity;
 		int? newSelection = selectedIndex;
@@ -81,7 +81,7 @@ public class EdgeInspector : BezierSplineInspector {
 			Handles.DrawLine(p0, p1);
 			Handles.DrawLine(p2, p3);
 			
-			Handles.DrawBezier(p0, p3, p1, p2, Color.white, null, 2f);
+			Handles.DrawBezier(p0, p3, p1, p2, edgeColor, null, 2f);
 			p0 = p3;
 
 			var d = HandleUtility.DistancePointBezier(Input.mousePosition, p0, p3, p1, p2);

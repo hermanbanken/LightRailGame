@@ -16,8 +16,10 @@ public class LinesWindow : EditorWindow
 
 	LightRailGame game;
 	List<Schedule> schedule;
+	public static LinesWindow instance;
 
-	private void OnEnable(){
+	void OnEnable(){
+		instance = this;
 		game = LightRailGame.GetInstance ();
 		schedule = game.Schedule;
 
@@ -49,41 +51,70 @@ public class LinesWindow : EditorWindow
 		listLines.drawHeaderCallback = (Rect rect) => {
 			EditorGUI.LabelField(rect, "Lines");
 		};
+		listLines.onChangedCallback = list => {
+			if(selectedLine >= schedule.Count){
+				selectedLine--;
+				this.Repaint();
+				return;
+			}
+		};
 
 		listWayPoints = new ReorderableList (schedule [selectedLine].WayPoints, typeof(Node));
 		listWayPoints.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) => {
 			rect.y += 2;
 			var wp = schedule[selectedLine].WayPoints;
 			var ns = game.graph.nodes;
-			var currentIndex = ns.TakeWhile((n, i) => n != wp.ElementAtOrDefault(index)).Count();
+			var currentIndex = ns.TakeWhile((n, i) => n.GetInstanceID() != wp[index].GetInstanceID()).Count();
 			var labels = ns.Select(n => n.gameObject.name).ToArray();
 			var newIndex = EditorGUI.Popup(rect, currentIndex, labels);
-			wp[index] = ns.ElementAtOrDefault(newIndex);
+			if(currentIndex != newIndex){
+				wp[index] = ns.ElementAtOrDefault(newIndex);
+			}
 		};
 		listWayPoints.drawHeaderCallback = (Rect rect) => {
 			EditorGUI.LabelField(rect, "WayPoints of "+schedule[selectedLine].Name);
 		};
 		listWayPoints.onAddCallback = (ReorderableList list) => {
 			schedule [selectedLine].WayPoints.Add(game.graph.nodes.FirstOrDefault());
+			GUI.changed = true;
 		};
+
+		this.Repaint ();
 	}
 
-	public void OnGUI(){
+	void OnGUI(){
+		var old = game.Schedule;
+		EditorGUI.BeginChangeCheck ();
 
 		listLines.DoLayoutList();
 		EditorGUILayout.Space ();
 		listWayPoints.DoLayoutList();
+
+		if (EditorGUI.EndChangeCheck ()) {
+			var _new = game.Schedule;
+			game.Schedule = old;
+			Undo.RecordObject (game, "Change Tram Line");
+			game.Schedule = _new;
+			EditorUtility.SetDirty(game);
+			GraphInspector.SelectedLine(schedule[selectedLine]);
+		}
 	}
 
 	[MenuItem("Window/Tram Lines %#l",priority = 3000)]
 	public static void Init(){
-		LinesWindow w = EditorWindow.GetWindow<LinesWindow> ("Tram Lines", true);
-		w.Show ();
+		EditorWindow.GetWindow<LinesWindow> ("Tram Lines", true).Show ();
 	}
-
 
 	public void OnHierarchyChange(){
 //		Debug.Log ("Hierarchy Changed!");
+	}
+
+	public static Schedule SelectedLine(){
+		return instance == null ? null : instance.schedule.ElementAtOrDefault (instance.selectedLine);
+	}
+
+	void OnFocus(){
+		GraphInspector.SelectedLine (schedule [selectedLine]);
 	}
 }
 

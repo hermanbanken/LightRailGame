@@ -48,4 +48,26 @@ public class Node : MonoBehaviour {
 		GUI.Label(new Rect (sp.x - w/2, Screen.height - (sp.y + w/2), w, w), this.ToString().Replace("(Node)", "").Replace("Node ", ""));
 		return GUI.Button (new Rect (sp.x - w/2, Screen.height - (sp.y + w/2), w, w), "");
 	}
+
+	public override bool Equals (object o)
+	{
+		Node a = o as Node;
+		return a != null && this.GetInstanceID () == a.GetInstanceID ();
+	}
+
+	public static bool operator ==(Node a, Node b){
+		if (System.Object.ReferenceEquals(a, b))
+		{
+			return true;
+		}
+		
+		// If one is null, but not both, return false.
+		if (((object)a == null) || ((object)b == null))
+		{
+			return false;
+		}
+		
+		// Return true if the fields match:
+		return a.Equals(b);
+	}
 }
