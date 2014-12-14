@@ -119,7 +119,7 @@ public class Edge : BezierSpline, IEdge<Node>, ILine
 	public override bool Equals (object o)
 	{
 		Edge a = o as Edge;
-		return a != null && this.GetInstanceID () == a.GetInstanceID ();
+		return null != a && this.GetInstanceID () == a.GetInstanceID ();
 	}
 
 	public static bool operator ==(Edge a, Edge b){

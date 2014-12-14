@@ -12,14 +12,16 @@ public class Dijkstra<E,N> where E : IEdge<N> where N : class {
 	}
 
 	public IEnumerable<N> Plan(N from, N to){
+		EqualityComparer<N> c = EqualityComparer<N>.Default;
+
 		// Initialize
-		var dist = new Dictionary<N,float> ();
-		var prev = new Dictionary<N,N> ();
+		var dist = new Dictionary<N,float> (c);
+		var prev = new Dictionary<N,N> (c);
 		var nodes = edges.SelectMany (e => new N[] { e.From, e.To }).Distinct ();
 		var remaining = new List<N> (nodes);
 
 		foreach (N n in nodes) {
-			dist[n] = from == n ? 0 : float.MaxValue;
+			dist[n] = from.Equals(n) ? 0 : float.MaxValue;
 		}
 
 		// Run
@@ -27,7 +29,7 @@ public class Dijkstra<E,N> where E : IEdge<N> where N : class {
 			N u = remaining.MinBy(n => dist[n]);
 			remaining.Remove(u);
 
-			foreach(E e in edges.Where (e => e.From == u).Where (e => remaining.Contains(e.To))){
+			foreach(E e in edges.Where (e => e.From.Equals(u)).Where (e => remaining.Contains(e.To, c))){
 				var v = e.To;
 				var alt = dist[u] + e.Cost;
 				if(alt < dist[v]){
@@ -49,12 +51,11 @@ public class Dijkstra<E,N> where E : IEdge<N> where N : class {
 	}
 
 	public IEnumerable<E> PlanRoute(N from, N to){
-		var p = Plan (from, to);
-		Debug.Log ("Dijkstra: " + p.Count ());
-		var points = p.GetEnumerator();
+		var points = Plan (from, to).GetEnumerator();
+		points.Reset ();
 		var last = from;
 		while (points.MoveNext()) {
-			var edge = edges.FirstOrDefault(e => e.From == last && e.To == points.Current);
+			var edge = edges.FirstOrDefault(e => e.From.Equals(last) && e.To.Equals(points.Current));
 			if(edge == null)
 				break;
 			else
