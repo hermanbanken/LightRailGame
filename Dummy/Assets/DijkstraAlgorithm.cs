@@ -49,8 +49,10 @@ public class Dijkstra<E,N> where E : IEdge<N> where N : class {
 	}
 
 	public IEnumerable<E> PlanRoute(N from, N to){
-		var points = Plan (from, to).GetEnumerator();
-		var last = points.Current;
+		var p = Plan (from, to);
+		Debug.Log ("Dijkstra: " + p.Count ());
+		var points = p.GetEnumerator();
+		var last = from;
 		while (points.MoveNext()) {
 			var edge = edges.FirstOrDefault(e => e.From == last && e.To == points.Current);
 			if(edge == null)
