@@ -70,4 +70,8 @@ public class Node : MonoBehaviour {
 		// Return true if the fields match:
 		return a.Equals(b);
 	}
+
+	public static bool operator !=(Node a, Node b){
+		return !(a == b);
+	}
 }

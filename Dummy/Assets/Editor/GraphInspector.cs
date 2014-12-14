@@ -125,9 +125,9 @@ public class GraphInspector : Editor {
 	}
 
 	private Color nodeColor(Node n){
-		return selectedLineSchedule != null && selectedLineSchedule.WayPoints.Any (no => no.GetInstanceID() == n.GetInstanceID()) ? Color.red : Color.green;
+		return selectedLineSchedule != null && selectedLineSchedule.WayPoints.Contains(n) ? Color.red : Color.green;
 	}
 	private Color edgeColor(Edge e){
-		return selectedLineScheduleEdges != null && selectedLineScheduleEdges.Any (ed => ed.GetInstanceID() == e.GetInstanceID()) ? Color.red : Color.white;
+		return selectedLineScheduleEdges != null && selectedLineScheduleEdges.Contains(e) ? Color.red : Color.white;
 	}
 }

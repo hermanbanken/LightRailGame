@@ -137,4 +137,8 @@ public class Edge : BezierSpline, IEdge<Node>, ILine
 		// Return true if the fields match:
 		return a.Equals(b);
 	}
+
+	public static bool operator !=(Edge a, Edge b){
+		return !(a == b);
+	}
 }

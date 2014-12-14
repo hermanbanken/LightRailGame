@@ -64,7 +64,7 @@ public class LinesWindow : EditorWindow
 			rect.y += 2;
 			var wp = schedule[selectedLine].WayPoints;
 			var ns = game.graph.nodes;
-			var currentIndex = ns.TakeWhile((n, i) => n.GetInstanceID() != wp[index].GetInstanceID()).Count();
+			var currentIndex = ns.TakeWhile((n, i) => n != wp[index]).Count();
 			var labels = ns.Select(n => n.gameObject.name).ToArray();
 			var newIndex = EditorGUI.Popup(rect, currentIndex, labels);
 			if(currentIndex != newIndex){
