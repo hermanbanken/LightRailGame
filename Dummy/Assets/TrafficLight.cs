@@ -27,7 +27,13 @@ public class TrafficLight : MonoBehaviour, IStop {
 			SetGreen (this);
 
 		var node = this.gameObject.GetComponent<Node> ();
-		var dir = node.graph.edges.FirstOrDefault (e => e.From == node).GetDirection(0f);
+		var edge = node.graph.edges.FirstOrDefault (e => e.From == node || e.To == node);
+		Vector3 dir;
+		if(edge != null){
+			dir = edge.GetDirection(edge.From == node ? 0f : 1f);
+		} else {
+			dir = Vector3.up;
+		}
 		var pos = gameObject.transform.position  + 2.5f * Vector3.Cross (dir, Vector3.forward);
 		quad = GameObject.CreatePrimitive (PrimitiveType.Quad);
 		quad.transform.parent = gameObject.transform;
