@@ -32,9 +32,15 @@ public class NodeInspector : Editor {
 		}
 
 		if(GUILayout.Button ("Remove Node")){
-			graph.RemoveNode(node);
+			Undo.IncrementCurrentGroup();
+			var remove = graph.edges.Where(e => e.To == node || e.From == node).ToArray();
+			foreach(Edge e in remove){
+				Undo.DestroyObjectImmediate(e.gameObject);
+			}
 			Undo.DestroyObjectImmediate (node.gameObject);
-			EditorUtility.SetDirty (graph);
+			graph.RemoveNode(node);
+			Undo.RecordObject(graph, "Remove Node");
+			Undo.CollapseUndoOperations(Undo.GetCurrentGroup());
 			editor.Repaint();
 		}
 	}

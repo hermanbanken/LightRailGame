@@ -30,6 +30,7 @@ public class GraphInspector : Editor {
 			EditorUtility.SetDirty (graph);
 		}
 
+		// Add selected Node buttons
 		if (selectionIsNode && selectedNode != null) {
 			subFieldFold = EditorGUILayout.InspectorTitlebar(subFieldFold, selectedNode);
 			GUILayout.Label("Selected Node:");
@@ -39,6 +40,7 @@ public class GraphInspector : Editor {
 			}
 			NodeInspector.OnInspectorGUI(this, selectedNode);
 		} else
+		// Add selected Edge buttons
 		if (!selectionIsNode && selectedEdge != null) {
 			subFieldFold = EditorGUILayout.InspectorTitlebar(subFieldFold, selectedEdge);
 			GUILayout.Label("Selected Edge:");
@@ -49,6 +51,15 @@ public class GraphInspector : Editor {
 	public void OnSceneGUI () {
 		graph = target as Graph;
 
+		// Reload edges and nodes after Undo operation
+		if (Event.current.type == EventType.ValidateCommand) {
+			switch (Event.current.commandName) {
+			case "UndoRedoPerformed":
+				graph.Reset();
+				break;
+			}
+		}
+				
 		// Draw Node GUI and detect clicks
 		var clickedNode = graph.nodes.FirstOrDefault (n => NodeInspector.OnGraphSceneGUI (n, selectionIsNode && n == this.selectedNode));
 		if (clickedNode != null) {

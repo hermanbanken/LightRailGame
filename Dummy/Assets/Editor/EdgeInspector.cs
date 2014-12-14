@@ -34,9 +34,10 @@ public class EdgeInspector : BezierSplineInspector {
 		}
 
 		if(GUILayout.Button ("Remove Edge")){
-			Undo.DestroyObjectImmediate (edge.gameObject);
+			var g = edge.graph;
 			edge.graph.RemoveEdge(edge);
-			EditorUtility.SetDirty (edge.graph);
+			Undo.DestroyObjectImmediate (edge.gameObject);
+			EditorUtility.SetDirty(g);
 			editor.Repaint();
 		}
 	}
