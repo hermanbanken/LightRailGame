@@ -260,8 +260,8 @@ MonoBehaviour:
   points:
   - {x: -71.6640167, y: 48.1700516, z: -4}
   - {x: -71.7434464, y: 31.5130806, z: -4}
-  - {x: -71.7853699, y: 15.6587811, z: -4}
-  - {x: -71.6640167, y: -.829947948, z: -4}
+  - {x: -70.6539688, y: 12.7634602, z: -4}
+  - {x: -70.8876114, y: -.288109064, z: -4}
   modes: 0000000000000000
   loop: 0
   _from: {fileID: 395486788}
@@ -293,7 +293,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1367576509}
-  m_RootOrder: 59
+  m_RootOrder: 58
 --- !u!114 &179372486
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -676,8 +676,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   points:
-  - {x: -71.6640167, y: -.829947948, z: -4}
-  - {x: -71.4184265, y: -16.2461472, z: -4}
+  - {x: -70.8876114, y: -.288109064, z: -4}
+  - {x: -71.1596298, y: -11.0700445, z: -4}
   - {x: -71.6678772, y: -34.2232437, z: -4}
   - {x: -71.6640167, y: -46.8299484, z: -4}
   modes: 0000000000000000
@@ -1247,7 +1247,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 483706203}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -71, y: 0, z: 4}
+  m_LocalPosition: {x: -70.2235947, y: .541838884, z: 4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1367576509}
@@ -1685,7 +1685,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 5
 --- !u!1 &802219761
 GameObject:
   m_ObjectHideFlags: 0
@@ -1739,7 +1739,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dueTime: 60
   dangerTime: 40
-  quad: {fileID: 0}
 --- !u!1 &808315358
 GameObject:
   m_ObjectHideFlags: 0
@@ -1767,7 +1766,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1367576509}
-  m_RootOrder: 60
+  m_RootOrder: 59
 --- !u!114 &808315360
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2182,7 +2181,7 @@ Transform:
   m_LocalScale: {x: 150, y: 100, z: 100}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 4
 --- !u!1 &1101527359
 GameObject:
   m_ObjectHideFlags: 0
@@ -2767,12 +2766,11 @@ Transform:
   - {fileID: 1717056929}
   - {fileID: 1038903881}
   - {fileID: 1017759585}
-  - {fileID: 1713084765}
   - {fileID: 1826172278}
   - {fileID: 179372485}
   - {fileID: 808315359}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 2
 --- !u!1 &1369232342
 GameObject:
   m_ObjectHideFlags: 0
@@ -2874,7 +2872,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dueTime: 60
   dangerTime: 40
-  quad: {fileID: 0}
 --- !u!1 &1386005308
 GameObject:
   m_ObjectHideFlags: 0
@@ -3487,54 +3484,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6aac013bf9c9482093feac57521c94e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &1713084764
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 4
-  m_Component:
-  - 4: {fileID: 1713084765}
-  - 114: {fileID: 1713084766}
-  m_Layer: 0
-  m_Name: Edge 38
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1713084765
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1713084764}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: .332011223, y: .414973974, z: 4}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 1367576509}
-  m_RootOrder: 57
---- !u!114 &1713084766
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1713084764}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b5b65894c4aac4fe9868c73b36fafecc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  points:
-  - {x: 24.3359756, y: -43.0282135, z: -4}
-  - {x: -46.4380722, y: -33.5984344, z: -4}
-  - {x: -59.84235, y: -28.9164963, z: -4}
-  - {x: -71.6640167, y: 48.1700516, z: -4}
-  modes: 0000000000000000
-  loop: 0
-  _from: {fileID: 1530913930}
-  _to: {fileID: 395486788}
 --- !u!1 &1717056928
 GameObject:
   m_ObjectHideFlags: 0
@@ -3749,7 +3698,7 @@ RectTransform:
   - {fileID: 202783637}
   - {fileID: 240450562}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 3
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
@@ -3783,7 +3732,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1367576509}
-  m_RootOrder: 58
+  m_RootOrder: 57
 --- !u!114 &1826172279
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3809,8 +3758,6 @@ MonoBehaviour:
   Next: {fileID: 0}
   lastChanged: 0
   State: 1
-  quad: {fileID: 0}
-  sphere: {fileID: 0}
 --- !u!1 &1930633135
 GameObject:
   m_ObjectHideFlags: 0
@@ -4073,7 +4020,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   points:
-  - {x: -71.6640167, y: -.829947948, z: -4}
+  - {x: -70.8876114, y: -.288109064, z: -4}
   - {x: -62.0989113, y: -.759393692, z: -4}
   - {x: -53.6309547, y: -.707350731, z: -4}
   - {x: -40.6640244, y: -.829947948, z: -4}
@@ -4108,10 +4055,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2dae2f0c930814260a22608fe193a855, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  graph: {fileID: 0}
   Train: {fileID: 400000, guid: f0e52cacd2e114f91a37aa4c75fcb0d5, type: 2}
   LineRendererMaterial: {fileID: 2100000, guid: a2b8ffcef2a2e499d935dcd18956be2c,
     type: 2}
+  Schedule:
+  - Name: Line 1
+    TramCount: 10
+    WayPoints:
+    - {fileID: 1995277296}
+    - {fileID: 1814185991}
+    - {fileID: 395486788}
+  - Name: Line 2
+    TramCount: 1
+    WayPoints:
+    - {fileID: 1171046312}
+    - {fileID: 466628792}
 --- !u!4 &2135025056
 Transform:
   m_ObjectHideFlags: 0
