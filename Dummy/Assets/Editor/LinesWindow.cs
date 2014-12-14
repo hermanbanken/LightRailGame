@@ -8,6 +8,10 @@ using Schedule = LineSchedule;
 using Rotorz.ReorderableList;
 using UnityEditorInternal; 
 
+/**
+ * This class uses ReorderableList which is documented extremely well here:
+ * @see http://va.lent.in/unity-make-your-lists-functional-with-reorderablelist/
+ */
 public class LinesWindow : EditorWindow
 {
 	private ReorderableList listLines;

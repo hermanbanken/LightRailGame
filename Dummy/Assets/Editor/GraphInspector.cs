@@ -53,7 +53,7 @@ public class GraphInspector : Editor {
 
 		// Add selected Node buttons
 		if (selectionIsNode && selectedNode != null && (subFieldFold = EditorGUILayout.InspectorTitlebar (subFieldFold, selectedNode))) {
-			GUILayout.Label ("Selected Node:");
+			GUILayout.Label ("Selected "+selectedNode+":");
 			NodeInspector.OnInspectorGUI (this, selectedNode, () => {
 				nodeConnectionMode = true;
 				this.Repaint ();

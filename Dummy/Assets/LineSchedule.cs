@@ -23,9 +23,11 @@ public static class LineExt{
 		// Dijkstra WayPoints together
 		for(int i = 1; i <= waypoints.Count; i++){
 			try {
-				path.AddRange(new Dijkstra<Edge,Node>(allEdges).PlanRoute(waypoints[i-1], waypoints[i % waypoints.Count]));
+				var seg = new Dijkstra<Edge,Node>(allEdges).PlanRoute(waypoints[i-1], waypoints[i % waypoints.Count]);
+				if(!seg.Any ())
+					throw new ArgumentException("No route exists between nodes "+waypoints[i-1]+" and "+waypoints[i % waypoints.Count]+" in these "+allEdges.Count+" edges");
+				path.AddRange(seg);
 			} catch(Exception e){
-				Debug.Log ("Exception while evaluating lines");
 				Debug.LogException(e);
 				break;
 			}

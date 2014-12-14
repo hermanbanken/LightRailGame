@@ -52,7 +52,7 @@ public class Node : MonoBehaviour {
 	public override bool Equals (object o)
 	{
 		Node a = o as Node;
-		return a != null && this.GetInstanceID () == a.GetInstanceID ();
+		return null != a && this.GetInstanceID () == a.GetInstanceID ();
 	}
 
 	public static bool operator ==(Node a, Node b){
