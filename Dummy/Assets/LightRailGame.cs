@@ -55,6 +55,7 @@ public class LightRailGame : MonoBehaviour {
 		GameObject.Find ("FPS").SetActive (Debug.isDebugBuild);
 
 		// Initialize obstacle's
+		// TODO Rogier: move this constructor to ScoreManager
 		Obstacles = gameObject.GetComponent<ObstacleMaster>() ?? gameObject.AddComponent<ObstacleMaster> ();
 		Obstacles.init (obstacle => {
 			Debug.Log("An obstacle was placed.");
