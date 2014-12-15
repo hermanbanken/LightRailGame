@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class Mapchoose : MonoBehaviour {
@@ -7,5 +7,10 @@ public class Mapchoose : MonoBehaviour {
 	public void chooseMap1()
 	{
 		Application.LoadLevel ("Scene");
+	}
+
+	public void chooseMap2()
+	{
+		Application.LoadLevel ("SceneB");
 	}
 }
