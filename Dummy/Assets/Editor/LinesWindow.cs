@@ -23,12 +23,13 @@ public class LinesWindow : EditorWindow
 	public static LinesWindow instance;
 
 	void OnEnable(){
+
 		instance = this;
 		game = LightRailGame.GetInstance ();
 
 		// Probably no scene loaded
 		if (game == null) {
-			instance.Close ();
+			Init ();
 			return;
 		}
 
@@ -120,7 +121,12 @@ public class LinesWindow : EditorWindow
 
 	[MenuItem("Window/Tram Lines %#l",priority = 3000)]
 	public static void Init(){
-		EditorWindow.GetWindow<LinesWindow> ("Tram Lines", true).Show ();
+		var w = EditorWindow.GetWindow<LinesWindow> ("Tram Lines", true);
+		w.ShowTab ();
+	}
+
+	public void Start(){
+		Init ();
 	}
 
 	public void OnHierarchyChange(){
@@ -140,7 +146,7 @@ public class LinesWindow : EditorWindow
 
 	void OnDestroy(){
 		if (instance == this) {
-			instance.Close();
+			Debug.Log ("Window Pos " + instance.position);
 			instance.game = null;
 			instance.schedule = null;
 			instance = null;
