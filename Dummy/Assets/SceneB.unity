@@ -11776,7 +11776,17 @@ MonoBehaviour:
   Train: {fileID: 400000, guid: f0e52cacd2e114f91a37aa4c75fcb0d5, type: 2}
   LineRendererMaterial: {fileID: 2100000, guid: a2b8ffcef2a2e499d935dcd18956be2c,
     type: 2}
-  Schedule: []
+  Schedule:
+  - Name: Line 1
+    TramCount: 1
+    WayPoints:
+    - {fileID: 2140990385}
+    - {fileID: 1560630147}
+  - Name: Line 2
+    TramCount: 1
+    WayPoints:
+    - {fileID: 178846820}
+    - {fileID: 1630947036}
 --- !u!4 &2135025056
 Transform:
   m_ObjectHideFlags: 0
