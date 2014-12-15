@@ -7,6 +7,10 @@ TagManager:
   - WayPoint
   - Rails
   - Node
+  - tree
+  - warning
+  - dig
+  - car
   - 
   Builtin Layer 0: Default
   Builtin Layer 1: TransparentFX
