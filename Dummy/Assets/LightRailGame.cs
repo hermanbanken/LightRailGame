@@ -33,6 +33,7 @@ public class LightRailGame : MonoBehaviour {
 		set { _scoreManager = value; } 
 	}
 
+	// TODO Roger move this field to ScoreManager
 	[HideInInspector,NonSerialized]
 	public ObstacleMaster Obstacles;
 
