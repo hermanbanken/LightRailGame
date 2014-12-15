@@ -10555,10 +10555,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2dae2f0c930814260a22608fe193a855, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  graph: {fileID: 0}
   Train: {fileID: 400000, guid: f0e52cacd2e114f91a37aa4c75fcb0d5, type: 2}
   LineRendererMaterial: {fileID: 2100000, guid: a2b8ffcef2a2e499d935dcd18956be2c,
     type: 2}
+  Schedule: []
 --- !u!4 &2135025056
 Transform:
   m_ObjectHideFlags: 0

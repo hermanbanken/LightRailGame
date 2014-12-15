@@ -18,7 +18,7 @@ public class Obstacle : MonoBehaviour {
 	[SerializeField]
 	public IIncident Incident;
 	Action<Obstacle> onUserActioned;
-	
+
 	public void init(Vector3 position, ObstacleType type, Action<Obstacle> onUserActioned){
 		this.onUserActioned = onUserActioned;
 		Incident = new ObstacleBlockage (this);
@@ -26,7 +26,9 @@ public class Obstacle : MonoBehaviour {
 		this.type = type;
 		switch (type) {
 		case ObstacleType.Car:
-			this.block = GameObject.CreatePrimitive (PrimitiveType.Capsule);
+			//this.block = GameObject.CreatePrimitive (PrimitiveType.Capsule);
+			this.block= (GameObject)Instantiate(Resources.Load("prefab/tree"));
+		//	this.block = Instantiate(Resources.Load("prefab/tree"), new Vector3(0,0,-4),Quaternion.identity);
 			break;
 		case ObstacleType.Tree:
 			this.block = GameObject.CreatePrimitive (PrimitiveType.Cube);
@@ -44,7 +46,7 @@ public class Obstacle : MonoBehaviour {
 		block.transform.parent = Wrapper.transform;
 		timerDisplay.transform.parent = Wrapper.transform;
 		timerDisplay.transform.localPosition = Vector3.zero;
-		block.transform.localPosition = Vector3.zero;
+		block.transform.localPosition = Vector3.zero+Vector3.back;
 		timerDisplay.AddComponent<GUIText> ();
 		timerDisplay.guiText.enabled = false;
 	}
