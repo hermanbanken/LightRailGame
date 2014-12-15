@@ -7,13 +7,11 @@ using System.Collections.Generic;
 public class ScoreManager : MonoBehaviour
 {
 	public static int score;        // The player's score.
-	Text text;                      // Reference to the Text component.
+	Text text;               // Reference to the Text component.
 
 	void Awake ()
 	{
-		// Set up the reference.
-		text = GetComponent <Text> ();
-		
+		text = this.GetComponentInChildren<Text> ();
 		// Reset the score.
 		score = 0;
 	}
