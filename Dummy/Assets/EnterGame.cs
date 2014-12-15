@@ -6,6 +6,8 @@ public class EnterGame : MonoBehaviour {
 	public GameObject map1;
 	public GameObject map2;
 	public GameObject map3;
+	public GameObject scrollbar;
+	public GameObject text;
 	public GameObject Exist;
 	public GameObject train;
 	
@@ -17,6 +19,7 @@ public class EnterGame : MonoBehaviour {
 
 
 
+
 	}
 
 	void OnMouseDown()
@@ -25,6 +28,8 @@ public class EnterGame : MonoBehaviour {
 		map2.SetActive (true);
 		train.SetActive (false);
 		map3.SetActive (true);
+		scrollbar.SetActive (true);
+		text.SetActive (true);
 		Exist.SetActive (false);
 		gameObject.SetActive (false);
 		//Application.LoadLevel ("Scene");
