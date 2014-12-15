@@ -29,7 +29,7 @@ public class Station : MonoBehaviour, IStop {
 	public enum State { Due, Danger, OK }
 
 	// Visuals
-	public GameObject quad;
+	private GameObject quad;
 
 	void Reset(){
 		dueTime = 60f;

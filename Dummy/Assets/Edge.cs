@@ -115,4 +115,35 @@ public class Edge : BezierSpline, IEdge<Node>, ILine
 		this._from = this._to;
 		this._to = f;
 	}
+	
+	public override bool Equals (object o)
+	{
+		Edge a = o as Edge;
+		return null != a && this.GetInstanceID () == a.GetInstanceID ();
+	}
+
+	public static bool operator ==(Edge a, Edge b){
+		if (System.Object.ReferenceEquals(a, b))
+		{
+			return true;
+		}
+		
+		// If one is null, but not both, return false.
+		if (((object)a == null) || ((object)b == null))
+		{
+			return false;
+		}
+		
+		// Return true if the fields match:
+		return a.Equals(b);
+	}
+
+	public static bool operator !=(Edge a, Edge b){
+		return !(a == b);
+	}
+	
+	public override int GetHashCode ()
+	{
+		return GetInstanceID ();
+	}
 }

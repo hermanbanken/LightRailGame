@@ -9,13 +9,15 @@ public class TrafficLight : MonoBehaviour, IStop {
 	public TrafficLight Next;
 
 	// Last time we changed colors
+	[HideInInspector]
 	public float lastChanged = 0;
 	// Current color
+	[HideInInspector]
 	public TrafficLightState State = TrafficLightState.Green;
 
 	// Visual stuff
-	public GameObject quad;
-	public GameObject sphere;
+	private GameObject quad;
+	private GameObject sphere;
 	public readonly static Color orange = new Color(1f, 0.7f, 0f);
 
 	void Reset() {

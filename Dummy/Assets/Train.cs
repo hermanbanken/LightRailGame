@@ -177,4 +177,9 @@ public class Train : MonoBehaviour {
 	{
 		this.incident = incident;
 	}
+
+	public void SetPosition (float f)
+	{
+		position = f;
+	}
 }

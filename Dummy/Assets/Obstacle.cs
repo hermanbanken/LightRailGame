@@ -51,15 +51,18 @@ public class Obstacle : MonoBehaviour {
 
 	void Update(){
 		if (Incident != null && Incident.IsResolved() && block != null) {
-			GameObject.Destroy (block);
-			GameObject.Destroy (timerDisplay);
-			GameObject.Destroy (Wrapper);
+			GameObject.Destroy (gameObject);
+			return;
 		}
 
-		this.timerDisplay.guiText.text = ButtonText ();
+		if(timerDisplay != null)
+			this.timerDisplay.guiText.text = ButtonText ();
 	}
 	
 	public string ButtonText(){
+		if (Incident == null)
+			return "";
+
 		// Not yet actioned || resolved
 		if (!Incident.CountDownValue().HasValue)
 			return "handle";
@@ -90,6 +93,5 @@ public class Obstacle : MonoBehaviour {
 		var w = 60f;
 		var sp = screenPosition(buttonPosition);
 		return GUI.Button (new Rect (sp.x - w/2, Screen.height - (sp.y + w/2), w, w/2), ButtonText());
-		
 	}
 }

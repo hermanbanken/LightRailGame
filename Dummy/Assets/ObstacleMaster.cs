@@ -78,6 +78,10 @@ public class ObstacleMaster : MonoBehaviour {
 				onResolved(ob); 
 		});
 	}
+	
+	void OnDisable(){
+		obstacles = new List<Obstacle>();
+	}
 }
 
 public enum ObstacleType {
