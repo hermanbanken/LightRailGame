@@ -132,7 +132,10 @@ public class LinesWindow : EditorWindow
 	}
 
 	void OnFocus(){
+		if (schedule == null)
+			return;
 		GraphInspector.SelectedLine (schedule [selectedLine % schedule.Count]);
+		this.Repaint ();
 	}
 
 	void OnDestroy(){
