@@ -10,6 +10,7 @@ public class EnterGame : MonoBehaviour {
 	public GameObject text;
 	public GameObject Exist;
 	public GameObject train;
+	public GameObject back;
 	
 	void Start()
 	{
@@ -30,6 +31,7 @@ public class EnterGame : MonoBehaviour {
 		map3.SetActive (true);
 		scrollbar.SetActive (true);
 		text.SetActive (true);
+		back.SetActive (true);
 		Exist.SetActive (false);
 		gameObject.SetActive (false);
 		//Application.LoadLevel ("Scene");
