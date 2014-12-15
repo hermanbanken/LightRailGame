@@ -24,22 +24,29 @@ public class TrafficLight : MonoBehaviour, IStop {
 		Next = null;
 	}
 
+	public static void  SetOffsetPositionAndDirection(Node node, Transform transform){
+		var edge = node.graph.edges.FirstOrDefault (e => e.From == node || e.To == node);
+		Vector3 dir;
+		if(edge != null){
+			dir = edge.GetDirection(edge.From == node ? 0f : 1f);
+			transform.position = edge.GetPoint(edge.From == node ? 0f : 1f) + 2.5f * Vector3.Cross ( dir, Vector3.forward);
+		} else {
+			Debug.LogWarning("No Edge found!!");
+			dir = Vector3.up;
+			transform.position = Vector3.zero;
+		}
+		transform.rotation = Quaternion.Euler(0, 0, Vector3.Angle(Vector3.up,dir));
+//		transform.rotation = Quaternion.LookRotation (dir, -Vector3.back);
+	}
+
 	void Start() {
 		if (lastChanged == 0)    
 			SetGreen (this);
 
 		var node = this.gameObject.GetComponent<Node> ();
-		var edge = node.graph.edges.FirstOrDefault (e => e.From == node || e.To == node);
-		Vector3 dir;
-		if(edge != null){
-			dir = edge.GetDirection(edge.From == node ? 0f : 1f);
-		} else {
-			dir = Vector3.up;
-		}
-		var pos = gameObject.transform.position  + 2.5f * Vector3.Cross (dir, Vector3.forward);
 		quad = GameObject.CreatePrimitive (PrimitiveType.Quad);
 		quad.transform.parent = gameObject.transform;
-		quad.transform.position = pos + 4f * Vector3.back;
+		SetOffsetPositionAndDirection (node, quad.transform);
 		quad.transform.localScale = 2f * Vector3.one;
 		quad.renderer.material.color = Color.black;
 
@@ -48,6 +55,8 @@ public class TrafficLight : MonoBehaviour, IStop {
 		sphere.transform.localScale = 0.6f * Vector3.one;
 		sphere.transform.localPosition = Vector3.zero + 2.4f * Vector3.back;
 		Destroy (sphere.collider);
+//		Texture2D image = (Texture2D)Resources.Load("OKbutton");
+//		GUI.DrawTexture(new Rect(0, 0, image.width, image.height), image);
 	}
 
 	void Update(){

@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using UnityEditor;
+
 public class Station : MonoBehaviour, IStop {
 	// Mechanics
 	private IDictionary<Train,float> Presence = new Dictionary<Train, float> ();
@@ -36,24 +38,28 @@ public class Station : MonoBehaviour, IStop {
 		dangerTime = 40f;
 	}
 
+	Edge edge;
 	void Start(){
 		_state = State.OK;
 
 		var node = this.gameObject.GetComponent<Node> ();
-		var dir = node.graph.edges.FirstOrDefault (e => e.From == node).GetDirection(0f);
-		var pos = gameObject.transform.position  + 2.5f * Vector3.Cross ( dir, Vector3.forward);
-
 		quad = GameObject.CreatePrimitive (PrimitiveType.Quad);
+		TrafficLight.SetOffsetPositionAndDirection (node, quad.transform);
 		quad.transform.parent = gameObject.transform;
-		quad.transform.position = pos + 4f * Vector3.back;
 		quad.transform.localScale = 2f * Vector3.one;
-		quad.transform.rotation = Quaternion.Euler(0, 0, Vector3.Angle(Vector3.right,dir));
 		quad.AddComponent<GUIText> ();
 		
 		quad.renderer.material.color = Color.yellow;
 	}
 
+	void OnGUI(){
+		if(edge != null)
+		Handles.ArrowCap(0, edge.GetPoint (0f), Quaternion.LookRotation (edge.GetDirection (0f)), 100f);
+	}
+
 	void Update(){
+		//OnGUI ();
+
 		if (ActiveState == State.OK) {
 			this.quad.renderer.material.color = Color.Lerp (Color.white, Color.green, .7f);
 		} else {

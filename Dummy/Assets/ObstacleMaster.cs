@@ -33,7 +33,10 @@ public class ObstacleMaster : MonoBehaviour {
 			game.ClickedObstacle = clickedObs;
 		}
 	}
-	
+	ObstacleType generateRndType(){
+		ObstacleType[] obsTypes = Enum.GetValues(typeof (ObstacleType)).Cast<ObstacleType>().ToArray();
+		return obsTypes [UnityEngine.Random.Range (0, 2)];
+	}
 	void PlaceNewObstacle (){
 		// Get random position
 		Edge edge = game.graph.edges.ElementAt(rnd.Next(0, game.graph.edges.Count ()-1));
@@ -44,7 +47,9 @@ public class ObstacleMaster : MonoBehaviour {
 
 		Obstacle obstacle = new GameObject ().AddComponent<Obstacle> ();
 	
-		obstacle.init(pos, ObstacleType.Car, onUserActioned);
+		obstacle.init(pos, generateRndType(), onUserActioned);
+
+
 		obstacle.buttonPosition = buttonPosition;
 		obstacles.Add (obstacle);
 		obstaclesPos.Add (obstacle.block.transform.position);
@@ -77,11 +82,19 @@ public class ObstacleMaster : MonoBehaviour {
 			if(onResolved != null)
 				onResolved(ob); 
 		});
+
+		// Draw Incident Handles
+//		obstacles.ForEach (o => DrawHandle (o.Incident, o.transform.position));
 	}
 	
 	void OnDisable(){
 		obstacles = new List<Obstacle>();
 	}
+	
+//	public void DrawHandle(IIncident incident, Vector3 subjectPosition){
+//		// Draw GUI button / timer
+//		// Draw line from subject Position (either tram/obstacle)
+//	}
 }
 
 public enum ObstacleType {
