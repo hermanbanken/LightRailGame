@@ -25,7 +25,18 @@ public class LinesWindow : EditorWindow
 	void OnEnable(){
 		instance = this;
 		game = LightRailGame.GetInstance ();
+
+		// Probably no scene loaded
+		if (game == null) {
+			instance.Close ();
+			return;
+		}
+
 		schedule = game.Schedule;
+
+		// Make sure we have at least one schedule
+		if (schedule.Count == 0)
+			schedule.Add (new Schedule ());
 
 		listLines = new ReorderableList (schedule, typeof(Schedule), false, true, true, true);
 		listLines.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) => {
@@ -87,6 +98,9 @@ public class LinesWindow : EditorWindow
 	}
 
 	void OnGUI(){
+		if(game == null) 
+			OnEnable ();
+
 		var old = game.Schedule;
 		EditorGUI.BeginChangeCheck ();
 
@@ -118,7 +132,16 @@ public class LinesWindow : EditorWindow
 	}
 
 	void OnFocus(){
-		GraphInspector.SelectedLine (schedule [selectedLine]);
+		GraphInspector.SelectedLine (schedule [selectedLine % schedule.Count]);
+	}
+
+	void OnDestroy(){
+		if (instance == this) {
+			instance.Close();
+			instance.game = null;
+			instance.schedule = null;
+			instance = null;
+		}
 	}
 }
 
