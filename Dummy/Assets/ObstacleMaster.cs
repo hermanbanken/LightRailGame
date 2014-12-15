@@ -34,7 +34,8 @@ public class ObstacleMaster : MonoBehaviour {
 		}
 	}
 	
-	void PlaceNewObstacle (){
+	// TODO Rogier: call this from ScoreManager
+	public void PlaceNewObstacle (){
 		// Get random position
 		Edge edge = game.graph.edges.ElementAt(rnd.Next(0, game.graph.edges.Count ()-1));
 		float randT = (float)rnd.NextDouble ();
@@ -65,6 +66,7 @@ public class ObstacleMaster : MonoBehaviour {
 
 	void Update (){
 		// Introduce obstacles
+		// TODO Rogier: move this to ScoreManager
 		if (!LastObstacle.HasValue || LastObstacle.Value + 5 < Time.time) {
 			LastObstacle = Time.time;
 			PlaceNewObstacle();

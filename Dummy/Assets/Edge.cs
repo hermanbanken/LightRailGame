@@ -86,6 +86,8 @@ public class Edge : BezierSpline, IEdge<Node>, ILine
 		deco.Mesh = go.AddComponent<MeshFilter> ();
 		//r.material.color = Color.yellow;
 		r.material.mainTexture = Resources.Load<Texture2D>("rail");
+		// TODO Rendong find shader that makes track 100% opacit and background 0% opacit
+		r.material.shader = Shader.Find ("Transparent/Diffuse");
 		deco.Awake ();
 	}
 	
