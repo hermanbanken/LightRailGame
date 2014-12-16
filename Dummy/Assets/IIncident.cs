@@ -12,6 +12,8 @@ public interface IIncident
 	IEnumerable<ISolution> PossibleActions();
 	void SetChosenSolution (ISolution solution);
 	ISolution GetChosenSolution ();
+	float MaxSpeedOfSubject();
+	GameObject Subject();
 }
 
 public interface ISolution {

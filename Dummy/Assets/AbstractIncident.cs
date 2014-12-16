@@ -74,5 +74,9 @@ public abstract class AbstractIncident : IIncident {
 		return TimeSpan.Zero;
 	}
 
+	public abstract float MaxSpeedOfSubject ();
+
+	public abstract GameObject Subject ();
+
 	#endregion
 }

@@ -54,6 +54,22 @@ public class TrainCollisionBlockage : AbstractIncident, IIncident {
 			};
 		}
 	}
+	
+	#endregion
+	
+	#region implemented abstract members of AbstractIncident
+
+	public override float MaxSpeedOfSubject ()
+	{
+		// TODO maybe look to collision impact if the tram should still be able to drive
+		return 0.5f;
+	}
+
+	public override GameObject Subject ()
+	{
+		return self.gameObject;
+	}
+
 	#endregion
 }
 
@@ -95,6 +111,20 @@ public class ObstacleBlockage : AbstractIncident, IIncident {
 	}
 
 	#endregion
+
+	#region implemented abstract members of AbstractIncident
+
+	public override float MaxSpeedOfSubject ()
+	{
+		return 0;
+	}
+
+	public override GameObject Subject ()
+	{
+		return obstacle.gameObject;
+	}
+
+	#endregion
 }
 
 // For tramcar incident we implement four different types: Drunken passenger, angry mob, women in labour and stench on board
@@ -103,10 +133,10 @@ public class TramCarIncident : AbstractIncident, IIncident {
 	Obstacle obstacle;
 	
 	
-	public TramCarIncident (Obstacle obstacle)
+	public TramCarIncident (Train subject, Obstacle obstacle)
 	{
+		this.self = self;
 		this.obstacle = obstacle;
-		
 	}	
 	
 	#region IIncident implementation
@@ -135,6 +165,31 @@ public class TramCarIncident : AbstractIncident, IIncident {
 
 		return new ISolution[] {};
 	}
+	#endregion
+
+	#region implemented abstract members of AbstractIncident
+
+	public override float MaxSpeedOfSubject ()
+	{
+		// TODO do more smart things, now:
+		// - if we are waiting on police/ambulance we can not move
+		// - if there windows are open for ventilation: max speed
+		var s = GetChosenSolution ();
+		if (s == SolutionIncidents.Ambulance || s == SolutionIncidents.Police) {
+			return 0f;
+		}
+		if (s == SolutionIncidents.Ventilate) {
+			return 0.5f;
+		}
+
+		return 2f;
+	}
+
+	public override GameObject Subject ()
+	{
+		return self.gameObject;
+	}
+
 	#endregion
 }
 
