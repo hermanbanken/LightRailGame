@@ -96,7 +96,7 @@ GameObject:
   - 4: {fileID: 437826}
   - 132: {fileID: 13237834}
   - 114: {fileID: 11437834}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: FPS
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -452,7 +452,7 @@ GUIText:
   m_GameObject: {fileID: 137826}
   m_Enabled: 1
   serializedVersion: 3
-  m_Text: Gui Text
+  m_Text: FPS
   m_Anchor: 2
   m_Alignment: 2
   m_PixelOffset: {x: 0, y: 0}
