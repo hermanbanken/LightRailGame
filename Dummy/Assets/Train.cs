@@ -66,9 +66,14 @@ public class Train : MonoBehaviour {
 			stop = null;
 		}
 	
-		// Don't move tram if the game is paused or an incident exists
-		if (lightRailGame.paused || incident != null || Path.Count == 0 || stop != null) {
+		// Don't move tram if the game is paused or there is no path
+		if (lightRailGame.paused || Path.Count == 0 || stop != null) {
 			return;
+		}
+
+		// Limit speed
+		if (incident != null) {
+			this.speed = Math.Min(this.speed, incident.MaxSpeedOfSubject());
 		}
 
 		// Stop at stops
@@ -84,8 +89,11 @@ public class Train : MonoBehaviour {
 			}
 		}
 
-		// New way of moving: move along Path defined in Train class
-		UpdateToNextPosition(position + speed * Time.deltaTime);
+		// Update position if speed != 0
+		if (!nearlyEqual(this.speed, 0f, 0.01f)) {
+			UpdateToNextPosition(position + speed * Time.deltaTime);
+		}
+
 		this.speed = this.speed + acceleration () * Time.deltaTime;
 	}
 
@@ -181,5 +189,21 @@ public class Train : MonoBehaviour {
 	public void SetPosition (float f)
 	{
 		position = f;
+	}
+
+	public static bool nearlyEqual(float a, float b, float epsilon) {
+		float absA = Math.Abs(a);
+		float absB = Math.Abs(b);
+		float diff = Math.Abs(a - b);
+		
+		if (a == b) { // shortcut, handles infinities
+			return true;
+		} else if (a == 0 || b == 0 || diff < float.MinValue) {
+			// a or b is zero or both are extremely close to it
+			// relative error is less meaningful here
+			return diff < (epsilon * float.MinValue);
+		} else { // use relative error
+			return diff / (absA + absB) < epsilon;
+		}
 	}
 }

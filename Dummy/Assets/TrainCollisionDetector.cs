@@ -24,6 +24,10 @@ public class TrainCollisionDetector : MonoBehaviour
 		}
 	}
 
+	void OnCollisionStay(Collision col){
+		reportTo.speed = 0;
+	}
+
 	public void ReportTo (Train train)
 	{
 		reportTo = train;
