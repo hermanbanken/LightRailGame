@@ -10,8 +10,8 @@ public class LightRailGame : MonoBehaviour {
 	[HideInInspector,NonSerialized]
 	public bool paused = false;	
 	[HideInInspector,NonSerialized]
-	public Obstacle ClickedObstacle;
-
+	public IIncident ClickedIncident;
+	
 	private Train selected;
 	private Action<Train> selectedTrainPathChangeAction;
 	
@@ -41,6 +41,8 @@ public class LightRailGame : MonoBehaviour {
 
 	public Transform Train;
 
+	public Transform WarningPrefab;
+
 	// Set Line for Unity to package in Build
 	public Material LineRendererMaterial;
 
@@ -49,6 +51,8 @@ public class LightRailGame : MonoBehaviour {
 	
 	// Use this for initialization
 	void Start () {
+		QualitySettings.antiAliasing = 4;
+
 		if (LineRendererMaterial == null)
 			Debug.LogWarning ("You did not set the Material of the LineRenderer. Please go to the Inspector of the LightRailGame object and set its material");
 	
@@ -156,11 +160,13 @@ public class LightRailGame : MonoBehaviour {
 		if (selected != null)
 			this.TrainGUI (selected);
 		// Handle Obstacle clicks
-		else if (ClickedObstacle != null) {
+		else if (ClickedIncident != null) {
 			// If user chooses an action this is true
-			if(ClickedObstacle.Incident.IncidentGUI()){
-				ClickedObstacle.DoUserAction();
-				ClickedObstacle = null;
+			if(ClickedIncident.IncidentGUI()){
+				var obs = (ClickedIncident as ObstacleBlockage);
+				if(obs!=null)
+					obs.Subject().GetComponent<Obstacle>().DoUserAction();
+				ClickedIncident = null;
 			}
 		}
 	}
@@ -182,8 +188,7 @@ public class LightRailGame : MonoBehaviour {
 					model.localScale = new Vector3(2, 2, 2);
 					model.parent = go.transform;
 					Train train = go.AddComponent<Train>();
-					train.Path = path;
-					train.SetPosition(segment * i);
+					train.Init (line, path, segment * i);
 				}
 			}
 		}

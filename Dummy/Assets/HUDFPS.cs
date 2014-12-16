@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class HUDFPS : MonoBehaviour 
 {
@@ -20,7 +21,8 @@ public class HUDFPS : MonoBehaviour
 	private float accum   = 0; // FPS accumulated over the interval
 	private int   frames  = 0; // Frames drawn over the interval
 	private float timeleft; // Left time for current interval
-	
+	public Text guiText;
+
 	void Start()
 	{
 		if( !guiText )
@@ -29,6 +31,7 @@ public class HUDFPS : MonoBehaviour
 			enabled = false;
 			return;
 		}
+		guiText.material = Instantiate (guiText.material) as Material;
 		timeleft = updateInterval;  
 	}
 	

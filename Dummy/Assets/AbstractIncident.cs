@@ -14,9 +14,11 @@ public abstract class AbstractIncident : IIncident {
 	public AbstractIncident(){
 		// Fire occur event
 		LightRailGame.ScoreManager.DoOccur(this);
+		IncidentVisualizer.Add (this);
 		// Track events
 		this.OnUserAction += LightRailGame.ScoreManager.DoUserAction;
 		this.OnResolved += LightRailGame.ScoreManager.DoResolved;
+		this.OnResolved += (IIncident obj) => IncidentVisualizer.Remove (obj);
 	}
 
 	#region IIncident implementation

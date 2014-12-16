@@ -39,6 +39,11 @@ public class Train : MonoBehaviour {
 		FixedUpdate ();
 	}
 
+	public void Init(LineSchedule line, IList<Edge> route, float initialUnitPositionOnLine = 0f){
+		Path = route;		
+		position = initialUnitPositionOnLine;
+	}
+
 	public void UpdatePath(IList<Edge> path){
 		var prev = this.Path;
 		this.currentTrack = path.IndexOf (this.Path [currentTrack]);
@@ -184,11 +189,6 @@ public class Train : MonoBehaviour {
 	public void Incident (IIncident incident)
 	{
 		this.incident = incident;
-	}
-
-	public void SetPosition (float f)
-	{
-		position = f;
 	}
 
 	public static bool nearlyEqual(float a, float b, float epsilon) {
