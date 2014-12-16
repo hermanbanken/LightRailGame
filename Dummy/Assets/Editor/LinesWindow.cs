@@ -99,8 +99,10 @@ public class LinesWindow : EditorWindow
 	}
 
 	void OnGUI(){
-		if(game == null) 
-			OnEnable ();
+		if (game == null) {
+			this.Close ();
+			return;	
+		}
 
 		var old = game.Schedule;
 		EditorGUI.BeginChangeCheck ();
@@ -123,6 +125,11 @@ public class LinesWindow : EditorWindow
 	public static void Init(){
 		var w = EditorWindow.GetWindow<LinesWindow> ("Tram Lines", true);
 		w.ShowTab ();
+	}
+
+	[MenuItem("Window/Tram Lines", true)]
+	public static bool CanOpen(){
+		return LightRailGame.GetInstance () != null;
 	}
 
 	public void Start(){

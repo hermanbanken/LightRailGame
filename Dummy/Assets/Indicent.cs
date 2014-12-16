@@ -67,7 +67,7 @@ public class TrainCollisionBlockage : AbstractIncident, IIncident {
 
 	public override GameObject Subject ()
 	{
-		return self.gameObject;
+		return self != null ? self.gameObject : null;
 	}
 
 	#endregion
@@ -75,7 +75,6 @@ public class TrainCollisionBlockage : AbstractIncident, IIncident {
 
 public class ObstacleBlockage : AbstractIncident, IIncident {
 	Obstacle obstacle;
-
 
 	public ObstacleBlockage (Obstacle obstacle)
 	{
@@ -121,7 +120,7 @@ public class ObstacleBlockage : AbstractIncident, IIncident {
 
 	public override GameObject Subject ()
 	{
-		return obstacle.gameObject;
+		return obstacle == null ? null : obstacle.gameObject;
 	}
 
 	#endregion

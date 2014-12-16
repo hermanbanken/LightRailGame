@@ -25,14 +25,6 @@ public class ObstacleMaster : MonoBehaviour {
 		this.onUserActioned = onUserActioned;
 		this.onOccur = onOccur;
 	}
-
-	void OnGUI(){
-		var clickedObs = this.obstacles.FirstOrDefault (o => o.DrawGUI());
-		if (clickedObs != null) {					
-			// Button was hit
-			game.ClickedObstacle = clickedObs;
-		}
-	}
 	
 	// TODO Rogier: call this from ScoreManager
 	public void PlaceNewObstacle (){
@@ -67,7 +59,7 @@ public class ObstacleMaster : MonoBehaviour {
 	void Update (){
 		// Introduce obstacles
 		// TODO Rogier: move this to ScoreManager
-		if (!LastObstacle.HasValue || LastObstacle.Value + 5 < Time.time) {
+		if (!LastObstacle.HasValue || LastObstacle.Value + 5 < Time.time && obstacles.Count <= 5) {
 			LastObstacle = Time.time;
 			PlaceNewObstacle();
 		}

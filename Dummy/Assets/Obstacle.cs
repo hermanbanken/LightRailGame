@@ -3,14 +3,10 @@ using System.Collections;
 using System;
 
 public class Obstacle : MonoBehaviour {
-	// Set at mouse event
-	public float? userActionedAt = null; // Seconds since userActioned
-
 	//  Initialized
 	public GameObject Wrapper;
 	public GameObject block;
 	//public GameObject button;
-	public GameObject timerDisplay;
 	public Vector3 buttonPosition;
 	
 	// Set by init
@@ -18,7 +14,7 @@ public class Obstacle : MonoBehaviour {
 	[SerializeField]
 	public IIncident Incident;
 	Action<Obstacle> onUserActioned;
-
+	
 	public void init(Vector3 position, ObstacleType type, Action<Obstacle> onUserActioned){
 		this.onUserActioned = onUserActioned;
 		Incident = new ObstacleBlockage (this);
@@ -26,9 +22,7 @@ public class Obstacle : MonoBehaviour {
 		this.type = type;
 		switch (type) {
 		case ObstacleType.Car:
-			//this.block = GameObject.CreatePrimitive (PrimitiveType.Capsule);
-			this.block= (GameObject)Instantiate(Resources.Load("prefab/tree"));
-		//	this.block = Instantiate(Resources.Load("prefab/tree"), new Vector3(0,0,-4),Quaternion.identity);
+			this.block = GameObject.CreatePrimitive (PrimitiveType.Capsule);
 			break;
 		case ObstacleType.Tree:
 			this.block = GameObject.CreatePrimitive (PrimitiveType.Cube);
@@ -40,15 +34,10 @@ public class Obstacle : MonoBehaviour {
 
 		Wrapper = gameObject;
 		gameObject.name = "Obstacle";
-		timerDisplay = new GameObject ("timer");
 		Wrapper.transform.position = position;
 
 		block.transform.parent = Wrapper.transform;
-		timerDisplay.transform.parent = Wrapper.transform;
-		timerDisplay.transform.localPosition = Vector3.zero;
-		block.transform.localPosition = Vector3.zero+Vector3.back;
-		timerDisplay.AddComponent<GUIText> ();
-		timerDisplay.guiText.enabled = false;
+		block.transform.localPosition = Vector3.zero;
 	}
 
 	void Update(){
@@ -56,9 +45,6 @@ public class Obstacle : MonoBehaviour {
 			GameObject.Destroy (gameObject);
 			return;
 		}
-
-		if(timerDisplay != null)
-			this.timerDisplay.guiText.text = ButtonText ();
 	}
 	
 	public string ButtonText(){
@@ -77,9 +63,6 @@ public class Obstacle : MonoBehaviour {
 	public void DoUserAction(){
 		if(onUserActioned != null)
 			onUserActioned (this);
-
-		userActionedAt = Time.time;
-		timerDisplay.guiText.enabled = true;
 	}
 
 	public Vector2 screenPosition(Vector3? pos = null){
