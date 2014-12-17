@@ -15,13 +15,21 @@ public class Train : MonoBehaviour {
 	public float desiredSpeed = 10f;
 	private float position = 0f;
 
-	public IIncident incident;
-	public IStop stop;
+	public IIncident incident { get; private set; }
+	private bool hasIncident; // For performance : null checks are costly
+	public IStop stop { get; private set; }
+	private bool isAtStop;
 
-	public IList<Edge> Path = new List<Edge>();
+	public IList<Edge> Path { get; private set; }
+	public IList<Edge> OriginalPath { get; private set; }
 	public int currentTrack;
 
 	public event Action<Train> OnPathChange;
+
+	void Awake (){
+		if (Path == null)
+			Path = new List<Edge> ();
+	}
 
 	// Use this for initialization
 	void Start () {
@@ -40,7 +48,12 @@ public class Train : MonoBehaviour {
 	}
 
 	public void Init(LineSchedule line, IList<Edge> route, float initialUnitPositionOnLine = 0f){
-		Path = route;		
+		if (OriginalPath != null)
+			throw new InvalidOperationException ("Initialization may only be done once");
+		if (Path.Count > 0)
+			throw new InvalidOperationException ("Initialize the path only by using the Init method, do not set the Path elsewere");
+		Path = route;
+		OriginalPath = route;
 		position = initialUnitPositionOnLine;
 	}
 
@@ -62,22 +75,24 @@ public class Train : MonoBehaviour {
 	// Update is called once per frame
 	void FixedUpdate () {
 		// Clean resolved incidents
-		if (incident != null && incident.IsResolved ()) {
+		if (hasIncident && incident.IsResolved ()) {
+			hasIncident = false;
 			incident = null;
 		}
 
 		// Leave stops, if possible
-		if (stop != null && stop.TryLeave(this)) {
+		if (isAtStop && stop.TryLeave(this)) {
 			stop = null;
+			isAtStop = false;
 		}
 	
 		// Don't move tram if the game is paused or there is no path
-		if (lightRailGame.paused || Path.Count == 0 || stop != null) {
+		if (lightRailGame.paused || Path.Count == 0 || isAtStop) {
 			return;
 		}
 
 		// Limit speed
-		if (incident != null) {
+		if (hasIncident) {
 			this.speed = Math.Min(this.speed, incident.MaxSpeedOfSubject());
 		}
 
@@ -85,7 +100,8 @@ public class Train : MonoBehaviour {
 		Edge e = Path [currentTrack];
 		if (position + speed * Time.deltaTime > e.GetLength()){
 			stop = (IStop) e.To.GetComponent<Station>() ?? (IStop) e.To.GetComponent<TrafficLight>();
-			if(stop != null){
+			isAtStop = stop != null;
+			if(isAtStop){
 				stop.Arrive(this);
 				LightRailGame.ScoreManager.DoStopVisit(new ScoreManager.StopVisitEventArgs() {
 					Train = this,
@@ -189,6 +205,7 @@ public class Train : MonoBehaviour {
 	public void Incident (IIncident incident)
 	{
 		this.incident = incident;
+		this.hasIncident = true;
 	}
 
 	public static bool nearlyEqual(float a, float b, float epsilon) {
