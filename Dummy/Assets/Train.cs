@@ -8,8 +8,9 @@ public class Train : MonoBehaviour, IOccupy {
 
 	private LightRailGame lightRailGame;
 
-	public GameObject StartingNode;
 	private Node currentNode;
+
+	[HideInInspector]
 	public bool forward = true;
 	public float speed = 0;
 	public float desiredSpeed = 10f;
@@ -39,8 +40,8 @@ public class Train : MonoBehaviour, IOccupy {
 		Collider c = GetComponentInChildren<Collider> ();
 		(this.GetComponentInChildren<TrainCollisionDetector> () ?? c.gameObject.AddComponent<TrainCollisionDetector> ()).ReportTo(this);
 
-		if (StartingNode == null && Path.Count == 0) {
-			Debug.LogWarning("Either define a StartingNode or a Path for this train.");
+		if (Path.Count == 0) {
+			Debug.LogWarning("Either define a Path for this train.");
 			return;		
 		}
 
@@ -54,6 +55,16 @@ public class Train : MonoBehaviour, IOccupy {
 			throw new InvalidOperationException ("Initialize the path only by using the Init method, do not set the Path elsewere");
 		Path = route;
 		OriginalPath = route;
+
+		Edge current = Path [currentTrack];
+		while (current.GetLength () < initialUnitPositionOnLine) {
+			initialUnitPositionOnLine -= current.GetLength ();
+			if (!TryGetNextTrack (out this.currentTrack, out current)) {
+				// At end of defined Path
+				break;
+			}
+		}
+
 		position = initialUnitPositionOnLine;
 	}
 
@@ -197,12 +208,13 @@ public class Train : MonoBehaviour, IOccupy {
 		/* Stop for vehicles and obstacles ahead */
 		var ahead = currentTrack;
 		var accum = 0f;
+		var forZero = DistanceUntilSpeed(0);
 		do 
 		{
 			if(desiredSpeed == 0) break;
 
 			// TODO refine maths here; 
-			var block = Path [ahead].GetOccupants ().Where (o => NeedBreak (o.Speed, accum + o.Location.Item2 - this.position));
+			var block = Path [ahead].GetOccupants ().Where (o => accum + o.Location.Item2 < forZero && NeedBreak (o.Speed, accum + o.Location.Item2 - this.position));
 			if (block.Any ()) {
 				Debug.Log("Other ahead of "+this+": "+block.MinBy (o => (accum + o.Location.Item2 - this.position) / o.Speed));
 				desiredSpeed = Math.Min(desiredSpeed, block.MinBy (o => (accum + o.Location.Item2 - this.position) / o.Speed).Speed);
@@ -212,11 +224,17 @@ public class Train : MonoBehaviour, IOccupy {
 			ahead++;
 		} 
 		// If we don't need to break for vehicles standing this far away, don't look further
-		while(NeedBreak(0, accum));
+		while(accum < forZero);
 
 		// Limit de- or accelleration
 		var diff = desiredSpeed - this.speed;
 		return diff > 0 ? Math.Min (diff, maxAcc) : Math.Max (diff, -maxAcc);
+	}
+
+	private float DistanceUntilSpeed(float speed){
+		var accTime = (this.speed - speed) / maxAcc;
+		var avgSpeed = (this.speed + speed) / 2;
+		return avgSpeed * accTime;
 	}
 
 	private bool NeedBreak(float speed, float distanceUntilSpeed){
