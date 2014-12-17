@@ -7,6 +7,7 @@ public class TrafficLight : MonoBehaviour, IStop {
 	private IList<Train> Presence = new List<Train> ();
 	// The TrafficLight that might be green after this one turns red
 	public TrafficLight Next;
+	public TrafficLight Slave;
 
 	// Last time we changed colors
 	[HideInInspector]
@@ -84,6 +85,10 @@ public class TrafficLight : MonoBehaviour, IStop {
 				State = TrafficLightState.Green;
 			}
 
+			if (Slave != null) {
+				Slave.State = State;
+				Slave.lastChanged = Time.time;
+			}
 			lastChanged = Time.time;
 		}
 	}
@@ -111,6 +116,8 @@ public class TrafficLight : MonoBehaviour, IStop {
 
 		if (greenOne == this) {
 			State = TrafficLightState.Green;
+			if (Slave != null) 
+				Slave.State = TrafficLightState.Green;
 		}
 		lastChanged = Time.time;
 	}
