@@ -5,12 +5,12 @@ using System.Linq;
 
 public class IncidentVisualizer : MonoBehaviour
 {
-	static Dictionary<IIncident,GameObject> incidents = new Dictionary<IIncident,GameObject> ();
+	static Dictionary<IIncident,Warning> incidents = new Dictionary<IIncident,Warning> ();
 	public GameObject HandlePrefab;
 	static GameObject _HandlePrefab;
 
 	void Start(){
-		incidents = new Dictionary<IIncident,GameObject> ();
+		incidents = new Dictionary<IIncident,Warning> ();
 		_HandlePrefab = HandlePrefab;
 	}
 
@@ -18,18 +18,15 @@ public class IncidentVisualizer : MonoBehaviour
 		var w = Instantiate(_HandlePrefab, Position (incident), Quaternion.identity) as GameObject;
 
 		w.transform.SetParent (GameObject.FindObjectsOfType<Canvas> ().First(c => c.gameObject.name == "LRG_Controls").transform, false);
-//		w.transform.parent = GameObject.FindObjectOfType<Canvas> ().transform;
-		var script = w.GetComponent<Warning> ();
-		if (script != null)
-			script.incident = incident;
-
-		incidents [incident] = w;
+		var warning = w.GetComponent<Warning> ();
+		warning.incident = incident;
+		incidents [incident] = warning;
 	}
 
 	void Update(){
 		foreach (var pair in incidents) {
-			var handle = pair.Value;
-			handle.transform.position = Position(pair.Key);
+			var warning = pair.Value;
+			warning.gameObject.transform.position = Position(pair.Key) + (15f + warning.Width()/2f) * Vector3.right;
 		}
 	}
 
@@ -45,6 +42,6 @@ public class IncidentVisualizer : MonoBehaviour
 	public static void Remove(IIncident incident){
 		var w = incidents [incident];
 		incidents.Remove (incident);
-		Destroy(w);
+		Destroy(w.gameObject);
 	}
 }
