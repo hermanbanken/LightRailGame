@@ -13,9 +13,7 @@ public class Warning : MonoBehaviour {
 	private RectTransform backdrop;
 	private Text timer;
 	private RectTransform icon;
-	private LineRenderer line;
-	private Vector3[] corners = new Vector3[4];
-	private Transform subjectTransform;
+	private RectTransform line;
 
 	const string fail = "fail";
 	private string text = "initial";
@@ -26,21 +24,8 @@ public class Warning : MonoBehaviour {
 		backdrop = GetComponentsInChildren<RectTransform> ().First(r => r.gameObject.name == "Backdrop");
 		timer = GetComponentsInChildren<Text> ().First(r => r.gameObject.name == "Timer");
 		icon = GetComponentsInChildren<RectTransform> ().First(r => r.gameObject.name == "Icon");
-//		line = GetComponentsInChildren<RectTransform> ().First(r => r.gameObject.name == "Line");
+		line = GetComponentsInChildren<RectTransform> ().First(r => r.gameObject.name == "Line");
 		GetComponent<Button> ().onClick.AddListener (OnClick);
-		line = gameObject.GetComponent<LineRenderer>() ?? gameObject.AddComponent<LineRenderer> ();
-		line.SetVertexCount (2);
-		line.SetColors (Color.red, Color.black);
-		line.SetWidth (2f, 0.4f);
-	}
-
-	public Transform FindSubjectTransform(Transform initial){
-		for (int i = 0; i < 5; i++) {
-			if(initial.position != Vector3.zero)
-				return initial;
-			initial = initial.parent ?? initial;
-		}
-		return initial;
 	}
 
 	public void OnClick(){
@@ -51,13 +36,6 @@ public class Warning : MonoBehaviour {
 	void Update () {
 		if (incident == null)
 			return;
-
-		if (subjectTransform == null)
-			subjectTransform = FindSubjectTransform (incident.Subject ().transform);
-
-		panel.GetWorldCorners(corners);
-		line.SetPosition (0, subjectTransform.position);
-		line.SetPosition (1, Camera.main.ScreenToWorldPoint((corners[0] + corners[1])/2f).FixZ(-10f));
 
 		var v = incident.CountDownValue ();
 
@@ -70,6 +48,7 @@ public class Warning : MonoBehaviour {
 				backdrop.gameObject.SetActive (v.HasValue);
 			panel.sizeDelta = new Vector2((v.HasValue ? 115f : 35f), 35f);
 			icon.anchoredPosition = new Vector2 (v.HasValue ? -38f : 0f, 0);
+			line.anchoredPosition = new Vector2 (v.HasValue ? -38f : 0f, 0) + new Vector2(-22f, -22f);
 			timer.text = newText;
 			timer.color = newText.Equals(fail) ? Color.red : Color.white;
 

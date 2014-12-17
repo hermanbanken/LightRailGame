@@ -17,7 +17,7 @@ public class LineSchedule : System.Object
 	}
 }
 
-public static class LineExt{
+public static class LineExt {
 	public static IList<Edge> RouteFromWayPoints(this IList<Node> waypoints, IList<Edge> allEdges){
 		var path = new List<Edge>() { };
 		// Dijkstra WayPoints together
@@ -37,5 +37,19 @@ public static class LineExt{
 
 	public static IList<Edge> RouteFromWayPoints(this LineSchedule line, IList<Edge> allEdges){
 		return line.WayPoints.RouteFromWayPoints (allEdges);
+	}
+	
+	public static T GetCurrent<T>(this IEnumerable<T> self, float unitPosition, out float unitPositionOnCurrent) where T : ILine {
+		unitPositionOnCurrent = unitPosition;
+		var e = self.GetEnumerator ();
+		while(e.MoveNext()){
+			var length = e.Current.GetUnitLength();
+			if(length > unitPositionOnCurrent){
+				return e.Current;
+			} else {
+				unitPositionOnCurrent -= length;
+			}
+		}
+		throw new ArgumentOutOfRangeException("unitPosition");
 	}
 }
