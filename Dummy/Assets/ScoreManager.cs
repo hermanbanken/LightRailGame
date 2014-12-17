@@ -6,20 +6,42 @@ using System.Collections.Generic;
 
 public class ScoreManager : MonoBehaviour
 {
-	public static int score;        // The player's score.
-	public Text text;               // Reference to the Text component.
+	// Values
+	public static int Score;        		// The player's score.
+	public static TimeSpan ProblemTime = TimeSpan.Zero;
+	public static TimeSpan DelayTime = TimeSpan.Zero;
+	public static int ImpactCount = 0;
 
+	// Text fields
+	public InputField ScoreText;         
+	public InputField ProblemTimerText;     
+	public InputField DelayTimerText;       
+	public InputField ImpactCounterText;
+	
 	void Awake ()
 	{
 		// Reset the score.
-		score = 0;
+		Score = 0;
 	}
-	
+
+	void FixedUpdate(){
+		// Dummy value increase
+		// TODO make sure to only increase when this is appropriate
+		ProblemTime += TimeSpan.FromSeconds (Time.fixedDeltaTime);
+		DelayTime += TimeSpan.FromSeconds (Time.fixedDeltaTime/2);
+		ImpactCount += 1;
+		Score += 1;
+	}
+
 	void Update ()
 	{
-		// Set the displayed text to be the word "Score" followed by the score value.
-		if(text != null)
-			text.text = "Score:" +score.ToString();
+		// Limit changing framerate
+		if(Time.frameCount%4 == 0){
+			ProblemTimerText.text = ProblemTime.FormatMinSec();
+			DelayTimerText.text = DelayTime.FormatMinSec();
+			ImpactCounterText.text = ImpactCount.ToString();
+			ScoreText.text = Score.ToString();
+		}
 	}
 
 	/* Events */

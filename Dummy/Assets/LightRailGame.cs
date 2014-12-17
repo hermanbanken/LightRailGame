@@ -68,7 +68,7 @@ public class LightRailGame : MonoBehaviour {
 			Debug.Log("An obstacle was actioned by the user.");
 		},obstacle => {
 			Debug.Log("An obstacle was resolved.");
-			ScoreManager.score++;
+			ScoreManager.Score++;
 		});
 
 		StartGame ();
@@ -211,10 +211,9 @@ public class LightRailGame : MonoBehaviour {
 	}
 
 	private T GetComponentAtScreen2DPosition<T> (Vector3 position) where T : Component{
-		Ray ray = Camera.main.ScreenPointToRay( position );
 		RaycastHit2D hit = Physics2D.Raycast(transform.position, -Vector2.up);
 
-		if (hit!=null && hit.collider != null)
+		if (hit.collider != null)
 		{
 			return hit.collider.GetComponent<T>() ?? hit.collider.GetComponentInParent<T>();
 		}     

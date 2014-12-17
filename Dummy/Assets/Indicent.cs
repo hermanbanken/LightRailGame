@@ -134,7 +134,7 @@ public class TramCarIncident : AbstractIncident, IIncident {
 	
 	public TramCarIncident (Train subject, Obstacle obstacle)
 	{
-		this.self = self;
+		this.self = subject;
 		this.obstacle = obstacle;
 	}	
 	

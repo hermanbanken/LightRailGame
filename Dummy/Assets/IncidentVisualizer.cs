@@ -8,12 +8,10 @@ public class IncidentVisualizer : MonoBehaviour
 	static Dictionary<IIncident,GameObject> incidents = new Dictionary<IIncident,GameObject> ();
 	public GameObject HandlePrefab;
 	static GameObject _HandlePrefab;
-	static IncidentVisualizer instance;
 
 	void Start(){
 		incidents = new Dictionary<IIncident,GameObject> ();
 		_HandlePrefab = HandlePrefab;
-		instance = this;
 	}
 
 	public static void Add(IIncident incident){
