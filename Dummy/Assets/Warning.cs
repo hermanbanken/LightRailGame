@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine.UI;
 using System.Linq;
 using UnityEngine.Events;
+using System;
 
 public class Warning : MonoBehaviour {
 
@@ -11,9 +12,9 @@ public class Warning : MonoBehaviour {
 	private RectTransform panel;
 	private RectTransform backdrop;
 	private Text timer;
-	private Button button;
 	private RectTransform icon;
 
+	const string fail = "fail";
 	private string text = "initial";
 
 	void Start(){
@@ -21,7 +22,7 @@ public class Warning : MonoBehaviour {
 		backdrop = GetComponentsInChildren<RectTransform> ().First(r => r.gameObject.name == "Backdrop");
 		timer = GetComponentsInChildren<Text> ().First(r => r.gameObject.name == "Timer");
 		icon = GetComponentsInChildren<RectTransform> ().First(r => r.gameObject.name == "Icon");
-		(button = GetComponent<Button> ()).onClick.AddListener (OnClick);
+		GetComponent<Button> ().onClick.AddListener (OnClick);
 	}
 
 	public void OnClick(){
@@ -35,9 +36,9 @@ public class Warning : MonoBehaviour {
 		
 		var v = incident.CountDownValue ();
 
-		var newText = v.HasValue ? v.Value.Minutes.ToString ("D2") + ":" + v.Value.Seconds.ToString ("D2") : "";
+		var newText = v.HasValue ? (!v.Value.Equals(TimeSpan.Zero) ? v.Value.FormatMinSec() : fail) : "";
 
-		if (!newText.Equals(text)) 
+		if (!newText.Equals(text))
 		{
 			timer.enabled = v.HasValue;
 			if (backdrop.gameObject.activeSelf != v.HasValue)
@@ -45,6 +46,7 @@ public class Warning : MonoBehaviour {
 			panel.sizeDelta = new Vector2((v.HasValue ? 115f : 35f), 35f);
 			icon.anchoredPosition = new Vector2 (v.HasValue ? -38f : 0f, 0);
 			timer.text = newText;
+			timer.color = newText.Equals(fail) ? Color.red : Color.white;
 
 			text = newText;
 		}
