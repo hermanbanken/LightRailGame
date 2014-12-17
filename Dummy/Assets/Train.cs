@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 
-public class Train : MonoBehaviour {
+public class Train : MonoBehaviour, IOccupy {
 
 	private LightRailGame lightRailGame;
 
@@ -148,6 +148,8 @@ public class Train : MonoBehaviour {
 			}
 
 			// Send Events
+			current.Arrive(this);
+			previous.Leave(this);
 			LightRailGame.ScoreManager.DoNodeVisit(new ScoreManager.NodeVisitEventArgs { Train = this, Node = current.From });
 			LightRailGame.ScoreManager.DoNextSegment(new ScoreManager.NextSegmentEventArgs { Train = this, PreviousSegment = previous, Segment = current });
 		}
@@ -192,6 +194,27 @@ public class Train : MonoBehaviour {
 			desiredSpeed = traffic.MaxSpeed (this);
 		}
 
+		/* Stop for vehicles and obstacles ahead */
+		var ahead = currentTrack;
+		var accum = 0f;
+		do 
+		{
+			if(desiredSpeed == 0) break;
+
+			// TODO refine maths here; 
+			var block = Path [ahead].GetOccupants ().Where (o => NeedBreak (o.Speed, accum + o.Location.Item2 - this.position));
+			if (block.Any ()) {
+				Debug.Log("Other ahead of "+this+": "+block.MinBy (o => (accum + o.Location.Item2 - this.position) / o.Speed));
+				desiredSpeed = Math.Min(desiredSpeed, block.MinBy (o => (accum + o.Location.Item2 - this.position) / o.Speed).Speed);
+			}
+
+			accum += Path[ahead].GetUnitLength();
+			ahead++;
+		} 
+		// If we don't need to break for vehicles standing this far away, don't look further
+		while(NeedBreak(0, accum));
+
+		// Limit de- or accelleration
 		var diff = desiredSpeed - this.speed;
 		return diff > 0 ? Math.Min (diff, maxAcc) : Math.Max (diff, -maxAcc);
 	}
@@ -223,4 +246,20 @@ public class Train : MonoBehaviour {
 			return diff / (absA + absB) < epsilon;
 		}
 	}
+
+	#region IOccupy implementation
+
+	public Eppy.Tuple<ILine, float> Location {
+		get {
+			return Eppy.Tuple.Create<ILine, float>(Path[currentTrack], position);
+		}
+	}
+
+	public float Speed {
+		get {
+			return speed;
+		}
+	}
+
+	#endregion
 }

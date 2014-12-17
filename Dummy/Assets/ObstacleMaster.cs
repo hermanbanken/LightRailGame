@@ -30,14 +30,15 @@ public class ObstacleMaster : MonoBehaviour {
 	public void PlaceNewObstacle (){
 		// Get random position
 		Edge edge = game.graph.edges.ElementAt(rnd.Next(0, game.graph.edges.Count ()-1));
-		float randT = (float)rnd.NextDouble ();
-		Vector3 pos = edge.GetPoint (randT);
+		float randU = (float)rnd.NextDouble () * edge.GetUnitLength ();
+		float randT = edge.GetPositionOfUnitPoint (randU);
+		Vector3 pos = edge.GetPoint(randT);
 		Vector3 dir = edge.GetDirection (randT);
 		Vector3 buttonPosition = getButtonPosition (pos, dir, 12);
 
 		Obstacle obstacle = new GameObject ().AddComponent<Obstacle> ();
 	
-		obstacle.init(pos, ObstacleType.Car, onUserActioned);
+		obstacle.init(pos, Eppy.Tuple.Create<ILine,float>(edge, randU), ObstacleType.Car, onUserActioned);
 		obstacle.buttonPosition = buttonPosition;
 		obstacles.Add (obstacle);
 		obstaclesPos.Add (obstacle.block.transform.position);

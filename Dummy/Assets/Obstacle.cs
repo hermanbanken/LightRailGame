@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System;
 
-public class Obstacle : MonoBehaviour {
+public class Obstacle : MonoBehaviour, IOccupy {
 	//  Initialized
 	public GameObject Wrapper;
 	public GameObject block;
@@ -15,9 +15,10 @@ public class Obstacle : MonoBehaviour {
 	public IIncident Incident;
 	Action<Obstacle> onUserActioned;
 	
-	public void init(Vector3 position, ObstacleType type, Action<Obstacle> onUserActioned){
+	public void init(Vector3 position, Eppy.Tuple<ILine,float> location, ObstacleType type, Action<Obstacle> onUserActioned){
 		this.onUserActioned = onUserActioned;
 		Incident = new ObstacleBlockage (this);
+		Location = location;
 
 		this.type = type;
 		switch (type) {
@@ -79,4 +80,16 @@ public class Obstacle : MonoBehaviour {
 		var sp = screenPosition(buttonPosition);
 		return GUI.Button (new Rect (sp.x - w/2, Screen.height - (sp.y + w/2), w, w/2), ButtonText());
 	}
+
+	#region IOccupy implementation
+
+	public Eppy.Tuple<ILine,float> Location { get; private set; }
+	
+	public float Speed {
+		get {
+			return 0f;
+		}
+	}
+
+	#endregion
 }
