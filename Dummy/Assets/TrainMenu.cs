@@ -42,7 +42,7 @@ public class TrainMenu : MonoBehaviour {
 		slider.maxValue = 10f;
 		slider.onValueChanged.RemoveAllListeners ();
 		slider.onValueChanged.AddListener((float val) => Selected.desiredSpeed = val);
-//		slider
+		slider.fillRect.GetComponent<Image> ().color = Color.blue;
 	
 		visiblePosition = gameObject.transform.position;
 		gameObject.transform.position += hidePosition;
@@ -53,7 +53,9 @@ public class TrainMenu : MonoBehaviour {
 	{
 		if (Selected != null) {
 			slider.value = Selected.desiredSpeed;
-			slider.fillRect.sizeDelta = new Vector2(Selected.speed, slider.fillRect.sizeDelta.y);
+			slider.fillRect.anchoredPosition = new Vector2(-5,0);
+			slider.fillRect.sizeDelta = new Vector2(Selected.speed / Selected.desiredSpeed * 110f - 100f, slider.fillRect.sizeDelta.y);
+			// TODO fix size of fillRect while dragging
 
 			stopText.text = Selected.desiredSpeed == 0f ? "Start vehicle" : "Stop vehicle";
 		}
