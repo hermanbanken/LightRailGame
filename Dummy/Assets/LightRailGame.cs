@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +12,8 @@ public class LightRailGame : MonoBehaviour {
 	[HideInInspector,NonSerialized]
 	public IIncident ClickedIncident;
 
+	public static int Difficulty = 6;
+	
 	public GameObject SelectedGameObject { get; private set; }
 	private Action<Train> selectedTrainPathChangeAction;
 
