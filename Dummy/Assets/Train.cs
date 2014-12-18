@@ -11,6 +11,8 @@ public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandle
 
 	private Node currentNode;
 
+	public State currentState { get; private set; }
+
 	[HideInInspector]
 	public bool forward = true;
 	public float speed = 0;
@@ -96,15 +98,19 @@ public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandle
 		if (isAtStop && stop.TryLeave(this)) {
 			stop = null;
 			isAtStop = false;
+			currentState &= ~(State.WaitingAtStation & State.WaitingForTrafficLight);
 		}
 	
 		// Don't move tram if the game is paused or there is no path
 		if (lightRailGame.paused || Path.Count == 0 || isAtStop) {
+			if(isAtStop)
+				currentState |= (stop as TrafficLight ? State.WaitingForTrafficLight : State.WaitingAtStation);
 			return;
 		}
 
 		// Limit speed
 		if (hasIncident) {
+			this.currentState |= State.Blocked;
 			this.speed = Math.Min(this.speed, incident.MaxSpeedOfSubject());
 		}
 
@@ -219,6 +225,7 @@ public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandle
 			if (block.Any ()) {
 				Debug.Log("Other ahead of "+this+": "+block.MinBy (o => (accum + o.Location.Item2 - this.position) / o.Speed));
 				desiredSpeed = Math.Min(desiredSpeed, block.MinBy (o => (accum + o.Location.Item2 - this.position) / o.Speed).Speed);
+				currentState &= State.Blocked;
 			}
 
 			accum += Path[ahead].GetUnitLength();
@@ -300,4 +307,13 @@ public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandle
 	}
 
 	#endregion
+
+	[Flags]
+	public enum State {
+		None,
+		WaitingAtStation,
+		WaitingForTrafficLight,
+		Blocked,
+		ManuallyStopped,
+	}
 }
