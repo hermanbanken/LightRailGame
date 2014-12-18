@@ -49,7 +49,7 @@ public class Station : MonoBehaviour, IStop {
 		quad.transform.localScale = 2f * Vector3.one;
 		quad.transform.rotation = Quaternion.Euler(0, 0, Vector3.Angle(Vector3.right,dir));
 		quad.AddComponent<GUIText> ();
-		Destory (quad.collider);
+		Destroy (quad.collider);
 		
 		quad.renderer.material.color = Color.yellow;
 	}
