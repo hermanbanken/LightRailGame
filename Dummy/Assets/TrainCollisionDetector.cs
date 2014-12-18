@@ -17,10 +17,17 @@ public class TrainCollisionDetector : MonoBehaviour
 
 		var other = col.gameObject.GetComponentInParent<Train> ();
 		if (other != null) {
-			Debug.Log("Collision on "+gameObject.name + " with "+col.gameObject.name);
 			reportTo.speed = 0f;
-			reportTo.Incident(new TrainCollisionBlockage(reportTo, other));
+			if(reportTo.incident == null){
+				Debug.Log("Collision on "+gameObject.name + " with "+col.gameObject.name);
+				var incident = new TrainCollisionBlockage(reportTo, other);
+				reportTo.Incident(incident);
+			}
 		}
+	}
+
+	void OnCollisionStay(Collision col){
+		reportTo.speed = 0;
 	}
 
 	public void ReportTo (Train train)

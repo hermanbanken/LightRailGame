@@ -8,10 +8,7 @@ public class Graph : MonoBehaviour {
 	private List<Edge> _edges;
 	private List<Node> _nodes;
 	public Dijkstra<Edge,Node> Dijkstra { get { return new Dijkstra<Edge, Node> (_edges); } }
-
-	[SerializeField]
-	public Transform Decoration;
-
+	
 	public IEnumerable<Edge> edges {
 		get {
 			if(_edges == null || _edges.Any (e => e == null) || _edges.Count == 0){
@@ -56,6 +53,15 @@ public class Graph : MonoBehaviour {
 		return node;
 	}
 
+	public void RemoveNode (Node node)
+	{
+		var removed = _edges.Where(e => e.To == node || e.From == node).ToArray();
+		foreach (Edge e in removed) {
+			_edges.Remove(e);
+		}
+		_nodes.Remove (node);
+	}
+
 	public Edge AddEdge (Node from, Node to)
 	{
 		GameObject go = new GameObject ();
@@ -71,4 +77,8 @@ public class Graph : MonoBehaviour {
 		return edge;
 	}
 
+	public void RemoveEdge (Edge edge)
+	{
+		_edges.Remove (edge);
+	}
 }

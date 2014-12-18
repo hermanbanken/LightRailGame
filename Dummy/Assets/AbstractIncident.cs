@@ -4,9 +4,22 @@ using System.Collections.Generic;
 using System;
 
 public abstract class AbstractIncident : IIncident {
-	ISolution solution;
-	DateTime? solutionChosenAt;
-	bool? resolved = null;
+
+	public event Action<IIncident> OnResolved;
+	public event Action<IIncident> OnUserAction;
+	private ISolution solution;
+	private float? solutionChosenAt;
+	private bool? resolved = null;
+
+	public AbstractIncident(){
+		// Fire occur event
+		LightRailGame.ScoreManager.DoOccur(this);
+		IncidentVisualizer.Add (this);
+		// Track events
+		this.OnUserAction += LightRailGame.ScoreManager.DoUserAction;
+		this.OnResolved += LightRailGame.ScoreManager.DoResolved;
+		this.OnResolved += (IIncident obj) => IncidentVisualizer.Remove (obj);
+	}
 
 	#region IIncident implementation
 
@@ -14,8 +27,18 @@ public abstract class AbstractIncident : IIncident {
 	{
 		if (resolved.HasValue)
 			return resolved.Value;
-		if (solutionChosenAt.HasValue && solutionChosenAt.Value + solution.ResolveTime < DateTime.Now) {
-			resolved = solutionChosenAt.HasValue && solutionChosenAt.Value + solution.ResolveTime < DateTime.Now; // TODO randomness here: && UnityEngine.Random.value < solution.SuccessRatio;
+		if (solutionChosenAt.HasValue && solutionChosenAt.Value + solution.ResolveTime.TotalSeconds < Time.time) {
+			// Add randomness, solution might fail:
+			if(UnityEngine.Random.value < solution.SuccessRatio){
+				resolved = true;
+				// Fire event
+				var listeners = OnResolved;
+				if(resolved.Value == true && listeners != null){
+					listeners(this);
+				}
+			} else {
+				resolved = false;
+			}
 		}
 		return resolved.HasValue && resolved.Value;
 	}
@@ -24,12 +47,17 @@ public abstract class AbstractIncident : IIncident {
 
 	public void SetChosenSolution (ISolution solution)
 	{
-		if (resolved.HasValue && resolved.Value) {
+		if (IsResolved ()) {
 			// Already resolved, unmodifyable
-		} else {
+		} else if (this.solution == null || CountDownValue ().HasValue && CountDownValue ().Value == TimeSpan.Zero) {
 			this.resolved = null;
 			this.solution = solution;
-			this.solutionChosenAt = DateTime.Now;
+			this.solutionChosenAt = Time.time;
+			// Fire event
+			var listeners = OnUserAction;
+			if(listeners != null){
+				listeners(this);
+			}
 		}
 	}
 
@@ -37,6 +65,20 @@ public abstract class AbstractIncident : IIncident {
 	{
 		return solution;
 	}
+
+	public TimeSpan? CountDownValue ()
+	{
+		if (solution == null || !solutionChosenAt.HasValue)
+			return null;
+		var remaining = solutionChosenAt.Value + solution.ResolveTime.TotalSeconds - Time.time;
+		if (remaining > 0)
+			return TimeSpan.FromSeconds (remaining);
+		return TimeSpan.Zero;
+	}
+
+	public abstract float MaxSpeedOfSubject ();
+
+	public abstract GameObject Subject ();
 
 	#endregion
 }

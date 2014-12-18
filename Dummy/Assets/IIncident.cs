@@ -5,10 +5,15 @@ using System;
 
 public interface IIncident
 {
+	event Action<IIncident> OnResolved;
+	event Action<IIncident> OnUserAction;
 	bool IsResolved();
+	TimeSpan? CountDownValue();
 	IEnumerable<ISolution> PossibleActions();
 	void SetChosenSolution (ISolution solution);
 	ISolution GetChosenSolution ();
+	float MaxSpeedOfSubject();
+	GameObject Subject();
 }
 
 public interface ISolution {

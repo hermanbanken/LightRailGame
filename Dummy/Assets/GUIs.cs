@@ -83,7 +83,7 @@ public static class GUIs
 				else  {
 					stateSelectPath = true;
 					// As we cannot deviate from current Edge, at this edge as starting Path
-					newPath = new List<Edge>(new [] { train.Path[train.currentStation] });
+					newPath = new List<Edge>(new [] { train.Path[train.currentTrack] });
 				}
 			}
 
@@ -105,7 +105,7 @@ public static class GUIs
 			// Add node
 			if(node != null){
 				// Find last station
-				var from = (newPath.LastOrDefault() ?? train.Path.Skip(train.currentStation).First()).To;
+				var from = (newPath.LastOrDefault() ?? train.Path.Skip(train.currentTrack).First()).To;
 				// Do Dijkstra route plan
 				var subpath = game.graph.Dijkstra.Plan(from, node);
 

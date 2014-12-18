@@ -14,6 +14,8 @@ public class ObstacleMaster : MonoBehaviour {
 	Action<Obstacle> onUserActioned;
 	Action<Obstacle> onResolved;
 
+	float? LastObstacle = null;
+
 	void Start (){
 		game = GetComponent<LightRailGame> ();
 	}
@@ -22,35 +24,27 @@ public class ObstacleMaster : MonoBehaviour {
 		this.onResolved = onResolved;
 		this.onUserActioned = onUserActioned;
 		this.onOccur = onOccur;
-		InvokeRepeating ("running", 5F,5F);
 	}
-
-	void OnGUI(){
-		var clickedObs = this.obstacles.FirstOrDefault (o => o.DrawGUI());
-		if (clickedObs != null) {					
-			// Button was hit
-			game.ClickedObstacle = clickedObs;
-		}
-	}
-
-	void running (){
+	
+	// TODO Rogier: call this from ScoreManager
+	public void PlaceNewObstacle (){
 		// Get random position
 		Edge edge = game.graph.edges.ElementAt(rnd.Next(0, game.graph.edges.Count ()-1));
-		float randT = (float)rnd.NextDouble ();
-		Vector3 pos = edge.GetPoint (randT);
+		float randU = (float)rnd.NextDouble () * edge.GetUnitLength ();
+		float randT = edge.GetPositionOfUnitPoint (randU);
+		Vector3 pos = edge.GetPoint(randT);
 		Vector3 dir = edge.GetDirection (randT);
 		Vector3 buttonPosition = getButtonPosition (pos, dir, 12);
 
 		Obstacle obstacle = new GameObject ().AddComponent<Obstacle> ();
 	
-		obstacle.init(pos, ObstacleType.Car, onUserActioned);
+		obstacle.init(pos, Eppy.Tuple.Create<ILine,float>(edge, randU), ObstacleType.Car, onUserActioned);
 		obstacle.buttonPosition = buttonPosition;
 		obstacles.Add (obstacle);
 		obstaclesPos.Add (obstacle.block.transform.position);
 
 		if(onOccur != null) onOccur (obstacle);
 	}
-	
 
 	public static Vector3 getButtonPosition(Vector3 pos, Vector3 dir, float distance){
 		Vector3 a = new Vector3 ();
@@ -61,20 +55,27 @@ public class ObstacleMaster : MonoBehaviour {
 		b.y = pos.y + distance * dir.x / (float)Math.Sqrt (dir.x * dir.x + dir.y * dir.y);
 		a.z = b.z = -4.5f;
 		return (a.magnitude < b.magnitude) ? a : b;
-		}
+	}
+
 	void Update (){
-		// Tick
-		obstacles.ForEach(p => { if (p != null) p.Tick(); });
+		// Introduce obstacles
+		// TODO Rogier: move this to ScoreManager
+		if (!LastObstacle.HasValue || LastObstacle.Value + 5 < Time.time && obstacles.Count <= 5) {
+			LastObstacle = Time.time;
+			PlaceNewObstacle();
+		}
 
 		// Resolve obstacles
-		var resolved = obstacles.Where (p => p.userActionedAt + p.timeToResolve.TotalSeconds < Time.time).ToList ();
+		var resolved = obstacles.Where (p => p.Incident.IsResolved()).ToList ();
 		resolved.ForEach((ob) => { 
 			obstacles.Remove(ob);
 			if(onResolved != null)
 				onResolved(ob); 
 		});
-
-
+	}
+	
+	void OnDisable(){
+		obstacles = new List<Obstacle>();
 	}
 }
 
