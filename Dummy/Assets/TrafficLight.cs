@@ -43,6 +43,7 @@ public class TrafficLight : MonoBehaviour, IStop {
 		quad.transform.position = pos + 4f * Vector3.back;
 		quad.transform.localScale = 2f * Vector3.one;
 		quad.renderer.material.color = Color.black;
+		Destroy (quad.collider);
 
 		sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
 		sphere.transform.parent = quad.transform;
