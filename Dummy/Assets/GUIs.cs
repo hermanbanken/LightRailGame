@@ -23,7 +23,7 @@ public static class GUIs
 	 * Show incident GUI, returns true only if the user clicked the button
 	 */
 	public static bool IncidentGUI(this IIncident incident){
-		int w = 400, h = 200;
+		int w = 600, h = 200;
 		int x, y;
 		CenterInScreen(w, h, out x, out y);
 
@@ -41,15 +41,21 @@ public static class GUIs
 		GUILayout.BeginScrollView (Vector2.zero);
 		foreach (ISolution s in incident.PossibleActions()) {
 			GUILayout.BeginHorizontal();
+			GUI.enabled = s as IPowerUp == null || (s as IPowerUp).IsAvailable();
 			if(GUILayout.Button (s.ProposalText)){
+				if(s as IPowerUp != null) (s as IPowerUp).Use();
 				incident.SetChosenSolution(s);
 				return true;
 			}
+			GUI.enabled = true;
 			GUILayout.Label (((int) s.ResolveTime.TotalSeconds) + " sec.", GUILayout.Width(50));
 			GUILayout.Label (((int)(s.SuccessRatio*100)+"%"), GUILayout.Width(60));
 			GUILayout.EndHorizontal();
 		}
 		GUILayout.EndScrollView();
+
+		if (GUILayout.Button ("Cancel", GUILayout.ExpandWidth(false), GUILayout.Width(100)))
+			return true;
 
 		GUILayout.EndArea ();
 		return false;

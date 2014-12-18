@@ -25,8 +25,27 @@ public class SolutionBlockages {
 	public static ISolution Crane = new Solution ("Call for a crane service", TimeSpan.FromSeconds (90), 0.90f);
 	public static ISolution EmergencyServices = new Solution ("Call for emergency services", TimeSpan.FromSeconds (120), 1.0f);
 	public static ISolution ContinueAnyway = new Solution ("Try to continue despite collision", TimeSpan.FromSeconds (20), 0.10f); //Only to be used if the collision is between tram and not tram
-
 }	
+
+public class PowerUps {
+	public static ISolution Magic = new PowerUp ("Call your friend Gandalf", TimeSpan.FromSeconds (5f), 1f, 1);
+}
+
+public class PowerUp : Solution, ISolution, IPowerUp {
+	public PowerUp(string ProposalText, TimeSpan ResolveTime, float SuccessRatio, int initialAvailibility) : base(ProposalText, ResolveTime, SuccessRatio) {
+
+		_powerUpCounter = initialAvailibility	;
+	}
+	public int _powerUpCounter;
+	public void Use(){
+		this._powerUpCounter --;
+	}
+	public bool IsAvailable(){
+		return this._powerUpCounter > 0;
+	}
+
+}
+
 // Given two types of collision: with another tram or something else (like a car)
 public class TrainCollisionBlockage : AbstractIncident, IIncident {
 	Train self;
@@ -50,7 +69,7 @@ public class TrainCollisionBlockage : AbstractIncident, IIncident {
 		// if another
 		else {
 			return new [] {
-				SolutionBlockages.EmergencyServices, SolutionBlockages.ContinueAnyway
+				SolutionBlockages.EmergencyServices, SolutionBlockages.ContinueAnyway, PowerUps.Magic
 			};
 		}
 	}
@@ -89,22 +108,22 @@ public class ObstacleBlockage : AbstractIncident, IIncident {
 		// Depending on this.obstacle we can also change the possible actions
 			if (this.obstacle.type == ObstacleType.Car) {
 					return new [] {
-						SolutionBlockages.Tow, SolutionBlockages.Horn, SolutionBlockages.PushAside
+				SolutionBlockages.Tow, SolutionBlockages.Horn, SolutionBlockages.PushAside, PowerUps.Magic
 					};
 			} 
 			else if (this.obstacle.type == ObstacleType.Defect) {
 					return new [] {
-						SolutionBlockages.Maintenance, SolutionBlockages.ContinueAnyway
+					SolutionBlockages.Maintenance, SolutionBlockages.ContinueAnyway,PowerUps.Magic
 					};
 			} 
 			else if (this.obstacle.type == ObstacleType.SwitchDefect) { //one needs to make sure it can happen only at a node with more than one possible direction
 					return new [] {
-						SolutionBlockages.Maintenance, SolutionBlockages.SwitchManually
+				SolutionBlockages.Maintenance, SolutionBlockages.SwitchManually,PowerUps.Magic
 					};	
 			}
 			else {
 					return new [] {
-						SolutionBlockages.Crane, SolutionBlockages.EmergencyServices,
+				SolutionBlockages.Crane, SolutionBlockages.EmergencyServices,PowerUps.Magic
 					};
 			}
 	}
