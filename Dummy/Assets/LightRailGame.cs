@@ -183,12 +183,11 @@ public class LightRailGame : MonoBehaviour {
 				var totalLength = path.Sum(e => e.GetUnitLength());
 				var segment = (1f / line.TramCount) * totalLength;
 				for(int i = 0; i < line.TramCount; i++){
-					GameObject go = new GameObject();
 					var model = Instantiate(Train, Vector3.zero, Quaternion.LookRotation(Vector3.down)) as Transform;
-					model.name = go.name = line.Name + " Tram "+(i+1);
+					model.name = line.Name + " Tram "+(i+1);
 					model.localScale = new Vector3(2, 2, 2);
-					model.parent = go.transform;
-					Train train = go.AddComponent<Train>();
+					model.parent = this.transform;
+					Train train = model.GetComponent<Train>();
 					train.Init (line, path, segment * i);
 				}
 			}
