@@ -4,8 +4,8 @@ using UnityEngine.UI;
 
 public class DifficultLevel : MonoBehaviour {
 
-	public Scrollbar diff_level;
-	public float diffcultno;
+	public Slider slider;
+	public float difficulty;
 	Text text;
 	// Use this for initialization
 	void Awake ()
@@ -13,13 +13,13 @@ public class DifficultLevel : MonoBehaviour {
 		DontDestroyOnLoad (this);
 		// Set up the reference.
 		text = GetComponent <Text> ();
-	
+		slider.onValueChanged.RemoveAllListeners ();
+		slider.onValueChanged.AddListener ((float difficulty) => LightRailGame.Difficulty = (int)difficulty);	
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		diffcultno = diff_level.value * 8;
-		text.text = "Diffuculty:" + diffcultno;
-	
+		difficulty = slider.value;
+		text.text = "Diffuculty: " + difficulty;
 	}
 }

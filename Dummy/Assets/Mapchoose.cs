@@ -4,27 +4,8 @@ using UnityEngine.UI;
 
 public class Mapchoose : MonoBehaviour {
 
-	public Scrollbar diff_level;
-	public static float diffcultno;
-
-	void Start()
-	{
-		DontDestroyOnLoad (this);
+	public void ChooseMap(string name){
+		Application.LoadLevel (name);
 	}
 
-// Update is called once per frame
-	void Update () {
-		diffcultno = diff_level.value * 8;
-		
-	}
-	// Use this for initialization
-	public void chooseMap1()
-	{
-		Application.LoadLevel ("Scene");
-	}
-
-	public void chooseMap2()
-	{
-		Application.LoadLevel ("SceneB");
-	}
 }

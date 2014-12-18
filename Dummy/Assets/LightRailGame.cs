@@ -11,6 +11,8 @@ public class LightRailGame : MonoBehaviour {
 	public bool paused = false;	
 	[HideInInspector,NonSerialized]
 	public IIncident ClickedIncident;
+
+	public static int Difficulty = 6;
 	
 	private Train selected;
 	private Action<Train> selectedTrainPathChangeAction;
