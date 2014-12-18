@@ -3,8 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using UnityEngine.EventSystems;
 
-public class Train : MonoBehaviour, IOccupy {
+public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandler {
 
 	private LightRailGame lightRailGame;
 
@@ -277,6 +278,25 @@ public class Train : MonoBehaviour, IOccupy {
 		get {
 			return speed;
 		}
+	}
+
+	#endregion
+
+	#region IPointerClickHandler implementation
+
+	void IPointerClickHandler.OnPointerClick (PointerEventData eventData)
+	{
+		EventSystem.current.SetSelectedGameObject (this.gameObject, eventData);
+	}
+
+	#endregion
+	
+	#region ISelectHandler implementation
+
+	void ISelectHandler.OnSelect (BaseEventData eventData)
+	{
+		Debug.LogWarning ("Select!"+this);
+		LightRailGame.GetInstance ().DoSelect (gameObject);
 	}
 
 	#endregion
