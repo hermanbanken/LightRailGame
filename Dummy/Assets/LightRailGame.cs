@@ -14,6 +14,8 @@ public class LightRailGame : MonoBehaviour {
 
 	public GameObject SelectedGameObject { get; private set; }
 	private Action<Train> selectedTrainPathChangeAction;
+
+	public static int Difficulty;			
 	
 	public readonly LineDrawMaster LineMaster = LineDrawMaster.getInstance();
 
