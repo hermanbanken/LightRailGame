@@ -22,6 +22,11 @@ public interface ISolution {
 	float SuccessRatio { get; }
 }
 
+public interface IPowerUp : ISolution {
+	void Use ();
+	bool IsAvailable ();
+}
+
 public class Solution : ISolution {
 	#region ISolution implementation
 
