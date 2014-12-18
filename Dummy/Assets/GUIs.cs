@@ -5,6 +5,7 @@ using System.Linq;
 
 public static class GUIs
 {
+
 	private static bool stateSelectPath = false;
 	private static List<Edge> newPath = new List<Edge>();
 	private static ILine selectedPath = null;
@@ -26,10 +27,9 @@ public static class GUIs
 		int w = 600, h = 200;
 		int x, y;
 		CenterInScreen(w, h, out x, out y);
-
 		GUI.Box (new Rect (x - 5, y - 5, w + 10, h + 10), "");
 		GUILayout.BeginArea (new Rect (x, y, w, h));
-
+		GUI.skin.button.alignment = TextAnchor.MiddleLeft;
 		GUILayout.Label ("An incident occured. How would you like to resolve this issue?");
 		
 		GUILayout.BeginHorizontal();
@@ -102,6 +102,7 @@ public static class GUIs
 
 		if (stateSelectPath) {
 			GUILayout.BeginArea(new Rect (Screen.width - 130, 10, 120, 25));
+		
 			if (GUILayout.Button ("Cancel re-routing"))
 				game.CancelReroute(train);
 			GUILayout.EndArea ();
