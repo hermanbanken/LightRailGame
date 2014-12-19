@@ -22,6 +22,8 @@ public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandle
 	public IStop stop { get; private set; }
 	private bool isAtStop;
 
+	public IList<Node> WayPoints { get; private set; }
+	public IList<Node> OriginalWayPoints { get; private set; }
 	public IList<Edge> Path { get; private set; }
 	public IList<Edge> OriginalPath { get; private set; }
 	public int currentTrack;
@@ -57,6 +59,9 @@ public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandle
 		Path = route;
 		OriginalPath = route;
 
+		WayPoints = line.WayPoints;
+		OriginalWayPoints = line.WayPoints.ToList ();
+
 		Edge current = Path [currentTrack];
 		while (current.GetLength () < initialUnitPositionOnLine) {
 			initialUnitPositionOnLine -= current.GetLength ();
@@ -69,10 +74,22 @@ public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandle
 		position = initialUnitPositionOnLine;
 	}
 
-	public void UpdatePath(IList<Edge> path){
+	public void UpdatePath(IList<Node> wayPoints, IList<Edge> preCalculatedPath = null){
+		if (wayPoints.Count < 2)
+			return;
+
+		var path = preCalculatedPath ?? wayPoints.RouteFromWayPoints (wayPoints.First ().graph.edges.ToList());
+
 		var prev = this.Path;
+		var prevCurrentTrack = currentTrack;
 		this.currentTrack = path.IndexOf (this.Path [currentTrack]);
+		if (this.currentTrack < 0) {
+			path = this.Path.Concat(path).ToList();
+			this.currentTrack = prevCurrentTrack;
+			// TODO handle when on new track : then fix route to desired path
+		}
 		this.Path = path;
+		this.WayPoints = wayPoints;
 
 		// Send events
 		LightRailGame.ScoreManager.DoReroute (new ScoreManager.RerouteEventArgs { 
@@ -217,7 +234,7 @@ public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandle
 			// TODO refine maths here; 
 			var block = Path [ahead].GetOccupants ().Where (o => accum + o.Location.Item2 < forZero && NeedBreak (o.Speed, accum + o.Location.Item2 - this.position));
 			if (block.Any ()) {
-				Debug.Log("Other ahead of "+this+": "+block.MinBy (o => (accum + o.Location.Item2 - this.position) / o.Speed));
+//				Debug.Log("Other ahead of "+this+": "+block.MinBy (o => (accum + o.Location.Item2 - this.position) / o.Speed));
 				desiredSpeed = Math.Min(desiredSpeed, block.MinBy (o => (accum + o.Location.Item2 - this.position) / o.Speed).Speed);
 			}
 

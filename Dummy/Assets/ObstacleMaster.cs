@@ -5,10 +5,16 @@ using System.Linq;
 using System;
 
 public class ObstacleMaster : MonoBehaviour {
+	[NonSerialized]
 	List<Obstacle> obstacles = new List<Obstacle>();
+	[NonSerialized]
+	List<IIncident> incidents = new List<IIncident>();
 	List<Vector3> obstaclesPos = new List<Vector3>();
 	System.Random rnd = new System.Random ();
+
 	LightRailGame game;
+	List <ObstacleType> incidentTypeList = new List<ObstacleType>{ 
+		ObstacleType.AngryMob, ObstacleType.DrunkenPassenger, ObstacleType.StenchOnBoard, ObstacleType.WomenInLabour };
 
 	Action<Obstacle> onOccur;
 	Action<Obstacle> onUserActioned;
@@ -18,6 +24,8 @@ public class ObstacleMaster : MonoBehaviour {
 
 	void Start (){
 		game = GetComponent<LightRailGame> ();
+		obstacles = new List<Obstacle>();
+		incidents = new List<IIncident>();
 	}
 
 	public void init(Action<Obstacle> onOccur, Action<Obstacle> onUserActioned, Action<Obstacle> onResolved) {
@@ -41,9 +49,19 @@ public class ObstacleMaster : MonoBehaviour {
 		obstacle.init(pos, Eppy.Tuple.Create<ILine,float>(edge, randU), ObstacleType.Car, onUserActioned);
 		obstacle.buttonPosition = buttonPosition;
 		obstacles.Add (obstacle);
+		incidents.Add (obstacle.Incident);
 		obstaclesPos.Add (obstacle.block.transform.position);
 
 		if(onOccur != null) onOccur (obstacle);
+	}
+
+	public void CreateNewInsideTramIncident(){
+
+		var trains = GameObject.FindObjectsOfType<Train> ();
+		Train train = trains [rnd.Next(trains.Length)%trains.Length];
+		var inc = new TramCarIncident (train.gameObject, incidentTypeList[rnd.Next (incidentTypeList.Count)]);
+		train.Incident (inc);
+		incidents.Add (inc);
 	}
 
 	public static Vector3 getButtonPosition(Vector3 pos, Vector3 dir, float distance){
@@ -59,12 +77,18 @@ public class ObstacleMaster : MonoBehaviour {
 
 	void Update (){
 		// Introduce obstacles
-		// TODO Rogier: move this to ScoreManager
-		if (!LastObstacle.HasValue || LastObstacle.Value + 5 < Time.time && obstacles.Count <= 5) {
-			LastObstacle = Time.time;
-			PlaceNewObstacle();
-		}
+		if (incidents.Count <= LightRailGame.Difficulty) {
+			// TODO Rogier: move this to ScoreManager
+			if (!LastObstacle.HasValue || LastObstacle.Value + 5 < Time.time) {
+				Debug.Log ("Creating obstacle, difficulty = " + LightRailGame.Difficulty);
+				LastObstacle = Time.time;
 
+				if(obstacles.Count * 2 - 2f * (.5f + UnityEngine.Random.value) > incidents.Count)
+					CreateNewInsideTramIncident();
+				else
+					PlaceNewObstacle ();
+			}
+		}
 		// Resolve obstacles
 		var resolved = obstacles.Where (p => p.Incident.IsResolved()).ToList ();
 		resolved.ForEach((ob) => { 
@@ -72,6 +96,8 @@ public class ObstacleMaster : MonoBehaviour {
 			if(onResolved != null)
 				onResolved(ob); 
 		});
+
+		incidents.RemoveAll (i => i.IsResolved ());
 	}
 	
 	void OnDisable(){

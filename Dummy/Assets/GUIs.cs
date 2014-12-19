@@ -5,6 +5,7 @@ using System.Linq;
 
 public static class GUIs
 {
+
 	private static bool stateSelectPath = false;
 	private static List<Edge> newPath = new List<Edge>();
 	private static ILine selectedPath = null;
@@ -23,13 +24,12 @@ public static class GUIs
 	 * Show incident GUI, returns true only if the user clicked the button
 	 */
 	public static bool IncidentGUI(this IIncident incident){
-		int w = 400, h = 200;
+		int w = 600, h = 200;
 		int x, y;
 		CenterInScreen(w, h, out x, out y);
-
 		GUI.Box (new Rect (x - 5, y - 5, w + 10, h + 10), "");
 		GUILayout.BeginArea (new Rect (x, y, w, h));
-
+		GUI.skin.button.alignment = TextAnchor.MiddleLeft;
 		GUILayout.Label ("An incident occured. How would you like to resolve this issue?");
 		
 		GUILayout.BeginHorizontal();
@@ -41,15 +41,21 @@ public static class GUIs
 		GUILayout.BeginScrollView (Vector2.zero);
 		foreach (ISolution s in incident.PossibleActions()) {
 			GUILayout.BeginHorizontal();
+			GUI.enabled = s as IPowerUp == null || (s as IPowerUp).IsAvailable();
 			if(GUILayout.Button (s.ProposalText)){
+				if(s as IPowerUp != null) (s as IPowerUp).Use();
 				incident.SetChosenSolution(s);
 				return true;
 			}
+			GUI.enabled = true;
 			GUILayout.Label (((int) s.ResolveTime.TotalSeconds) + " sec.", GUILayout.Width(50));
 			GUILayout.Label (((int)(s.SuccessRatio*100)+"%"), GUILayout.Width(60));
 			GUILayout.EndHorizontal();
 		}
 		GUILayout.EndScrollView();
+
+		if (GUILayout.Button ("Cancel", GUILayout.ExpandWidth(false), GUILayout.Width(100)))
+			return true;
 
 		GUILayout.EndArea ();
 		return false;
@@ -96,6 +102,7 @@ public static class GUIs
 
 		if (stateSelectPath) {
 			GUILayout.BeginArea(new Rect (Screen.width - 130, 10, 120, 25));
+		
 			if (GUILayout.Button ("Cancel re-routing"))
 				game.CancelReroute(train);
 			GUILayout.EndArea ();
@@ -132,7 +139,7 @@ public static class GUIs
 					Debug.Log ("Old "+train.Path.ToStr());
 					Debug.Log ("New "+newPath.ToStr());
 					// TODO If completed, then update train.Path
-					train.UpdatePath(newPath.ToList());
+					train.UpdatePath(newPath.Select(e=>e.From).ToList(), newPath.ToList());
 					stateSelectPath = false;
 				}
 			}

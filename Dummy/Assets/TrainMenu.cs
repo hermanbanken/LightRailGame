@@ -34,7 +34,15 @@ public class TrainMenu : MonoBehaviour {
 
 		stop = this.GetComponentsInChildren<Button>().First(b=>b.gameObject.name == "Stop");
 		stop.onClick.RemoveAllListeners ();
-		stop.onClick.AddListener(() => Selected.desiredSpeed = Selected.desiredSpeed == 0f ? 10f : 0f);
+		stop.onClick.AddListener(() => {
+			var prev = Selected.desiredSpeed;
+			Selected.desiredSpeed = Selected.desiredSpeed == 0f ? 10f : 0f;
+			LightRailGame.ScoreManager.DoDesiredSpeedChange(new ScoreManager.DesiredSpeedChangeEventArgs {
+				Train = Selected,
+				Previous = prev,
+				Current = Selected.desiredSpeed
+			});
+		});
 		stopText = stop.GetComponentInChildren<Text>();
 
 		slider = GetComponentInChildren<Slider> ();

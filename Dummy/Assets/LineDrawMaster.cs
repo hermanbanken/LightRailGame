@@ -9,10 +9,12 @@ public class LineDrawMaster {
 	private IDictionary<ILine,LineRenderer> renderers = new Dictionary<ILine, LineRenderer>();
 	private IList<LineRenderer> unused = new List<LineRenderer>();
 
-	public LineDrawMaster(){}
+	public LineDrawMaster(){
+		unused = new List<LineRenderer> ();
+	}
 
 	public static LineDrawMaster getInstance(){
-		return Instance ?? (Instance = new LineDrawMaster()); 
+		return (Instance = new LineDrawMaster()); 
 	}
 
 	public LineRenderer ShowLine(ILine e, LineOptions options = null){
@@ -87,6 +89,39 @@ public class LineOptions {
 	public float[] widths = new [] { 1f, 1f };
 }
 
+public class StraightLine : ILine {
+	Vector3 from;
+	Vector3 to;
+
+	public StraightLine(Vector3 from, Vector3 to){
+		this.to = to;
+		this.from = from;
+	}
+
+	#region ILine implementation
+
+	public float GetUnitLength ()
+	{
+		return (from - to).magnitude;
+	}
+
+	public Vector3 GetUnitPosition (float t)
+	{
+		return Vector3.Lerp (from, to, t);
+	}
+
+	public bool TryGetClosestPoint (Vector3 other, float maxDistance, out float t, out Vector3 pos)
+	{
+		t = 0f;
+		pos = Vector3.zero;
+		return false;
+	}
+
+	#endregion
+
+
+}
+
 public class CombinedLine : ILine {
 	private IEnumerable<ILine> lines;
 	public CombinedLine(IEnumerable<ILine> lines){
@@ -111,5 +146,17 @@ public class CombinedLine : ILine {
 		}
 		return lines.Last ().GetUnitPosition (lines.Last ().GetUnitLength ());
 	}
+	#endregion
+
+	#region ILine implementation
+
+	public bool TryGetClosestPoint (Vector3 other, float maxDistance, out float t, out Vector3 pos)
+	{
+		float _t; Vector3 _pos;
+		return lines.MinBy (l => {
+			return l.TryGetClosestPoint(other, maxDistance, out _t, out _pos) ? (other-_pos).magnitude : float.MaxValue;
+		}).TryGetClosestPoint(other, maxDistance, out t, out pos);
+	}
+
 	#endregion
 }

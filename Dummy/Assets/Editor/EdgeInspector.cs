@@ -37,7 +37,12 @@ public class EdgeInspector : BezierSplineInspector {
 		}
 
 		if (GUILayout.Button ("Split Edge")) {
-			
+			Undo.RecordObject (edge, "Split Edge");
+			var between = edge.graph.AddNode();
+			between.position = Vector3.Slerp(edge.From.position, edge.To.position, 0.5f);
+			edge.graph.AddEdge(edge.From, between);
+			edge.graph.AddEdge(between, edge.To);
+			edge.graph.RemoveEdge(edge);
 		}
 
 		var bg = GUI.backgroundColor;

@@ -14,6 +14,7 @@ public interface IEdge<TNode> where TNode : class {
 public interface ILine {
 	float GetUnitLength();
 	Vector3 GetUnitPosition(float t);
+	bool TryGetClosestPoint(Vector3 other, float maxDistance, out float t, out Vector3 pos);
 }
 
 public interface IKnowWhoIsHere : ILine {
@@ -98,8 +99,8 @@ public class Edge : BezierSpline, IEdge<Node>, ILine, IKnowWhoIsHere
 		deco.frequency = (int)Math.Round(4 * this.GetLength ());
 		MeshRenderer r = go.AddComponent<MeshRenderer> ();
 		deco.Mesh = go.AddComponent<MeshFilter> ();
-		r.material.mainTexture = Resources.Load<Texture2D>("rail");
-		r.material.shader = Shader.Find ("Transparent/Cutout/Diffuse");
+		r.material.mainTexture = LightRailGame.GetInstance ().RailTexture;//Resources.Load<Texture2D>("rail");
+		r.material.shader = LightRailGame.GetInstance ().RailShader;//Shader.Find ("Transparent/Cutout/Diffuse");
 		deco.Awake ();
 
 		Occupants = new Dictionary<Type, IList<IOccupy>>();
@@ -200,6 +201,16 @@ public class Edge : BezierSpline, IEdge<Node>, ILine, IKnowWhoIsHere
 	{
 		if(Occupants != null && Occupants.ContainsKey(typeof(T)) && Occupants[typeof(T)].Contains(who))
 			Occupants [typeof(T)].Remove (who);
+	}
+
+	#endregion
+
+	#region ILine implementation
+
+	public bool TryGetClosestPoint (Vector3 other, float maxDistance, out float t, out Vector3 pos)
+	{
+		// TODO pre-calculate Edge bounding square and pre-check if that matches the point 
+		return base.TryGetClosestPoint (other, maxDistance, out t, out pos);
 	}
 
 	#endregion

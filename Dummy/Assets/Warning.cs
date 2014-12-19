@@ -29,8 +29,7 @@ public class Warning : MonoBehaviour {
 	}
 
 	public void OnClick(){
-		Debug.Log("Clicked Button of incident " + incident);
-		LightRailGame.GetInstance().ClickedIncident = incident;
+		LightRailGame.GetInstance().ShowMenu(incident);
 	}
 
 	void Update () {

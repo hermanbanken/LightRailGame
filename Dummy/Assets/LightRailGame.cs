@@ -1,23 +1,34 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System;
 using System.Runtime.Serialization;
+using Eppy;
+using UnityEngine.UI;
 
-public class LightRailGame : MonoBehaviour {
-
+public class LightRailGame : MonoBehaviour 
+{
 	[HideInInspector,NonSerialized]
 	public bool paused = false;	
 	[HideInInspector,NonSerialized]
 	public IIncident ClickedIncident;
+	public event Action<IIncident> OnIncidentMenuOpen;
 
+	public static int Difficulty = 6;
+
+	public event Action<GameObject> OnSelectedGameObjectChanged;
 	public GameObject SelectedGameObject { get; private set; }
 	private Action<Train> selectedTrainPathChangeAction;
-	
-	public readonly LineDrawMaster LineMaster = LineDrawMaster.getInstance();
+
+	public LineDrawMaster LineMaster { get; private set; }
 
 	private LineRenderer selectionLine;
+
+	[NonSerialized]
+	private LineOptions LineOpts;
+	[NonSerialized]
+	private LineOptions LineOptsReRoute;
 
 	private Graph _graph;
 	[HideInInspector]
@@ -33,6 +44,13 @@ public class LightRailGame : MonoBehaviour {
 		set { _scoreManager = value; } 
 	}
 
+	private static EdgeRaycaster _edgeRaycaster;
+	[HideInInspector]
+	public static EdgeRaycaster EdgeRaycaster { 
+		get { return _edgeRaycaster ?? (_edgeRaycaster = GameObject.FindObjectOfType<EdgeRaycaster> ()); } 
+		set { _edgeRaycaster = value; } 
+	}
+
 	// TODO Roger move this field to ScoreManager
 	[HideInInspector,NonSerialized]
 	public ObstacleMaster Obstacles;
@@ -46,16 +64,43 @@ public class LightRailGame : MonoBehaviour {
 	// Set Line for Unity to package in Build
 	public Material LineRendererMaterial;
 
+	public Texture RailTexture;
+	public Shader RailShader;
+
 	[SerializeField]
 	public List<LineSchedule> Schedule = new List<LineSchedule> ();
-	
+
+	[NonSerialized]
+	private GameObject Knot;
+
+	[NonSerialized]
+	private Tuple<GameObject,Node>[] WPKnots;
+
 	// Use this for initialization
 	void Start () {
 		QualitySettings.antiAliasing = 4;
 
+		LineMaster = LineDrawMaster.getInstance ();
+
+		Knot = GameObject.Find ("ReRouteKnot");
+		Knot.SetActive (false);
+
 		if (LineRendererMaterial == null)
 			Debug.LogWarning ("You did not set the Material of the LineRenderer. Please go to the Inspector of the LightRailGame object and set its material");
 	
+		LineOpts = new LineOptions {
+			materials = new [] { LineRendererMaterial },
+			widths = new [] { .8f, .8f },
+			colors = new [] { Color.blue, Color.blue },
+			offset = Vector3.back
+		};
+		LineOptsReRoute = new LineOptions {
+			materials = new [] { LineRendererMaterial },
+			widths = new [] { .8f, .8f },
+			colors = new [] { Color.green, Color.green },
+			offset = Vector3.back
+		};
+
 		// Do not show FPS in non-dev Build
 		GameObject.Find ("FPS").SetActive (Debug.isDebugBuild);
 
@@ -74,9 +119,14 @@ public class LightRailGame : MonoBehaviour {
 		StartGame ();
 	}
 
+	void Update(){
+		UpdateKnots ();
+	}
+
 	/**
 	 * Handle mouse/scrolling/events
 	 */
+	static Train _train;
 	void FixedUpdate () {
 		mouse.OnFrame ();
 
@@ -86,19 +136,34 @@ public class LightRailGame : MonoBehaviour {
 			Camera.main.orthographicSize = Math.Max(3f, Camera.main.orthographicSize);
 		}
 
+		// Show edge dragger
+		if (SelectedGameObject != null){
+			if(LightRailGame.EdgeRaycaster.CurrentHover != null) {
+				Knot.transform.position = Camera.main.WorldToScreenPoint(LightRailGame.EdgeRaycaster.CurrentHover.pos);
+				Screen.showCursor = false;
+				Knot.SetActive(true);
+				if(mouse.Events.Any() && (_train = SelectedGameObject.GetComponent<Train>())){
+					HandleKnotClick(mouse.Events.Dequeue(), LightRailGame.EdgeRaycaster.CurrentHover.Edge, _train);
+				}
+			} else {
+				Knot.SetActive(false);
+				Screen.showCursor = true;
+			}
+		}
+
 		// Handle all mouse events
 		while (mouse.Events.Any()) {
 			var e = mouse.Events.Dequeue();
 
 			// Handle panning
-			var speed = 0.1f;
+			var speed = 0.5f * Camera.main.orthographicSize / 100f;
 			var background = this.GetComponentAtScreen2DPosition<BoxCollider2D>(e.position);
 			if(background != null && background.gameObject.name == "Quad"){
 				var lastPos = e.position;
 				e.OnDrag += (Vector3 newPos) => {
 					// Pan background using the new mouse position
 					var diff = newPos - lastPos;
-					Camera.main.transform.Translate(-diff.x*speed, -diff.y*speed, 0, Space.World);
+					Camera.main.transform.Translate(-diff.x*speed, -diff.y*speed, 0, Space.Self);
 					lastPos = newPos;
 				};
 				return;
@@ -110,6 +175,8 @@ public class LightRailGame : MonoBehaviour {
 		if (SelectedGameObject != null) RequestDeselect ();
 
 		SelectedGameObject = obj;
+		if (OnSelectedGameObjectChanged != null)
+			OnSelectedGameObjectChanged (obj);
 
 		var train = obj.GetComponent<Train>();
 		if(train != null){
@@ -118,12 +185,9 @@ public class LightRailGame : MonoBehaviour {
 				if(line != null) 
 					LineMaster.HideLine(line);
 				line = new CombinedLine(changedTrain.Path.AsEnumerable().Cast<ILine>());
-				LineMaster.ShowLine(line, new LineOptions {
-					materials = new [] { LineRendererMaterial },
-					widths = new [] { .6f, .6f },
-					colors = new [] { Color.blue, Color.red },
-					offset = Vector3.back
-				});
+				LineMaster.ShowLine(line, LineOpts);
+				RemoveKnots();
+				AddKnots(train, train.WayPoints);
 			};
 			train.OnPathChange += selectedTrainPathChangeAction;
 			selectedTrainPathChangeAction(train);
@@ -138,12 +202,19 @@ public class LightRailGame : MonoBehaviour {
 	
 	private void OnDeselect(){
 		var train = this.SelectedGameObject.GetComponent<Train>();
+
+		RemoveKnots ();
+		
 		if (train != null) {
 			LineMaster.RemoveAll ();
 			this.CancelReroute (train);
 			train.OnPathChange -= selectedTrainPathChangeAction;
 		}
+
 		this.SelectedGameObject = null;
+
+		if (OnSelectedGameObjectChanged != null)
+			OnSelectedGameObjectChanged (null);
 	}
 
 	// Draw menu's
@@ -158,6 +229,12 @@ public class LightRailGame : MonoBehaviour {
 				ClickedIncident = null;
 			}
 		}
+	}
+
+	public void ShowMenu(IIncident inc){
+		ClickedIncident = inc;
+		if(OnIncidentMenuOpen != null)
+			OnIncidentMenuOpen (inc);
 	}
 
 	// On start: form routes, add trams
@@ -213,5 +290,112 @@ public class LightRailGame : MonoBehaviour {
 		return GameObject.FindObjectOfType<LightRailGame>();
 	}
 
+	void HandleKnotClick(MouseEvent evt, Edge currentEdge, Train train){
+		Node from = null; Node to = null;
+		int edgeIndex = train.Path.IndexOf(currentEdge);
+		// Loop back, find previous WayPoint
+		for (int i = (edgeIndex-1+train.Path.Count)%train.Path.Count; i < edgeIndex || i > edgeIndex; i = (i-1+train.Path.Count)%train.Path.Count) {
+			if(train.WayPoints.Contains(train.Path[i].To)){
+				from = train.Path[i].To;
+				break;
+			}
+		}
+		// Loop forward, find next WayPoint
+		for (int i = (edgeIndex+1)%train.Path.Count; i < edgeIndex || i > edgeIndex; i = (i+1)%train.Path.Count) {
+			if(train.WayPoints.Contains(train.Path[i].From)){
+				to = train.Path[i].From;
+				break;
+			}
+		}
+
+		var edges = currentEdge.graph.edges.ToList ();
+		ILine reroute = null;
+		Edge lastEdge = currentEdge;
+
+		evt.OnDrag += (Vector3 obj) => {
+			// If we can Snap
+			if(LightRailGame.EdgeRaycaster.CurrentHover != null){
+				if(lastEdge == LightRailGame.EdgeRaycaster.CurrentHover.Edge)
+					return;
+
+				lastEdge = LightRailGame.EdgeRaycaster.CurrentHover.Edge;
+
+//				Debug.Log ("From: "+from);
+//				Debug.Log ("Visiting: "+lastEdge.From + " and " +lastEdge.To);
+//				Debug.Log ("To: "+to);
+				var a = new Dijkstra<Edge,Node>(edges).PlanRoute(from, lastEdge.To);
+				var b = new Dijkstra<Edge,Node>(edges).PlanRoute(lastEdge.To, from);
+
+				// Clear previous
+				if(reroute != null) LineMaster.HideLine(reroute);
+				reroute = new CombinedLine(a.Concat(b).Cast<ILine>());
+				LineMaster.ShowLine(reroute, LineOptsReRoute);
+//				Debug.Log ("Patch path = "+a+b);
+			} 
+			// Cannot Snap
+			else {
+				lastEdge = currentEdge;
+				Knot.transform.position = obj;
+				var c = Camera.main.ScreenToWorldPoint(obj).FixZ(currentEdge.To.position.z);
+				// Clear previous
+				if(reroute != null) LineMaster.HideLine(reroute);
+				reroute = new CombinedLine(new [] {
+					new StraightLine(from.position, c),
+					new StraightLine(c, to.position)
+				});
+				LineMaster.ShowLine(reroute, LineOptsReRoute);
+			}
+		};
+		evt.OnRelease += (Vector3 obj) => {
+			if(reroute != null) LineMaster.HideLine(reroute);
+			if(LightRailGame.EdgeRaycaster.CurrentHover != null && (lastEdge == LightRailGame.EdgeRaycaster.CurrentHover.Edge) && lastEdge != currentEdge){
+				var newWP = train.WayPoints.Where(n=>true).ToList();
+				if(LightRailGame.EdgeRaycaster.CurrentHover.t < 0.5)
+					newWP.Insert (newWP.IndexOf(from), lastEdge.From);
+				else 
+					newWP.Insert (newWP.IndexOf(from), lastEdge.To);
+				train.UpdatePath(newWP);
+				Debug.LogWarning("REROUTED!!");
+			}
+		};
+	}
+
+	void AddKnots (Train train, IList<Node> wayPoints)
+	{
+		Debug.Log ("Adding Knots");
+		var controls = GameObject.Find ("LRG_Controls");
+		// TODO cleanup this ugly mess
+		WPKnots = wayPoints.ToList().Select ((wp, i) => {
+			var knot = Instantiate(Knot, Camera.main.WorldToScreenPoint(wp.position), Quaternion.identity) as GameObject;
+			knot.transform.SetParent(controls.transform, true);
+			knot.SetActive (true);
+			knot.GetComponent<Button>().onClick.AddListener(() => {
+				Debug.Log ("There are "+train.WayPoints.Count()+" waypoints");
+				if(train.WayPoints.Count() > 2){
+					train.UpdatePath(train.WayPoints.Where(w => w != wp).ToList());
+				}
+			});
+			return Tuple.Create(knot, wp);
+		}).ToArray();
+	}
+
+	void RemoveKnots(){
+		if(WPKnots != null)
+		foreach (Tuple<GameObject,Node> p in WPKnots) {
+			if(p.Item1 != null){
+				p.Item1.SetActive(false);
+				Destroy (p.Item1);
+			}
+		}
+		WPKnots = new Tuple<GameObject, Node>[0];
+	}
+
+	void UpdateKnots (){
+		if(WPKnots != null)
+		foreach (Tuple<GameObject,Node> p in WPKnots) {
+			if(p.Item1 != null)
+				p.Item1.transform.position = Camera.main.WorldToScreenPoint(p.Item2.position);
+		}
+	}
 }
 
