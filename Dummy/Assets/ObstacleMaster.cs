@@ -5,7 +5,9 @@ using System.Linq;
 using System;
 
 public class ObstacleMaster : MonoBehaviour {
+	[NonSerialized]
 	List<Obstacle> obstacles = new List<Obstacle>();
+	[NonSerialized]
 	List<IIncident> incidents = new List<IIncident>();
 	List<Vector3> obstaclesPos = new List<Vector3>();
 	System.Random rnd = new System.Random ();
@@ -22,6 +24,8 @@ public class ObstacleMaster : MonoBehaviour {
 
 	void Start (){
 		game = GetComponent<LightRailGame> ();
+		obstacles = new List<Obstacle>();
+		incidents = new List<IIncident>();
 	}
 
 	public void init(Action<Obstacle> onOccur, Action<Obstacle> onUserActioned, Action<Obstacle> onResolved) {
@@ -53,10 +57,9 @@ public class ObstacleMaster : MonoBehaviour {
 
 	public void CreateNewInsideTramIncident(){
 
-		int r1 = rnd.Next(game.trainList.Count)%game.trainList.Count;
-		Train train = game.trainList [r1];
-		int r2 = rnd.Next (incidentTypeList.Count);
-		var inc = new TramCarIncident (train, incidentTypeList[r2]);
+		var trains = GameObject.FindObjectsOfType<Train> ();
+		Train train = trains [rnd.Next(trains.Length)%trains.Length];
+		var inc = new TramCarIncident (train.gameObject, incidentTypeList[rnd.Next (incidentTypeList.Count)]);
 		train.Incident (inc);
 		incidents.Add (inc);
 	}
