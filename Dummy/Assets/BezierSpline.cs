@@ -177,7 +177,7 @@ public class BezierSpline : MonoBehaviour {
 
 	private void cachePositions(bool forceReset = false){
 		if(positionCache == null || forceReset)
-			positionCache = Enumerable.Range (0, precision + 1).Select (t => (float) t / precision).Select (t => this.GetPoint (t)).ToList();
+			positionCache = Enumerable.Range (0, precision + 1).Select (t => t / (float) precision).Select (t => this.GetPoint (t)).ToList();
 		if (lengthCache == null || forceReset)
 			lengthCache = positionCache.TakeWhile ((_, i) => i < positionCache.Count - 1).Select ((p, i) => Vector3.Distance (p, positionCache [i + 1])).ToList();
 	}
