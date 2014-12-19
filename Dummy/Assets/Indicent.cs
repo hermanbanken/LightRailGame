@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System;
-
+using System.Linq;
 
 // Given 1s real time is 60s in game
 
@@ -161,34 +161,34 @@ public class ObstacleBlockage : AbstractIncident, IIncident {
 // For tramcar incident we implement four different types: Drunken passenger, angry mob, women in labour and stench on board
 public class TramCarIncident : AbstractIncident, IIncident {
 	Train self;
-	Obstacle obstacle;
+	ObstacleType type;
 	
 	
-	public TramCarIncident (Train subject, Obstacle obstacle)
+	public TramCarIncident (Train subject, ObstacleType type)
 	{
 		this.self = subject;
-		this.obstacle = obstacle;
+		this.type = type;
 	}	
 	
 	#region IIncident implementation
 	public override IEnumerable<ISolution> PossibleActions ()
 	{
-		if (this.obstacle.type == ObstacleType.DrunkenPassenger) {
+		if (this.type == ObstacleType.DrunkenPassenger) {
 			return new [] {
 				SolutionIncidents.Shout, SolutionIncidents.Police,
 			};
 		}
-		else if (this.obstacle.type == ObstacleType.AngryMob) {
+		else if (this.type == ObstacleType.AngryMob) {
 			return new [] {
 				SolutionIncidents.Calm, SolutionIncidents.Police,
 			};
 		}
-		else if (this.obstacle.type == ObstacleType.WomenInLabour) {
+		else if (this.type == ObstacleType.WomenInLabour) {
 			return new [] {
 				SolutionIncidents.Ambulance, SolutionIncidents.DeliverBaby, SolutionBlockages.Crane
 			};
 		}
-		else if (this.obstacle.type == ObstacleType.StenchOnBoard) {
+		else if (this.type == ObstacleType.StenchOnBoard) {
 			return new [] {
 				SolutionIncidents.Ventilate, SolutionIncidents.Calm,
 			};
@@ -224,7 +224,7 @@ public class TramCarIncident : AbstractIncident, IIncident {
 	//rogier - tweakit
 	public override int Suitability (ISolution solution)
 	{
-		if (this.obstacle.type == ObstacleType.WomenInLabour && solution == SolutionBlockages.Crane) return -1;
+		if (this.type == ObstacleType.WomenInLabour && solution == SolutionBlockages.Crane) return -1;
 		return 1;
 	}
 

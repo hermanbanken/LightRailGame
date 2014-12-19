@@ -5,8 +5,10 @@ using System.Linq;
 using System;
 using System.Runtime.Serialization;
 
-public class LightRailGame : MonoBehaviour {
-
+public class LightRailGame : MonoBehaviour 
+{
+	[HideInInspector,NonSerialized]
+	public List<Train> trainList = new List<Train>();
 	[HideInInspector,NonSerialized]
 	public bool paused = false;	
 	[HideInInspector,NonSerialized]
@@ -193,6 +195,7 @@ public class LightRailGame : MonoBehaviour {
 					model.parent = this.transform;
 					Train train = model.GetComponent<Train>();
 					train.Init (line, path, segment * i);
+					trainList.Add(train);
 				}
 			}
 		}
