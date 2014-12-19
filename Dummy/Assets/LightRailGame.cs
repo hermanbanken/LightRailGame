@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using System.Runtime.Serialization;
+using Eppy;
+using UnityEngine.UI;
 
 public class LightRailGame : MonoBehaviour 
 {
@@ -64,7 +66,10 @@ public class LightRailGame : MonoBehaviour
 
 	[NonSerialized]
 	private GameObject Knot;
-	
+
+	[NonSerialized]
+	private Tuple<GameObject,Node>[] WPKnots;
+
 	// Use this for initialization
 	void Start () {
 		QualitySettings.antiAliasing = 4;
@@ -117,6 +122,7 @@ public class LightRailGame : MonoBehaviour
 
 		// Show edge dragger
 		if (SelectedGameObject != null){
+			UpdateKnots ();
 			if(LightRailGame.EdgeRaycaster.CurrentHover != null) {
 				Knot.transform.position = Camera.main.WorldToScreenPoint(LightRailGame.EdgeRaycaster.CurrentHover.pos);
 				Screen.showCursor = false;
@@ -166,7 +172,7 @@ public class LightRailGame : MonoBehaviour
 				line = new CombinedLine(changedTrain.Path.AsEnumerable().Cast<ILine>());
 				LineMaster.ShowLine(line, LineOpts);
 
-				AddKnots(train.WayPoints);
+				AddKnots(train, train.WayPoints);
 			};
 			train.OnPathChange += selectedTrainPathChangeAction;
 			selectedTrainPathChangeAction(train);
@@ -323,7 +329,7 @@ public class LightRailGame : MonoBehaviour
 		};
 		evt.OnRelease += (Vector3 obj) => {
 			if(reroute != null) LineMaster.HideLine(reroute);
-			if(LightRailGame.EdgeRaycaster.CurrentHover != null && (lastEdge = LightRailGame.EdgeRaycaster.CurrentHover.Edge)){
+			if(LightRailGame.EdgeRaycaster.CurrentHover != null && (lastEdge == LightRailGame.EdgeRaycaster.CurrentHover.Edge)){
 				var newWP = train.WayPoints.ToList();
 				if(LightRailGame.EdgeRaycaster.CurrentHover.t < 0.5)
 					newWP.Insert (newWP.IndexOf(from), lastEdge.From);
@@ -335,11 +341,29 @@ public class LightRailGame : MonoBehaviour
 		};
 	}
 
-	void AddKnots (IList<Node> wayPoints)
+	void AddKnots (Train train, IList<Node> wayPoints)
 	{
-		foreach(Node n in wayPoints){
-			var knot = Instantiate(Knot, n.position, Quaternion.identity) as GameObject;
+		var controls = GameObject.Find ("LRG_Controls");
+		WPKnots = new Tuple<GameObject,Node>[wayPoints.Count];
+		int i = 0;
+		// TODO cleanup this ugly mess
+		wayPoints.ToList().ForEach (wp => {
+			var knot = Instantiate(Knot, Camera.main.WorldToScreenPoint(wp.position), Quaternion.identity) as GameObject;
+			knot.transform.SetParent(controls.transform, true);
 			knot.SetActive (true);
+			WPKnots[i++] = Tuple.Create(knot, wp);
+			knot.GetComponent<Button>().onClick.AddListener(() => {
+				Debug.Log ("Click WayPoint");
+				if(train.WayPoints.Count > 2)
+					train.UpdatePath(train.WayPoints.Where(w => w != wp).ToList());
+			});
+		});
+	}
+
+	void UpdateKnots (){
+		if(WPKnots != null)
+		foreach (Tuple<GameObject,Node> p in WPKnots) {
+			p.Item1.transform.position = Camera.main.WorldToScreenPoint(p.Item2.position);
 		}
 	}
 }
