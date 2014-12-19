@@ -35,6 +35,13 @@ public class LightRailGame : MonoBehaviour {
 		set { _scoreManager = value; } 
 	}
 
+	private static EdgeRaycaster _edgeRaycaster;
+	[HideInInspector]
+	public static EdgeRaycaster EdgeRaycaster { 
+		get { return _edgeRaycaster ?? (_edgeRaycaster = GameObject.FindObjectOfType<EdgeRaycaster> ()); } 
+		set { _edgeRaycaster = value; } 
+	}
+
 	// TODO Roger move this field to ScoreManager
 	[HideInInspector,NonSerialized]
 	public ObstacleMaster Obstacles;
