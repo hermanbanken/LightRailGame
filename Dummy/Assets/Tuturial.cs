@@ -11,7 +11,7 @@ public class Tuturial : MonoBehaviour {
 	void Start () {
 		LightRailGame.Difficulty = -1;
 		text = GetComponent<Text>();
-		text.text="Have a look at the map, you should see two trams moving. There are some stations that the trams visit. \n\n Firstly, try to click on a tram.";
+		text.text="Have a look at the map, you should see two trams moving. There are some stations that the trams visit.\n\nFirstly, try to click on a tram.";
 	}
 	
 	// Update is called once per frame
@@ -22,7 +22,7 @@ public class Tuturial : MonoBehaviour {
 				return;
 			if(obj.GetComponent<Train>() != null) {
 			text.text="Congratulations! You picked a Tram. The tram menu appeared.\n\n You can alter the tram's speed, route or stop it completely.\n\n" +
-				"Sometimes, an accident may occur which blocks the tracks.\n\n Click the button below to manually add one";
+				"Sometimes, an accident may occur which blocks the tracks.\n\nClick the button below to manually add one";
 				//LightRailGame.GetInstance().Obstacles.PlaceNewObstacle();
 				ObStacleOccure.SetActive(true);
 			
@@ -48,7 +48,7 @@ public class Tuturial : MonoBehaviour {
 			int suit = obj.Suitability(obj.GetChosenSolution());
 			// if suit<0, maybe a wrong action?;
 			if(suit<0)
-				text.text="Hmm, that might not have been a good idea!!\n You might need to choose another one...";;
+				text.text="Hmm, that might not have been a good idea!!\nYou might need to choose another one...";;
 
 		};
 
