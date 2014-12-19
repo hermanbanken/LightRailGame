@@ -29,7 +29,7 @@ public abstract class AbstractIncident : IIncident {
 			return resolved.Value;
 		if (solutionChosenAt.HasValue && solutionChosenAt.Value + solution.ResolveTime.TotalSeconds < Time.time) {
 			// Add randomness, solution might fail:
-			if(UnityEngine.Random.value < solution.SuccessRatio){
+			if(Suitability(solution) > 0 && UnityEngine.Random.value < solution.SuccessRatio){
 				resolved = true;
 				// Fire event
 				var listeners = OnResolved;
