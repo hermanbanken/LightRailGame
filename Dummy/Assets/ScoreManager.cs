@@ -14,6 +14,8 @@ public class ScoreManager : MonoBehaviour
 
 	public static int PTcount;
 	public static int DTcount;
+	public static int BalancePDcount;   
+	public static int treshholdPT;
 
 	public static IDictionary<IIncident,float> StartTime = new Dictionary<IIncident, float>();
 
@@ -29,8 +31,10 @@ public class ScoreManager : MonoBehaviour
 		Score = 0;
 		ImpactCount = 0;
 		PTcount = 0;
-		DTcount = 0; 
-		//ProblemTimerText = "PT";
+		DTcount = 0;
+		BalancePDcount = 2; // DT counts half the time, value [0,5] High is less importance off DT
+		treshholdPT = 4; // start timer after the 4th incident
+
 	}
 
 	void Start()
@@ -50,6 +54,7 @@ public class ScoreManager : MonoBehaviour
 						ImpactCount += 1;};
 		OnStationOk  += (object sender, StationDueEventArgs e) => DTcount -= 1;
 		OnReroute += (object sender, RerouteEventArgs e) => ImpactCount += 34;
+
 		// Reroute should influence PT or DT since DT is influenced by stations PT is used. 
 		// PTcount += 1;
 		// onDEroute ....
@@ -69,13 +74,19 @@ public class ScoreManager : MonoBehaviour
 			// Prepare for possible fail
 			StartTime[obj] = Time.time;
 		};
+
+		OnDesiredSpeedChange += (object sender, DesiredSpeedChangeEventArgs e) => {
+			// als de previous > 0 en current == 0 dan net gestopt.
+			if (e.Previous > 0 && e.Current == 0) ImpactCount += 100;
+			if (e.Previous == 0 && e.Current > 0) ImpactCount -= 50;
+		};
 	}
 
 	void FixedUpdate(){
-		// Dummy value increase
-		// TODO make sure to only increase when this is appropriate
-		if (PTcount > 5) ProblemTime += TimeSpan.FromSeconds (Time.fixedDeltaTime);
-		if (DTcount > 0) DelayTime += TimeSpan.FromSeconds (Time.fixedDeltaTime/2);
+		// test values used to increase.
+		// TODO tweak the values to be sure to only increase appropriate
+		if (PTcount > treshholdPT) ProblemTime += TimeSpan.FromSeconds (Time.fixedDeltaTime);
+		if (DTcount > 0) DelayTime += TimeSpan.FromSeconds (Time.fixedDeltaTime/BalancePDcount);
 		//ImpactCount += 1;
 		//Score += 1;
 	}
@@ -101,6 +112,7 @@ public class ScoreManager : MonoBehaviour
 	public event Action<IIncident> OnUserAction;
 	public event Action<IIncident> OnResolved;
 	public event EventHandler<RerouteEventArgs> OnReroute;
+	public event EventHandler<DesiredSpeedChangeEventArgs> OnDesiredSpeedChange;
 	
 	/* Event invocators */
 	public virtual void DoNextSegment (NextSegmentEventArgs e)
@@ -165,6 +177,13 @@ public class ScoreManager : MonoBehaviour
 		if (handler != null)
 			handler (this, e);
 	}
+	
+	public virtual void DoDesiredSpeedChange (DesiredSpeedChangeEventArgs e)
+	{
+		var handler = OnDesiredSpeedChange;
+		if (handler != null)
+			handler (this, e);
+	}
 
 	/* Events */
 	public class NextSegmentEventArgs : EventArgs {
@@ -192,4 +211,11 @@ public class ScoreManager : MonoBehaviour
 		public IEnumerable<Edge> Route { get; set; }
 		public IEnumerable<Edge> PreviousRoute { get; set; }
 	}
+
+	public class DesiredSpeedChangeEventArgs : EventArgs {
+		public Train Train { get; set; }
+		public float Previous { get; set; }
+		public float Current { get; set; }
+	}
+
 }
