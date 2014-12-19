@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using System.Runtime.Serialization;
+using Eppy;
+using UnityEngine.UI;
 
 public class LightRailGame : MonoBehaviour 
 {
@@ -18,8 +20,8 @@ public class LightRailGame : MonoBehaviour
 	public event Action<GameObject> OnSelectedGameObjectChanged;
 	public GameObject SelectedGameObject { get; private set; }
 	private Action<Train> selectedTrainPathChangeAction;
-	
-	public readonly LineDrawMaster LineMaster = LineDrawMaster.getInstance();
+
+	public LineDrawMaster LineMaster { get; private set; }
 
 	private LineRenderer selectionLine;
 
@@ -65,10 +67,15 @@ public class LightRailGame : MonoBehaviour
 
 	[NonSerialized]
 	private GameObject Knot;
-	
+
+	[NonSerialized]
+	private Tuple<GameObject,Node>[] WPKnots;
+
 	// Use this for initialization
 	void Start () {
 		QualitySettings.antiAliasing = 4;
+
+		LineMaster = LineDrawMaster.getInstance ();
 
 		Knot = GameObject.Find ("ReRouteKnot");
 		Knot.SetActive (false);
@@ -116,6 +123,7 @@ public class LightRailGame : MonoBehaviour
 
 		// Show edge dragger
 		if (SelectedGameObject != null){
+			UpdateKnots ();
 			if(LightRailGame.EdgeRaycaster.CurrentHover != null) {
 				Knot.transform.position = Camera.main.WorldToScreenPoint(LightRailGame.EdgeRaycaster.CurrentHover.pos);
 				Screen.showCursor = false;
@@ -165,7 +173,7 @@ public class LightRailGame : MonoBehaviour
 				line = new CombinedLine(changedTrain.Path.AsEnumerable().Cast<ILine>());
 				LineMaster.ShowLine(line, LineOpts);
 
-				AddKnots(train.WayPoints);
+				AddKnots(train, train.WayPoints);
 			};
 			train.OnPathChange += selectedTrainPathChangeAction;
 			selectedTrainPathChangeAction(train);
@@ -302,9 +310,9 @@ public class LightRailGame : MonoBehaviour
 				var b = new Dijkstra<Edge,Node>(edges).PlanRoute(lastEdge.To, from);
 
 				// Clear previous
-				if(reroute != null) LineDrawMaster.getInstance().HideLine(reroute);
+				if(reroute != null) LineMaster.HideLine(reroute);
 				reroute = new CombinedLine(a.Concat(b).Cast<ILine>());
-				LineDrawMaster.getInstance().ShowLine(reroute, LineOpts);
+				LineMaster.ShowLine(reroute, LineOpts);
 				Debug.Log ("Patch path = "+a+b);
 			} 
 			// Cannot Snap
@@ -313,12 +321,12 @@ public class LightRailGame : MonoBehaviour
 				Knot.transform.position = obj;
 				var c = Camera.main.ScreenToWorldPoint(obj).FixZ(currentEdge.To.position.z);
 				// Clear previous
-				if(reroute != null) LineDrawMaster.getInstance().HideLine(reroute);
+				if(reroute != null) LineMaster.HideLine(reroute);
 				reroute = new CombinedLine(new [] {
 					new StraightLine(from.position, c),
 					new StraightLine(c, to.position)
 				});
-				LineDrawMaster.getInstance().ShowLine(reroute, new LineOptions {
+				LineMaster.ShowLine(reroute, new LineOptions {
 					materials = new [] { LineRendererMaterial },
 					widths = new [] { .8f, .8f },
 					colors = new [] { Color.blue, Color.blue },
@@ -327,16 +335,42 @@ public class LightRailGame : MonoBehaviour
 			}
 		};
 		evt.OnRelease += (Vector3 obj) => {
-			if(reroute != null) LineDrawMaster.getInstance().HideLine(reroute);
-			Debug.LogWarning("REROUTED!!");
+			if(reroute != null) LineMaster.HideLine(reroute);
+			if(LightRailGame.EdgeRaycaster.CurrentHover != null && (lastEdge == LightRailGame.EdgeRaycaster.CurrentHover.Edge)){
+				var newWP = train.WayPoints.ToList();
+				if(LightRailGame.EdgeRaycaster.CurrentHover.t < 0.5)
+					newWP.Insert (newWP.IndexOf(from), lastEdge.From);
+				else 
+					newWP.Insert (newWP.IndexOf(from), lastEdge.To);
+				train.UpdatePath(newWP);
+				Debug.LogWarning("REROUTED!!");
+			}
 		};
 	}
 
-	void AddKnots (IList<Node> wayPoints)
+	void AddKnots (Train train, IList<Node> wayPoints)
 	{
-		foreach(Node n in wayPoints){
-			var knot = Instantiate(Knot, n.position, Quaternion.identity) as GameObject;
+		var controls = GameObject.Find ("LRG_Controls");
+		WPKnots = new Tuple<GameObject,Node>[wayPoints.Count];
+		int i = 0;
+		// TODO cleanup this ugly mess
+		wayPoints.ToList().ForEach (wp => {
+			var knot = Instantiate(Knot, Camera.main.WorldToScreenPoint(wp.position), Quaternion.identity) as GameObject;
+			knot.transform.SetParent(controls.transform, true);
 			knot.SetActive (true);
+			WPKnots[i++] = Tuple.Create(knot, wp);
+			knot.GetComponent<Button>().onClick.AddListener(() => {
+				Debug.Log ("Click WayPoint");
+				if(train.WayPoints.Count > 2)
+					train.UpdatePath(train.WayPoints.Where(w => w != wp).ToList());
+			});
+		});
+	}
+
+	void UpdateKnots (){
+		if(WPKnots != null)
+		foreach (Tuple<GameObject,Node> p in WPKnots) {
+			p.Item1.transform.position = Camera.main.WorldToScreenPoint(p.Item2.position);
 		}
 	}
 }

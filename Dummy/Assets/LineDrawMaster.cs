@@ -9,10 +9,12 @@ public class LineDrawMaster {
 	private IDictionary<ILine,LineRenderer> renderers = new Dictionary<ILine, LineRenderer>();
 	private IList<LineRenderer> unused = new List<LineRenderer>();
 
-	public LineDrawMaster(){}
+	public LineDrawMaster(){
+		unused = new List<LineRenderer> ();
+	}
 
 	public static LineDrawMaster getInstance(){
-		return Instance ?? (Instance = new LineDrawMaster()); 
+		return (Instance = new LineDrawMaster()); 
 	}
 
 	public LineRenderer ShowLine(ILine e, LineOptions options = null){
