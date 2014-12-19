@@ -99,8 +99,8 @@ public class Edge : BezierSpline, IEdge<Node>, ILine, IKnowWhoIsHere
 		deco.frequency = (int)Math.Round(4 * this.GetLength ());
 		MeshRenderer r = go.AddComponent<MeshRenderer> ();
 		deco.Mesh = go.AddComponent<MeshFilter> ();
-		r.material.mainTexture = Resources.Load<Texture2D>("rail");
-		r.material.shader = Shader.Find ("Transparent/Cutout/Diffuse");
+		r.material.mainTexture = LightRailGame.GetInstance ().RailTexture;//Resources.Load<Texture2D>("rail");
+		r.material.shader = LightRailGame.GetInstance ().RailShader;//Shader.Find ("Transparent/Cutout/Diffuse");
 		deco.Awake ();
 
 		Occupants = new Dictionary<Type, IList<IOccupy>>();

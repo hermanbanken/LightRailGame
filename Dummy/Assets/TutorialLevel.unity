@@ -6680,6 +6680,8 @@ MonoBehaviour:
   WarningPrefab: {fileID: 0}
   LineRendererMaterial: {fileID: 2100000, guid: a2b8ffcef2a2e499d935dcd18956be2c,
     type: 2}
+  RailTexture: {fileID: 2800000, guid: 48b0a35093dd1477692865307ca8c57c, type: 3}
+  RailShader: {fileID: 51, guid: 0000000000000000f000000000000000, type: 0}
   Schedule:
   - Name: Line 1
     TramCount: 2

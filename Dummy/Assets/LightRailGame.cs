@@ -64,6 +64,9 @@ public class LightRailGame : MonoBehaviour
 	// Set Line for Unity to package in Build
 	public Material LineRendererMaterial;
 
+	public Texture RailTexture;
+	public Shader RailShader;
+
 	[SerializeField]
 	public List<LineSchedule> Schedule = new List<LineSchedule> ();
 
