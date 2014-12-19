@@ -170,7 +170,7 @@ RectTransform:
   m_Children:
   - {fileID: 396417510}
   m_Father: {fileID: 823905692}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_AnchorMin: {x: .5, y: .5}
   m_AnchorMax: {x: .5, y: .5}
   m_AnchoredPosition: {x: 6, y: -7}
@@ -224,7 +224,7 @@ MonoBehaviour:
             Culture=neutral, PublicKeyToken=null
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: SceneB
+          m_StringArgument: Scene
           m_BoolArgument: 0
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
@@ -785,9 +785,9 @@ RectTransform:
   - {fileID: 1749984136}
   - {fileID: 417821798}
   - {fileID: 1075950048}
+  - {fileID: 1658162389}
   - {fileID: 170972157}
   - {fileID: 1191286463}
-  - {fileID: 1658162389}
   - {fileID: 614452659}
   - {fileID: 1836742052}
   - {fileID: 1542815990}
@@ -1259,7 +1259,7 @@ RectTransform:
   m_Children:
   - {fileID: 901061511}
   m_Father: {fileID: 823905692}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_AnchorMin: {x: .5, y: .5}
   m_AnchorMax: {x: .5, y: .5}
   m_AnchoredPosition: {x: 255, y: -9}
@@ -1303,7 +1303,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1191286465}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1390003427}
+        m_MethodName: ChooseMap
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine, Version=0.0.0.0,
+            Culture=neutral, PublicKeyToken=null
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: SceneB
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &1191286465
@@ -2081,7 +2093,7 @@ RectTransform:
   m_Children:
   - {fileID: 693788220}
   m_Father: {fileID: 823905692}
-  m_RootOrder: 5
+  m_RootOrder: 3
   m_AnchorMin: {x: .5, y: .5}
   m_AnchorMax: {x: .5, y: .5}
   m_AnchoredPosition: {x: -249, y: -8}
@@ -2135,7 +2147,7 @@ MonoBehaviour:
             Culture=neutral, PublicKeyToken=null
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: Scene
+          m_StringArgument: TutorialLevel
           m_BoolArgument: 0
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
