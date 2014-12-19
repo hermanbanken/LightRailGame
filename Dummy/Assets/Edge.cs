@@ -14,6 +14,7 @@ public interface IEdge<TNode> where TNode : class {
 public interface ILine {
 	float GetUnitLength();
 	Vector3 GetUnitPosition(float t);
+	bool TryGetClosestPoint(Vector3 other, float maxDistance, out float t, out Vector3 pos);
 }
 
 public interface IKnowWhoIsHere : ILine {
@@ -200,6 +201,15 @@ public class Edge : BezierSpline, IEdge<Node>, ILine, IKnowWhoIsHere
 	{
 		if(Occupants != null && Occupants.ContainsKey(typeof(T)) && Occupants[typeof(T)].Contains(who))
 			Occupants [typeof(T)].Remove (who);
+	}
+
+	#endregion
+
+	#region ILine implementation
+
+	public bool TryGetClosestPoint (Vector3 other, float maxDistance, out float t, out Vector3 pos)
+	{
+		return base.TryGetClosestPoint (other, maxDistance, out t, out pos);
 	}
 
 	#endregion
