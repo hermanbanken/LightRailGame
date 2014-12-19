@@ -17,8 +17,8 @@ public class LightRailGame : MonoBehaviour
 	public event Action<GameObject> OnSelectedGameObjectChanged;
 	public GameObject SelectedGameObject { get; private set; }
 	private Action<Train> selectedTrainPathChangeAction;
-	
-	public readonly LineDrawMaster LineMaster = LineDrawMaster.getInstance();
+
+	public LineDrawMaster LineMaster { get; private set; }
 
 	private LineRenderer selectionLine;
 
@@ -68,6 +68,8 @@ public class LightRailGame : MonoBehaviour
 	// Use this for initialization
 	void Start () {
 		QualitySettings.antiAliasing = 4;
+
+		LineMaster = LineDrawMaster.getInstance ();
 
 		Knot = GameObject.Find ("ReRouteKnot");
 		Knot.SetActive (false);
@@ -295,9 +297,9 @@ public class LightRailGame : MonoBehaviour
 				var b = new Dijkstra<Edge,Node>(edges).PlanRoute(lastEdge.To, from);
 
 				// Clear previous
-				if(reroute != null) LineDrawMaster.getInstance().HideLine(reroute);
+				if(reroute != null) LineMaster.HideLine(reroute);
 				reroute = new CombinedLine(a.Concat(b).Cast<ILine>());
-				LineDrawMaster.getInstance().ShowLine(reroute, LineOpts);
+				LineMaster.ShowLine(reroute, LineOpts);
 				Debug.Log ("Patch path = "+a+b);
 			} 
 			// Cannot Snap
@@ -306,12 +308,12 @@ public class LightRailGame : MonoBehaviour
 				Knot.transform.position = obj;
 				var c = Camera.main.ScreenToWorldPoint(obj).FixZ(currentEdge.To.position.z);
 				// Clear previous
-				if(reroute != null) LineDrawMaster.getInstance().HideLine(reroute);
+				if(reroute != null) LineMaster.HideLine(reroute);
 				reroute = new CombinedLine(new [] {
 					new StraightLine(from.position, c),
 					new StraightLine(c, to.position)
 				});
-				LineDrawMaster.getInstance().ShowLine(reroute, new LineOptions {
+				LineMaster.ShowLine(reroute, new LineOptions {
 					materials = new [] { LineRendererMaterial },
 					widths = new [] { .8f, .8f },
 					colors = new [] { Color.blue, Color.blue },
@@ -320,8 +322,16 @@ public class LightRailGame : MonoBehaviour
 			}
 		};
 		evt.OnRelease += (Vector3 obj) => {
-			if(reroute != null) LineDrawMaster.getInstance().HideLine(reroute);
-			Debug.LogWarning("REROUTED!!");
+			if(reroute != null) LineMaster.HideLine(reroute);
+			if(LightRailGame.EdgeRaycaster.CurrentHover != null && (lastEdge = LightRailGame.EdgeRaycaster.CurrentHover.Edge)){
+				var newWP = train.WayPoints.ToList();
+				if(LightRailGame.EdgeRaycaster.CurrentHover.t < 0.5)
+					newWP.Insert (newWP.IndexOf(from), lastEdge.From);
+				else 
+					newWP.Insert (newWP.IndexOf(from), lastEdge.To);
+				train.UpdatePath(newWP);
+				Debug.LogWarning("REROUTED!!");
+			}
 		};
 	}
 
