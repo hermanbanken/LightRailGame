@@ -10,7 +10,7 @@ public class Tuturial : MonoBehaviour {
 	void Start () {
 		LightRailGame.Difficulty = -1;
 		text = GetComponent<Text>();
-		text.text="First, you see that two trams are run.There are some stations. \n\nFirstly,Try to click on a Tram.";
+		text.text="Have a look at the map, you should see two trams moving. There are some stations that the trams visit. \n\n Firstly, try to click on a tram.";
 	}
 	
 	// Update is called once per frame
@@ -18,30 +18,33 @@ public class Tuturial : MonoBehaviour {
 		LightRailGame.GetInstance().OnSelectedGameObjectChanged += (GameObject obj) => {
 			// The user selected something
 			if(obj.GetComponent<Train>() != null) {
-				text.text="Congradurations! You pick a Tram now.Here you see the tram menu.\n\nYou can alter tram speed, route or stop it completely.\n\nSometimes, the accident may occur as a obstacke on the track.\n\nClick the button below see what happened";
+			text.text="Congratulations! You picked a Tram. The tram menu appeared.\n\n You can alter the tram's speed, route or stop it completely.\n\n" +
+				"Sometimes, an accident may occur which blocks the tracks.\n\n Click the button below to manually add one";
 				//LightRailGame.GetInstance().Obstacles.PlaceNewObstacle();
 				ObStacleOccure.SetActive(true);
 			
 			}
 			else 
 			{
-				text.text="You do not pick a Tram!!!";
+				text.text="Please pick a tram!";
 			}
 		};
 
 		LightRailGame.GetInstance().OnIncidentMenuOpen += (IIncident obj) => {
 
-			text.text="There are several options to choose from and they differ in success rate.\n Please choose one action and try to resolve the issue.\n\nNormally, you will be facing a trade-off between rerouting and waiting and need to decide whether you wish to alter the tram’s path.\n\nNow, Choose an action and see if it works out. If not, try again!";
+			text.text="There are several options to choose from and they differ in success rate.\n Please choose an action and try to resolve the issue.\n\n" +
+				"Normally, you will be facing a trade-off between rerouting and waiting and will need to decide whether you wish to alter the tram’s path.\n\n" +
+				"Now, Choose an action and see if it works out. If not, try again!";
 
 		};
 		//LightRailGame.GetInstance()
 
 		LightRailGame.ScoreManager.OnUserAction += (IIncident obj) => {
-				text.text="Now, you choose a action. See what happend next";
+			text.text="You have picked an action, let's see what happens next";
 			int suit = obj.Suitability(obj.GetChosenSolution());
 			// if suit<0, maybe a wrong action?;
 			if(suit<0)
-				text.text="No, you choose a wrong action.!!\n I belive you will fail";;
+				text.text="Hmm, that might not have been a good idea!!\n You might need to choose another one...";;
 		};
 
 						
@@ -51,7 +54,8 @@ public class Tuturial : MonoBehaviour {
 	public void createOb()
 	{
 		LightRailGame.GetInstance().Obstacles.PlaceNewObstacle();
-		text.text="Oh no! A disturbance occurred.\n\nSee the exclamation mark on the yellow background?\n\nClick on it and let’s see how we can solve it…!";
+		text.text="Oh no! A disturbance occurred.\n\nNotice an exclamation mark with the yellow background?\n\n" +
+			"Click on it and let’s see how we can solve it…!";
 
 	}
 
