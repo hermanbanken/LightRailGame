@@ -438,7 +438,7 @@ GameObject:
   - 114: {fileID: 11489066}
   - 114: {fileID: 11489064}
   m_Layer: 5
-  m_Name: ProblemTimer
+  m_Name: SM_ProblemTimer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -456,7 +456,7 @@ GameObject:
   - 114: {fileID: 11489068}
   - 114: {fileID: 11489070}
   m_Layer: 5
-  m_Name: Score
+  m_Name: SM_Score
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -490,7 +490,7 @@ GameObject:
   - 114: {fileID: 11489082}
   - 114: {fileID: 11489080}
   m_Layer: 5
-  m_Name: Impact
+  m_Name: SM_Impact
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -508,7 +508,7 @@ GameObject:
   - 114: {fileID: 11489084}
   - 114: {fileID: 11489086}
   m_Layer: 5
-  m_Name: DelayTimer
+  m_Name: SM_DelayTimer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
