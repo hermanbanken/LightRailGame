@@ -13,6 +13,7 @@ public class LightRailGame : MonoBehaviour
 	public bool paused = false;	
 	[HideInInspector,NonSerialized]
 	public IIncident ClickedIncident;
+	public event Action<IIncident> OnIncidentMenuOpen;
 
 	public static int Difficulty = 6;
 
@@ -210,6 +211,12 @@ public class LightRailGame : MonoBehaviour
 				ClickedIncident = null;
 			}
 		}
+	}
+
+	public void ShowMenu(IIncident inc){
+		ClickedIncident = inc;
+		if(OnIncidentMenuOpen != null)
+			OnIncidentMenuOpen (inc);
 	}
 
 	// On start: form routes, add trams
