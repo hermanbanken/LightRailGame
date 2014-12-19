@@ -10,6 +10,7 @@ public interface IIncident
 	bool IsResolved();
 	TimeSpan? CountDownValue();
 	IEnumerable<ISolution> PossibleActions();
+	int Suitability(ISolution solution);
 	void SetChosenSolution (ISolution solution);
 	ISolution GetChosenSolution ();
 	float MaxSpeedOfSubject();

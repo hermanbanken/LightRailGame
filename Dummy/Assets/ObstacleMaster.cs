@@ -6,9 +6,13 @@ using System;
 
 public class ObstacleMaster : MonoBehaviour {
 	List<Obstacle> obstacles = new List<Obstacle>();
+	List<IIncident> incidents = new List<IIncident>();
 	List<Vector3> obstaclesPos = new List<Vector3>();
 	System.Random rnd = new System.Random ();
+
 	LightRailGame game;
+	List <ObstacleType> incidentTypeList = new List<ObstacleType>{ 
+		ObstacleType.AngryMob, ObstacleType.DrunkenPassenger, ObstacleType.StenchOnBoard, ObstacleType.WomenInLabour };
 
 	Action<Obstacle> onOccur;
 	Action<Obstacle> onUserActioned;
@@ -41,9 +45,20 @@ public class ObstacleMaster : MonoBehaviour {
 		obstacle.init(pos, Eppy.Tuple.Create<ILine,float>(edge, randU), ObstacleType.Car, onUserActioned);
 		obstacle.buttonPosition = buttonPosition;
 		obstacles.Add (obstacle);
+		incidents.Add (obstacle.Incident);
 		obstaclesPos.Add (obstacle.block.transform.position);
 
 		if(onOccur != null) onOccur (obstacle);
+	}
+
+	public void CreateNewInsideTramIncident(){
+
+		int r1 = rnd.Next(game.trainList.Count)%game.trainList.Count;
+		Train train = game.trainList [r1];
+		int r2 = rnd.Next (incidentTypeList.Count);
+		var inc = new TramCarIncident (train, incidentTypeList[r2]);
+		train.Incident (inc);
+		incidents.Add (inc);
 	}
 
 	public static Vector3 getButtonPosition(Vector3 pos, Vector3 dir, float distance){
@@ -59,12 +74,16 @@ public class ObstacleMaster : MonoBehaviour {
 
 	void Update (){
 		// Introduce obstacles
-		if (obstacles.Count <= LightRailGame.Difficulty) {
+		if (incidents.Count <= LightRailGame.Difficulty) {
 			// TODO Rogier: move this to ScoreManager
 			if (!LastObstacle.HasValue || LastObstacle.Value + 5 < Time.time) {
 				Debug.Log ("Creating obstacle, difficulty = " + LightRailGame.Difficulty);
 				LastObstacle = Time.time;
-				PlaceNewObstacle ();
+
+				if(obstacles.Count * 2 - 2f * (.5f + UnityEngine.Random.value) > incidents.Count)
+					CreateNewInsideTramIncident();
+				else
+					PlaceNewObstacle ();
 			}
 		}
 		// Resolve obstacles
@@ -74,6 +93,8 @@ public class ObstacleMaster : MonoBehaviour {
 			if(onResolved != null)
 				onResolved(ob); 
 		});
+
+		incidents.RemoveAll (i => i.IsResolved ());
 	}
 	
 	void OnDisable(){
