@@ -10864,6 +10864,7 @@ GameObject:
   - 92: {fileID: 1513790305}
   - 124: {fileID: 1513790304}
   - 81: {fileID: 1513790303}
+  - 114: {fileID: 1513790308}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -10935,12 +10936,27 @@ Transform:
   m_PrefabInternal: {fileID: 1390264076}
   m_GameObject: {fileID: 1513790302}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalPosition: {x: 0, y: 0, z: -20}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1133776938}
   m_Father: {fileID: 1632243841}
   m_RootOrder: 0
+--- !u!114 &1513790308
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 11460450, guid: d626722a34ec34965a57c6eecde51352,
+    type: 2}
+  m_PrefabInternal: {fileID: 1390264076}
+  m_GameObject: {fileID: 1513790302}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -768656878, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EventMask:
+    serializedVersion: 2
+    m_Bits: 512
 --- !u!1 &1515949080
 GameObject:
   m_ObjectHideFlags: 0
@@ -12097,6 +12113,7 @@ GameObject:
   - 224: {fileID: 1638157507}
   - 222: {fileID: 1638157509}
   - 114: {fileID: 1638157508}
+  - 114: {fileID: 1638157510}
   m_Layer: 5
   m_Name: RightMenu
   m_TagString: Untagged
@@ -12153,6 +12170,18 @@ CanvasRenderer:
     type: 2}
   m_PrefabInternal: {fileID: 436575892}
   m_GameObject: {fileID: 1638157506}
+--- !u!114 &1638157510
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 11483488, guid: 062ce65807c764d6dbc263e35809010a,
+    type: 2}
+  m_PrefabInternal: {fileID: 436575892}
+  m_GameObject: {fileID: 1638157506}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f8ecfdab16c24276b488eaaac82716f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1640189387
 GameObject:
   m_ObjectHideFlags: 0
@@ -15601,6 +15630,7 @@ GameObject:
   - 114: {fileID: 2135025055}
   - 114: {fileID: 2135025058}
   - 114: {fileID: 2135025057}
+  - 114: {fileID: 2135025059}
   m_Layer: 0
   m_Name: LightRailGame
   m_TagString: Untagged
@@ -15703,6 +15733,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HandlePrefab: {fileID: 185782, guid: 85107b6203ff342a18386d706d58a3eb, type: 2}
+--- !u!114 &2135025059
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2135025054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e504beb4644f84dab9159a24f7249382, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  graph: {fileID: 1367576508}
 --- !u!1 &2140990383
 GameObject:
   m_ObjectHideFlags: 0

@@ -5,8 +5,7 @@ using System.Linq;
 public class EdgeRaycaster : MonoBehaviour {
 
 	public Graph graph;
-	public Edge e;
-
+	
 	const float loose = 4f;
 	const float strict = 1f;
 
@@ -49,7 +48,6 @@ public class EdgeRaycaster : MonoBehaviour {
 		if (hit) {
 			hover.t = outT;
 			hover.pos = outP;
-			e = hover.Edge;
 		}
 	}
 
