@@ -59,12 +59,14 @@ public class ObstacleMaster : MonoBehaviour {
 
 	void Update (){
 		// Introduce obstacles
-		// TODO Rogier: move this to ScoreManager
-		if (!LastObstacle.HasValue || LastObstacle.Value + 5 < Time.time && obstacles.Count <= 5) {
-			LastObstacle = Time.time;
-			PlaceNewObstacle();
+		if (obstacles.Count <= LightRailGame.Difficulty) {
+			// TODO Rogier: move this to ScoreManager
+			if (!LastObstacle.HasValue || LastObstacle.Value + 5 < Time.time) {
+				Debug.Log ("Creating obstacle, difficulty = " + LightRailGame.Difficulty);
+				LastObstacle = Time.time;
+				PlaceNewObstacle ();
+			}
 		}
-
 		// Resolve obstacles
 		var resolved = obstacles.Where (p => p.Incident.IsResolved()).ToList ();
 		resolved.ForEach((ob) => { 

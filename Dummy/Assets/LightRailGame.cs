@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,8 +11,11 @@ public class LightRailGame : MonoBehaviour {
 	public bool paused = false;	
 	[HideInInspector,NonSerialized]
 	public IIncident ClickedIncident;
-	
-	private Train selected;
+
+	public static int Difficulty = 6;
+
+	public event Action<GameObject> OnSelectedGameObjectChanged;
+	public GameObject SelectedGameObject { get; private set; }
 	private Action<Train> selectedTrainPathChangeAction;
 	
 	public readonly LineDrawMaster LineMaster = LineDrawMaster.getInstance();
@@ -31,6 +34,13 @@ public class LightRailGame : MonoBehaviour {
 	public static ScoreManager ScoreManager { 
 		get { return _scoreManager ?? (_scoreManager = GameObject.FindObjectOfType<ScoreManager> ()); } 
 		set { _scoreManager = value; } 
+	}
+
+	private static EdgeRaycaster _edgeRaycaster;
+	[HideInInspector]
+	public static EdgeRaycaster EdgeRaycaster { 
+		get { return _edgeRaycaster ?? (_edgeRaycaster = GameObject.FindObjectOfType<EdgeRaycaster> ()); } 
+		set { _edgeRaycaster = value; } 
 	}
 
 	// TODO Roger move this field to ScoreManager
@@ -91,53 +101,44 @@ public class LightRailGame : MonoBehaviour {
 			var e = mouse.Events.Dequeue();
 
 			// Handle panning
-			var speed = 0.1f;
+			var speed = 0.5f * Camera.main.orthographicSize / 100f;
 			var background = this.GetComponentAtScreen2DPosition<BoxCollider2D>(e.position);
 			if(background != null && background.gameObject.name == "Quad"){
 				var lastPos = e.position;
 				e.OnDrag += (Vector3 newPos) => {
 					// Pan background using the new mouse position
 					var diff = newPos - lastPos;
-					Camera.main.transform.Translate(-diff.x*speed, -diff.y*speed, 0, Space.World);
+					Camera.main.transform.Translate(-diff.x*speed, -diff.y*speed, 0, Space.Self);
 					lastPos = newPos;
 				};
 				return;
 			}
+		}
+	}
 
-			// Handle train clicks
-			var train = GetComponentAtScreenPosition<Train>(e.position, true);
-			if(train != null){
-				// Select
-				if(selected == null){
-					selected = train;
-					ILine line = null;
-					selectedTrainPathChangeAction = changedTrain => {
-						if(line != null) 
-							LineMaster.HideLine(line);
-						line = new CombinedLine(changedTrain.Path.AsEnumerable().Cast<ILine>());
-						LineMaster.ShowLine(line, new LineOptions {
-							materials = new [] { LineRendererMaterial },
-							widths = new [] { .6f, .6f },
-							colors = new [] { Color.blue, Color.red },
-							offset = Vector3.back
-						});
-					};
-					train.OnPathChange += selectedTrainPathChangeAction;
-					selectedTrainPathChangeAction(train);
-				}
-				// Deselect
-				else if(selected == train){
-					OnDeselect();
-				}
-			}
+	public void DoSelect(GameObject obj){
+		if (SelectedGameObject != null) RequestDeselect ();
 
-			// Handle GUI element clicks
-			var gui = GetComponentAtScreenPosition<GUIElement>(e.position, true);
-			if(gui != null){
-				Debug.Log("GUI ELEMENT CLICKED!");
-			}
+		SelectedGameObject = obj;
+		if (OnSelectedGameObjectChanged != null)
+			OnSelectedGameObjectChanged (obj);
 
-			paused = selected != null;
+		var train = obj.GetComponent<Train>();
+		if(train != null){
+			ILine line = null;
+			selectedTrainPathChangeAction = changedTrain => {
+				if(line != null) 
+					LineMaster.HideLine(line);
+				line = new CombinedLine(changedTrain.Path.AsEnumerable().Cast<ILine>());
+				LineMaster.ShowLine(line, new LineOptions {
+					materials = new [] { LineRendererMaterial },
+					widths = new [] { .6f, .6f },
+					colors = new [] { Color.blue, Color.red },
+					offset = Vector3.back
+				});
+			};
+			train.OnPathChange += selectedTrainPathChangeAction;
+			selectedTrainPathChangeAction(train);
 		}
 	}
 
@@ -148,19 +149,22 @@ public class LightRailGame : MonoBehaviour {
 	}
 	
 	private void OnDeselect(){
-		LineMaster.RemoveAll ();
-		this.CancelReroute(selected);
-		selected.OnPathChange -= selectedTrainPathChangeAction;
-		selected = null;
-		paused = selected != null;
+		var train = this.SelectedGameObject.GetComponent<Train>();
+		if (train != null) {
+			LineMaster.RemoveAll ();
+			this.CancelReroute (train);
+			train.OnPathChange -= selectedTrainPathChangeAction;
+		}
+		this.SelectedGameObject = null;
+
+		if (OnSelectedGameObjectChanged != null)
+			OnSelectedGameObjectChanged (null);
 	}
 
 	// Draw menu's
 	void OnGUI(){
-		if (selected != null)
-			this.TrainGUI (selected);
 		// Handle Obstacle clicks
-		else if (ClickedIncident != null) {
+		if (ClickedIncident != null) {
 			// If user chooses an action this is true
 			if(ClickedIncident.IncidentGUI()){
 				var obs = (ClickedIncident as ObstacleBlockage);

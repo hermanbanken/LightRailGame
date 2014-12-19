@@ -174,12 +174,28 @@ public class BezierSpline : MonoBehaviour {
 		}
 		return length;
 	}
-
+	
 	private void cachePositions(bool forceReset = false){
 		if(positionCache == null || forceReset)
-			positionCache = Enumerable.Range (0, precision + 1).Select (t => (float) t / precision).Select (t => this.GetPoint (t)).ToList();
+			positionCache = Enumerable.Range (0, precision + 1).Select (t => t / (float) precision).Select (t => this.GetPoint (t)).ToList();
 		if (lengthCache == null || forceReset)
 			lengthCache = positionCache.TakeWhile ((_, i) => i < positionCache.Count - 1).Select ((p, i) => Vector3.Distance (p, positionCache [i + 1])).ToList();
+	}
+	
+	public bool TryGetClosestPoint (Vector3 other, float maxDistance, out float t, out Vector3 pos)
+	{
+		cachePositions ();
+		t = 0f;
+		pos = Vector3.zero;
+		var minD = float.MaxValue;
+		for (int i = 0; i < positionCache.Count; i++) {
+			if((other - positionCache[i]).magnitude < minD){
+				minD = (other - positionCache[i]).magnitude;
+				pos = positionCache[i];
+				t = i / (float) precision;
+			}
+		}
+		return minD < maxDistance;
 	}
 
 	public Vector3 GetVelocity (float t) {

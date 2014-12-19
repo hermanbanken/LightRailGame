@@ -112,4 +112,16 @@ public class CombinedLine : ILine {
 		return lines.Last ().GetUnitPosition (lines.Last ().GetUnitLength ());
 	}
 	#endregion
+
+	#region ILine implementation
+
+	public bool TryGetClosestPoint (Vector3 other, float maxDistance, out float t, out Vector3 pos)
+	{
+		float _t; Vector3 _pos;
+		return lines.MinBy (l => {
+			return l.TryGetClosestPoint(other, maxDistance, out _t, out _pos) ? (other-_pos).magnitude : float.MaxValue;
+		}).TryGetClosestPoint(other, maxDistance, out t, out pos);
+	}
+
+	#endregion
 }
