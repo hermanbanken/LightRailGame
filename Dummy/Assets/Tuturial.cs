@@ -18,6 +18,8 @@ public class Tuturial : MonoBehaviour {
 	void Update () {
 		LightRailGame.GetInstance().OnSelectedGameObjectChanged += (GameObject obj) => {
 			// The user selected something
+			if(obj == null)
+				return;
 			if(obj.GetComponent<Train>() != null) {
 				text.text="Congradurations! You pick a Tram now.Here you see the tram menu.\n\nYou can alter tram speed, route or stop it completely.\n\nSometimes, the accident may occur as a obstacke on the track.\n\nClick the button below see what happened";
 				//LightRailGame.GetInstance().Obstacles.PlaceNewObstacle();
