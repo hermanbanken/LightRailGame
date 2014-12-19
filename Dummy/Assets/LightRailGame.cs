@@ -284,10 +284,6 @@ public class LightRailGame : MonoBehaviour
 		Edge lastEdge = currentEdge;
 
 		evt.OnDrag += (Vector3 obj) => {
-			// Clear previous
-			if(reroute != null) 
-				LineDrawMaster.getInstance().HideLine(reroute);
-
 			// If we can Snap
 			if(LightRailGame.EdgeRaycaster.CurrentHover != null){
 				if(lastEdge == LightRailGame.EdgeRaycaster.CurrentHover.Edge)
@@ -301,6 +297,7 @@ public class LightRailGame : MonoBehaviour
 				var a = new Dijkstra<Edge,Node>(edges).PlanRoute(from, lastEdge.To);
 				var b = new Dijkstra<Edge,Node>(edges).PlanRoute(lastEdge.To, from);
 
+				// Clear previous
 				if(reroute != null) LineDrawMaster.getInstance().HideLine(reroute);
 				reroute = new CombinedLine(a.Concat(b).Cast<ILine>());
 				LineDrawMaster.getInstance().ShowLine(reroute, LineOpts);
@@ -308,8 +305,11 @@ public class LightRailGame : MonoBehaviour
 			} 
 			// Cannot Snap
 			else {
+				lastEdge = currentEdge;
 				Knot.transform.position = obj;
 				var c = Camera.main.ScreenToWorldPoint(obj).FixZ(currentEdge.To.position.z);
+				// Clear previous
+				if(reroute != null) LineDrawMaster.getInstance().HideLine(reroute);
 				reroute = new CombinedLine(new [] {
 					new StraightLine(from.position, c),
 					new StraightLine(c, to.position)
