@@ -22,7 +22,7 @@ public class Tuturial : MonoBehaviour {
 				return;
 			if(obj.GetComponent<Train>() != null) {
 				text.text="Congratulations! You picked a Tram. The tram menu appeared.\n\n You can alter the tram's speed, route or stop it completely.\n\n"+
-					"The current route of the tram is also highlighted.\n\nClick on reroute Now and drag its route to the left side and notice how it changes";
+					"The current route of the tram is also highlighted.\n\nTo change a route you can drag the blue line. Change its route to the left side and notice how it changes";
 				//LightRailGame.GetInstance().Obstacles.PlaceNewObstacle();
 
 			
