@@ -13,7 +13,8 @@ public class LightRailGame : MonoBehaviour {
 	public IIncident ClickedIncident;
 
 	public static int Difficulty = 6;
-	
+
+	public event Action<GameObject> OnSelectedGameObjectChanged;
 	public GameObject SelectedGameObject { get; private set; }
 	private Action<Train> selectedTrainPathChangeAction;
 	
@@ -119,6 +120,8 @@ public class LightRailGame : MonoBehaviour {
 		if (SelectedGameObject != null) RequestDeselect ();
 
 		SelectedGameObject = obj;
+		if (OnSelectedGameObjectChanged != null)
+			OnSelectedGameObjectChanged (obj);
 
 		var train = obj.GetComponent<Train>();
 		if(train != null){
@@ -153,6 +156,9 @@ public class LightRailGame : MonoBehaviour {
 			train.OnPathChange -= selectedTrainPathChangeAction;
 		}
 		this.SelectedGameObject = null;
+
+		if (OnSelectedGameObjectChanged != null)
+			OnSelectedGameObjectChanged (null);
 	}
 
 	// Draw menu's
