@@ -4,13 +4,17 @@ using UnityEngine;
 using System.Linq;
 public class Station : MonoBehaviour, IStop {
 	// Mechanics
+	[NonSerialized]
 	private IDictionary<Train,float> Presence = new Dictionary<Train, float> ();
+	[NonSerialized]
 	private float stopTime = 5f;
+	[NonSerialized]
 	private float lastVisited = 0;
 
 	public float dueTime = 60f;
 	public float dangerTime = 40f;
 
+	[NonSerialized]
 	private State _state;
 	private State ActiveState { 
 		get { return _state; }
@@ -29,6 +33,7 @@ public class Station : MonoBehaviour, IStop {
 	public enum State { Due, Danger, OK }
 
 	// Visuals
+	[NonSerialized]
 	private GameObject quad;
 
 	void Reset(){

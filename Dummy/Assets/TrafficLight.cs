@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Linq;
 
 public class TrafficLight : MonoBehaviour, IStop {
+	[NonSerialized]
 	private IList<Train> Presence = new List<Train> ();
 	// The TrafficLight that might be green after this one turns red
 	public TrafficLight Next;
@@ -17,7 +18,9 @@ public class TrafficLight : MonoBehaviour, IStop {
 	public TrafficLightState State = TrafficLightState.Green;
 
 	// Visual stuff
+	[NonSerialized]
 	private GameObject quad;
+	[NonSerialized]
 	private GameObject sphere;
 	public readonly static Color orange = new Color(1f, 0.7f, 0f);
 
