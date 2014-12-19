@@ -80,5 +80,7 @@ public abstract class AbstractIncident : IIncident {
 
 	public abstract GameObject Subject ();
 
+	public abstract int Suitability (ISolution solution);
+
 	#endregion
 }

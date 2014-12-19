@@ -70,6 +70,13 @@ public class TrainCollisionBlockage : AbstractIncident, IIncident {
 		return self != null ? self.gameObject : null;
 	}
 
+	//rogier - tweakit -- solution toevoegen
+	public override int Suitability (ISolution solution)
+	{
+		//if (this.obstacle.type == ObstacleType.Car && solution == SolutionIncidents.Ventilate) return -1;
+		return 1;
+	}
+
 	#endregion
 }
 
@@ -89,7 +96,7 @@ public class ObstacleBlockage : AbstractIncident, IIncident {
 		// Depending on this.obstacle we can also change the possible actions
 			if (this.obstacle.type == ObstacleType.Car) {
 					return new [] {
-						SolutionBlockages.Tow, SolutionBlockages.Horn, SolutionBlockages.PushAside
+						SolutionBlockages.Tow, SolutionBlockages.Horn, SolutionBlockages.PushAside, SolutionIncidents.Ventilate
 					};
 			} 
 			else if (this.obstacle.type == ObstacleType.Defect) {
@@ -123,6 +130,12 @@ public class ObstacleBlockage : AbstractIncident, IIncident {
 		return obstacle == null ? null : obstacle.gameObject;
 	}
 
+	public override int Suitability (ISolution solution)
+	{
+		if (this.obstacle.type == ObstacleType.Car && solution == SolutionIncidents.Ventilate) return -1;
+		return 1;
+	}
+
 	#endregion
 }
 
@@ -153,7 +166,7 @@ public class TramCarIncident : AbstractIncident, IIncident {
 		}
 		else if (this.obstacle.type == ObstacleType.WomenInLabour) {
 			return new [] {
-				SolutionIncidents.Ambulance, SolutionIncidents.DeliverBaby,
+				SolutionIncidents.Ambulance, SolutionIncidents.DeliverBaby, SolutionBlockages.Crane
 			};
 		}
 		else if (this.obstacle.type == ObstacleType.StenchOnBoard) {
@@ -187,6 +200,13 @@ public class TramCarIncident : AbstractIncident, IIncident {
 	public override GameObject Subject ()
 	{
 		return self.gameObject;
+	}
+
+	//rogier - tweakit
+	public override int Suitability (ISolution solution)
+	{
+		if (this.obstacle.type == ObstacleType.WomenInLabour && solution == SolutionBlockages.Crane) return -1;
+		return 1;
 	}
 
 	#endregion
