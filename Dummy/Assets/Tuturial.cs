@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class Tuturial : MonoBehaviour {
 	public GameObject ObStacleOccure;
+	public GameObject Quitgame;
 	Text text;
 	// Use this for initialization
 	void Start () {
@@ -49,8 +50,10 @@ public class Tuturial : MonoBehaviour {
 
 		LightRailGame.ScoreManager.OnResolved += (IIncident obj) => {
 			text.text="Blockage removed!\n\nCongratulations, you now know the basics of the game. Good luck managing the network!";
-
+			Quitgame.SetActive(true);
 		};
+
+	//	LightRailGame.ScoreManager.
 		
 	}
 
