@@ -100,14 +100,14 @@ public class LightRailGame : MonoBehaviour {
 			var e = mouse.Events.Dequeue();
 
 			// Handle panning
-			var speed = 0.1f;
+			var speed = 0.5f * Camera.main.orthographicSize / 100f;
 			var background = this.GetComponentAtScreen2DPosition<BoxCollider2D>(e.position);
 			if(background != null && background.gameObject.name == "Quad"){
 				var lastPos = e.position;
 				e.OnDrag += (Vector3 newPos) => {
 					// Pan background using the new mouse position
 					var diff = newPos - lastPos;
-					Camera.main.transform.Translate(-diff.x*speed, -diff.y*speed, 0, Space.World);
+					Camera.main.transform.Translate(-diff.x*speed, -diff.y*speed, 0, Space.Self);
 					lastPos = newPos;
 				};
 				return;
