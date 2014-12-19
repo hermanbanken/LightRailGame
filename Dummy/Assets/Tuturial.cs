@@ -21,10 +21,10 @@ public class Tuturial : MonoBehaviour {
 			if(obj == null)
 				return;
 			if(obj.GetComponent<Train>() != null) {
-			text.text="Congratulations! You picked a Tram. The tram menu appeared.\n\n You can alter the tram's speed, route or stop it completely.\n\n" +
-				"Sometimes, an accident may occur which blocks the tracks.\n\nClick the button below to manually add one";
+				text.text="Congratulations! You picked a Tram. The tram menu appeared.\n\n You can alter the tram's speed, route or stop it completely.\n\n"+
+					"The current route of the tram is also highlighted.\n\nClick on reroute Now and drag its route to the left side and notice how it changes";
 				//LightRailGame.GetInstance().Obstacles.PlaceNewObstacle();
-				ObStacleOccure.SetActive(true);
+
 			
 			}
 			else 
@@ -32,6 +32,14 @@ public class Tuturial : MonoBehaviour {
 				text.text="Please pick a tram!";
 			}
 		};
+
+		LightRailGame.ScoreManager.OnReroute += (object sender, ScoreManager.RerouteEventArgs e)=>
+		{
+			text.text= "Success! You just made sure that the tram will reach omitted station. Once it reaches it, it will make sure the station is green and the travellers transported."+
+				"\n\nSometimes, an accident may occur which blocks the tracks.\n\nClick the button below to manually add one";;
+			ObStacleOccure.SetActive(true);
+		};
+
 
 		LightRailGame.GetInstance().OnIncidentMenuOpen += (IIncident obj) => {
 
@@ -42,8 +50,9 @@ public class Tuturial : MonoBehaviour {
 		};
 		//LightRailGame.GetInstance()
 
-		LightRailGame.ScoreManager.OnUserAction += (IIncident obj) => {
 
+		LightRailGame.ScoreManager.OnUserAction += (IIncident obj) => {
+			ObStacleOccure.SetActive(false);
 			text.text="You have picked an action, let's see what happens next";
 			int suit = obj.Suitability(obj.GetChosenSolution());
 			// if suit<0, maybe a wrong action?;
@@ -55,9 +64,10 @@ public class Tuturial : MonoBehaviour {
 		LightRailGame.ScoreManager.OnResolved += (IIncident obj) => {
 			text.text="Blockage removed!\n\nCongratulations, you now know the basics of the game. Good luck managing the network!";
 			Quitgame.SetActive(true);
+			ObStacleOccure.SetActive(false);
 		};
 
-	//	LightRailGame.ScoreManager.
+	
 		
 	}
 
