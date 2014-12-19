@@ -22,6 +22,9 @@ public class LightRailGame : MonoBehaviour
 
 	private LineRenderer selectionLine;
 
+	[NonSerialized]
+	private LineOptions LineOpts;
+
 	private Graph _graph;
 	[HideInInspector]
 	public Graph graph { 
@@ -58,14 +61,27 @@ public class LightRailGame : MonoBehaviour
 
 	[SerializeField]
 	public List<LineSchedule> Schedule = new List<LineSchedule> ();
+
+	[NonSerialized]
+	private GameObject Knot;
 	
 	// Use this for initialization
 	void Start () {
 		QualitySettings.antiAliasing = 4;
 
+		Knot = GameObject.Find ("ReRouteKnot");
+		Knot.SetActive (false);
+
 		if (LineRendererMaterial == null)
 			Debug.LogWarning ("You did not set the Material of the LineRenderer. Please go to the Inspector of the LightRailGame object and set its material");
 	
+		LineOpts = new LineOptions {
+			materials = new [] { LineRendererMaterial },
+			widths = new [] { .8f, .8f },
+			colors = new [] { Color.blue, Color.blue },
+			offset = Vector3.back
+		};
+
 		// Do not show FPS in non-dev Build
 		GameObject.Find ("FPS").SetActive (Debug.isDebugBuild);
 
@@ -87,6 +103,7 @@ public class LightRailGame : MonoBehaviour
 	/**
 	 * Handle mouse/scrolling/events
 	 */
+	static Train _train;
 	void FixedUpdate () {
 		mouse.OnFrame ();
 
@@ -94,6 +111,21 @@ public class LightRailGame : MonoBehaviour
 		if(Input.mouseScrollDelta.magnitude > 0){
 			Camera.main.orthographicSize -= Input.mouseScrollDelta.y;
 			Camera.main.orthographicSize = Math.Max(3f, Camera.main.orthographicSize);
+		}
+
+		// Show edge dragger
+		if (SelectedGameObject != null){
+			if(LightRailGame.EdgeRaycaster.CurrentHover != null) {
+				Knot.transform.position = Camera.main.WorldToScreenPoint(LightRailGame.EdgeRaycaster.CurrentHover.pos);
+				Screen.showCursor = false;
+				Knot.SetActive(true);
+				if(mouse.Events.Any() && (_train = SelectedGameObject.GetComponent<Train>())){
+					HandleKnotClick(mouse.Events.Dequeue(), LightRailGame.EdgeRaycaster.CurrentHover.Edge, _train);
+				}
+			} else {
+				Knot.SetActive(false);
+				Screen.showCursor = true;
+			}
 		}
 
 		// Handle all mouse events
@@ -130,12 +162,9 @@ public class LightRailGame : MonoBehaviour
 				if(line != null) 
 					LineMaster.HideLine(line);
 				line = new CombinedLine(changedTrain.Path.AsEnumerable().Cast<ILine>());
-				LineMaster.ShowLine(line, new LineOptions {
-					materials = new [] { LineRendererMaterial },
-					widths = new [] { .6f, .6f },
-					colors = new [] { Color.blue, Color.red },
-					offset = Vector3.back
-				});
+				LineMaster.ShowLine(line, LineOpts);
+
+				AddKnots(train.WayPoints);
 			};
 			train.OnPathChange += selectedTrainPathChangeAction;
 			selectedTrainPathChangeAction(train);
@@ -228,5 +257,80 @@ public class LightRailGame : MonoBehaviour
 		return GameObject.FindObjectOfType<LightRailGame>();
 	}
 
+	void HandleKnotClick(MouseEvent evt, Edge currentEdge, Train train){
+		Node from = null; Node to = null;
+		int edgeIndex = train.Path.IndexOf(currentEdge);
+		// Loop back, find previous WayPoint
+		for (int i = (edgeIndex-1+train.Path.Count)%train.Path.Count; i < edgeIndex || i > edgeIndex; i = (i-1+train.Path.Count)%train.Path.Count) {
+			if(train.WayPoints.Contains(train.Path[i].To)){
+				from = train.Path[i].To;
+				break;
+			}
+		}
+		// Loop forward, find next WayPoint
+		for (int i = (edgeIndex+1)%train.Path.Count; i < edgeIndex || i > edgeIndex; i = (i+1)%train.Path.Count) {
+			Debug.Log (i);
+			if(train.WayPoints.Contains(train.Path[i].From)){
+				to = train.Path[i].From;
+				break;
+			}
+		}
+
+		var edges = currentEdge.graph.edges.ToList ();
+		ILine reroute = null;
+		Edge lastEdge = currentEdge;
+
+		evt.OnDrag += (Vector3 obj) => {
+			// Clear previous
+			if(reroute != null) 
+				LineDrawMaster.getInstance().HideLine(reroute);
+
+			// If we can Snap
+			if(LightRailGame.EdgeRaycaster.CurrentHover != null){
+				if(lastEdge == LightRailGame.EdgeRaycaster.CurrentHover.Edge)
+					return;
+
+				lastEdge = LightRailGame.EdgeRaycaster.CurrentHover.Edge;
+
+				Debug.Log ("From: "+from);
+				Debug.Log ("Visiting: "+lastEdge.From + " and " +lastEdge.To);
+				Debug.Log ("To: "+to);
+				var a = new Dijkstra<Edge,Node>(edges).PlanRoute(from, lastEdge.To);
+				var b = new Dijkstra<Edge,Node>(edges).PlanRoute(lastEdge.To, from);
+
+				if(reroute != null) LineDrawMaster.getInstance().HideLine(reroute);
+				reroute = new CombinedLine(a.Concat(b).Cast<ILine>());
+				LineDrawMaster.getInstance().ShowLine(reroute, LineOpts);
+				Debug.Log ("Patch path = "+a+b);
+			} 
+			// Cannot Snap
+			else {
+				Knot.transform.position = obj;
+				var c = Camera.main.ScreenToWorldPoint(obj).FixZ(currentEdge.To.position.z);
+				reroute = new CombinedLine(new [] {
+					new StraightLine(from.position, c),
+					new StraightLine(c, to.position)
+				});
+				LineDrawMaster.getInstance().ShowLine(reroute, new LineOptions {
+					materials = new [] { LineRendererMaterial },
+					widths = new [] { .8f, .8f },
+					colors = new [] { Color.blue, Color.blue },
+					offset = Vector3.back
+				});
+			}
+		};
+		evt.OnRelease += (Vector3 obj) => {
+			if(reroute != null) LineDrawMaster.getInstance().HideLine(reroute);
+			Debug.LogWarning("REROUTED!!");
+		};
+	}
+
+	void AddKnots (IList<Node> wayPoints)
+	{
+		foreach(Node n in wayPoints){
+			var knot = Instantiate(Knot, n.position, Quaternion.identity) as GameObject;
+			knot.SetActive (true);
+		}
+	}
 }
 

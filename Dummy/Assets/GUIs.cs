@@ -139,7 +139,7 @@ public static class GUIs
 					Debug.Log ("Old "+train.Path.ToStr());
 					Debug.Log ("New "+newPath.ToStr());
 					// TODO If completed, then update train.Path
-					train.UpdatePath(newPath.ToList());
+					train.UpdatePath(newPath.Select(e=>e.From).ToList(), newPath.ToList());
 					stateSelectPath = false;
 				}
 			}

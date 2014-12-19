@@ -209,6 +209,7 @@ public class Edge : BezierSpline, IEdge<Node>, ILine, IKnowWhoIsHere
 
 	public bool TryGetClosestPoint (Vector3 other, float maxDistance, out float t, out Vector3 pos)
 	{
+		// TODO pre-calculate Edge bounding square and pre-check if that matches the point 
 		return base.TryGetClosestPoint (other, maxDistance, out t, out pos);
 	}
 
