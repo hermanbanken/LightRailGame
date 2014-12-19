@@ -87,6 +87,39 @@ public class LineOptions {
 	public float[] widths = new [] { 1f, 1f };
 }
 
+public class StraightLine : ILine {
+	Vector3 from;
+	Vector3 to;
+
+	public StraightLine(Vector3 from, Vector3 to){
+		this.to = to;
+		this.from = from;
+	}
+
+	#region ILine implementation
+
+	public float GetUnitLength ()
+	{
+		return (from - to).magnitude;
+	}
+
+	public Vector3 GetUnitPosition (float t)
+	{
+		return Vector3.Lerp (from, to, t);
+	}
+
+	public bool TryGetClosestPoint (Vector3 other, float maxDistance, out float t, out Vector3 pos)
+	{
+		t = 0f;
+		pos = Vector3.zero;
+		return false;
+	}
+
+	#endregion
+
+
+}
+
 public class CombinedLine : ILine {
 	private IEnumerable<ILine> lines;
 	public CombinedLine(IEnumerable<ILine> lines){
