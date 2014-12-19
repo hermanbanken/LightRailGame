@@ -30,6 +30,7 @@ public class Mouse {
 		// End of click
 		if (down && Input.GetMouseButtonUp (0)) {
 			down = false;
+			Last.HandleRelease(Input.mousePosition);
 		}
 	}
 
@@ -42,9 +43,14 @@ public abstract class MouseEvent {
 	}
 
 	public event Action<Vector3> OnDrag;
+	public event Action<Vector3> OnRelease;
 	public void HandleDrag(Vector3 newPosition){
 		if(OnDrag != null)
 			OnDrag (newPosition);
+	}
+	public void HandleRelease(Vector3 newPosition){
+		if(OnRelease != null)
+			OnRelease (newPosition);
 	}
 }
 

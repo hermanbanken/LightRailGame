@@ -10,7 +10,7 @@ public class TrainCollisionDetector : MonoBehaviour
 	void OnCollisionEnter(Collision col){
 		var obs = col.gameObject.GetComponentInParent<Obstacle> ();
 		if (obs != null) {
-			Debug.Log("Collision with obstacle with "+gameObject.name + " with "+col.gameObject.name);
+//			Debug.Log("Collision with obstacle with "+gameObject.name + " with "+col.gameObject.name);
 			reportTo.speed = 0;
 			reportTo.Incident(obs.Incident);
 		}
@@ -19,7 +19,7 @@ public class TrainCollisionDetector : MonoBehaviour
 		if (other != null) {
 			reportTo.speed = 0f;
 			if(reportTo.incident == null){
-				Debug.Log("Collision on "+gameObject.name + " with "+col.gameObject.name);
+//				Debug.Log("Collision on "+gameObject.name + " with "+col.gameObject.name);
 				var incident = new TrainCollisionBlockage(reportTo, other);
 				reportTo.Incident(incident);
 			}
