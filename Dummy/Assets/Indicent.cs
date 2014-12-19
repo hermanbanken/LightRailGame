@@ -160,13 +160,12 @@ public class ObstacleBlockage : AbstractIncident, IIncident {
 
 // For tramcar incident we implement four different types: Drunken passenger, angry mob, women in labour and stench on board
 public class TramCarIncident : AbstractIncident, IIncident {
-	Train self;
 	ObstacleType type;
+	private GameObject train;
 	
-	
-	public TramCarIncident (Train subject, ObstacleType type)
+	public TramCarIncident (GameObject subject, ObstacleType type) : base()
 	{
-		this.self = subject;
+		this.train = subject;
 		this.type = type;
 	}	
 	
@@ -218,7 +217,7 @@ public class TramCarIncident : AbstractIncident, IIncident {
 
 	public override GameObject Subject ()
 	{
-		return self.gameObject;
+		return train;
 	}
 
 	//rogier - tweakit
