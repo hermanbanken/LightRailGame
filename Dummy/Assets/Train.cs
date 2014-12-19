@@ -75,10 +75,19 @@ public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandle
 	}
 
 	public void UpdatePath(IList<Node> wayPoints, IList<Edge> preCalculatedPath = null){
+		if (wayPoints.Count < 2)
+			return;
+
 		var path = preCalculatedPath ?? wayPoints.RouteFromWayPoints (wayPoints.First ().graph.edges.ToList());
 
 		var prev = this.Path;
+		var prevCurrentTrack = currentTrack;
 		this.currentTrack = path.IndexOf (this.Path [currentTrack]);
+		if (this.currentTrack < 0) {
+			path = this.Path.Concat(path).ToList();
+			this.currentTrack = prevCurrentTrack;
+			// TODO handle when on new track : then fix route to desired path
+		}
 		this.Path = path;
 		this.WayPoints = wayPoints;
 

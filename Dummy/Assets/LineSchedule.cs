@@ -22,6 +22,8 @@ public static class LineExt {
 		var path = new List<Edge>() { };
 		// Dijkstra WayPoints together
 		for(int i = 1; i <= waypoints.Count; i++){
+			if(waypoints[i-1] == waypoints[i % waypoints.Count])
+				continue;
 			try {
 				var seg = new Dijkstra<Edge,Node>(allEdges).PlanRoute(waypoints[i-1], waypoints[i % waypoints.Count]);
 				if(!seg.Any ())
