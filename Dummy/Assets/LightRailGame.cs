@@ -27,6 +27,8 @@ public class LightRailGame : MonoBehaviour
 
 	[NonSerialized]
 	private LineOptions LineOpts;
+	[NonSerialized]
+	private LineOptions LineOptsReRoute;
 
 	private Graph _graph;
 	[HideInInspector]
@@ -87,6 +89,12 @@ public class LightRailGame : MonoBehaviour
 			materials = new [] { LineRendererMaterial },
 			widths = new [] { .8f, .8f },
 			colors = new [] { Color.blue, Color.blue },
+			offset = Vector3.back
+		};
+		LineOptsReRoute = new LineOptions {
+			materials = new [] { LineRendererMaterial },
+			widths = new [] { .8f, .8f },
+			colors = new [] { Color.green, Color.green },
 			offset = Vector3.back
 		};
 
@@ -318,7 +326,7 @@ public class LightRailGame : MonoBehaviour
 				// Clear previous
 				if(reroute != null) LineMaster.HideLine(reroute);
 				reroute = new CombinedLine(a.Concat(b).Cast<ILine>());
-				LineMaster.ShowLine(reroute, LineOpts);
+				LineMaster.ShowLine(reroute, LineOptsReRoute);
 //				Debug.Log ("Patch path = "+a+b);
 			} 
 			// Cannot Snap
@@ -332,12 +340,7 @@ public class LightRailGame : MonoBehaviour
 					new StraightLine(from.position, c),
 					new StraightLine(c, to.position)
 				});
-				LineMaster.ShowLine(reroute, new LineOptions {
-					materials = new [] { LineRendererMaterial },
-					widths = new [] { .8f, .8f },
-					colors = new [] { Color.blue, Color.blue },
-					offset = Vector3.back
-				});
+				LineMaster.ShowLine(reroute, LineOptsReRoute);
 			}
 		};
 		evt.OnRelease += (Vector3 obj) => {
