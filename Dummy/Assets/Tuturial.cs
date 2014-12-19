@@ -10,7 +10,8 @@ public class Tuturial : MonoBehaviour {
 	void Start () {
 		LightRailGame.Difficulty = -1;
 		text = GetComponent<Text>();
-		text.text="First, you see that two trams are run.There are some stations. \n\nFirstly,Try to click on a Tram.";
+		text.text = "Welcome!\n\nIn order to help you understand how the game works, a small map was created with 2 loops: left and right and 3 stations.\n\nNotice how 2 trams move around and stop at stations (green square) and stop if the traffic light is red. ";
+		//text.text="First, you see that two trams are run.There are some stations. \n\nFirstly,Try to click on a Tram.";
 	}
 	
 	// Update is called once per frame
@@ -37,23 +38,32 @@ public class Tuturial : MonoBehaviour {
 		//LightRailGame.GetInstance()
 
 		LightRailGame.ScoreManager.OnUserAction += (IIncident obj) => {
-				text.text="Now, you choose a action. See what happend next";
+			text.text="Now, you choose a action. See what happend next.\n\n If your action are successfull, the blockage will disappeared.\n\n But if you failed, choose an action again";
 			int suit = obj.Suitability(obj.GetChosenSolution());
 			// if suit<0, maybe a wrong action?;
 			if(suit<0)
-				text.text="No, you choose a wrong action.!!\n I belive you will fail";;
+				text.text="No, you choose a wrong action.!!\nI belive you will fail. You need choose another actions.";;
 		};
 
-						
+		LightRailGame.ScoreManager.OnResolved += (IIncident obj) => {
+			text.text="Blockage removed!\n\nCongratulations, you now know the basics of the game. Good luck managing the network!";
+
+		};
+		
 	}
 
-
+	public void next()
+	{
+		text.text = "But hey! Both of the trams have the same route and they are never reaching the station on the left. Soon it will turn yellow and then red and you will start losing points because your travellers are unhappy.\n\nPick one of the trams and let’s reroute it!";
+	}
 	public void createOb()
 	{
 		LightRailGame.GetInstance().Obstacles.PlaceNewObstacle();
 		text.text="Oh no! A disturbance occurred.\n\nSee the exclamation mark on the yellow background?\n\nClick on it and let’s see how we can solve it…!";
 
 	}
+
+
 
 
 }
