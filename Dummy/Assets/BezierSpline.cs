@@ -148,7 +148,11 @@ public class BezierSpline : MonoBehaviour {
 		return transform.TransformPoint(Bezier.GetPoint(points[i], points[i + 1], points[i + 2], points[i + 3], t));
 	}
 
-	protected IList<Vector3> positionCache; 
+	[NonSerialized]
+	protected IList<Vector3> positionCache;
+	[NonSerialized]
+	protected Bounds boundingBox;
+	[NonSerialized]
 	private IList<float> lengthCache; 
 	private int precision = 100;
 
@@ -180,13 +184,23 @@ public class BezierSpline : MonoBehaviour {
 			positionCache = Enumerable.Range (0, precision + 1).Select (t => t / (float) precision).Select (t => this.GetPoint (t)).ToList();
 		if (lengthCache == null || forceReset)
 			lengthCache = positionCache.TakeWhile ((_, i) => i < positionCache.Count - 1).Select ((p, i) => Vector3.Distance (p, positionCache [i + 1])).ToList();
+		if (boundingBox.size == Vector3.zero || forceReset){
+			boundingBox = new Bounds(positionCache[0], Vector3.zero);
+			foreach(Vector3 p in positionCache)
+				boundingBox.Encapsulate(p);
+		}
 	}
 	
 	public bool TryGetClosestPoint (Vector3 other, float maxDistance, out float t, out Vector3 pos)
 	{
 		cachePositions ();
+
 		t = 0f;
 		pos = Vector3.zero;
+
+		if (boundingBox.SqrDistance (other) > maxDistance)
+			return false;
+
 		var minD = float.MaxValue;
 		for (int i = 0; i < positionCache.Count; i++) {
 			if((other - positionCache[i]).magnitude < minD){
