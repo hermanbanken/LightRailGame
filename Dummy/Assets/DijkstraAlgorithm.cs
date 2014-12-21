@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 
-public class Dijkstra<E,N> where E : IEdge<N> where N : class {
+public class Dijkstra<E,N> where E : class, IEdge<N> where N : class {
 	private IList<E> edges;
 
 	public Dijkstra(IList<E> edges){

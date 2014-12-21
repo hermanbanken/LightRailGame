@@ -15,6 +15,8 @@ public interface ILine {
 	float GetUnitLength();
 	Vector3 GetUnitPosition(float t);
 	bool TryGetClosestPoint(Vector3 other, float maxDistance, out float t, out Vector3 pos);
+	int NumberOfPoints { get; }
+	void ForEach(Action<Vector3> action);
 }
 
 public interface IKnowWhoIsHere : ILine {
@@ -207,11 +209,25 @@ public class Edge : BezierSpline, IEdge<Node>, ILine, IKnowWhoIsHere
 
 	#region ILine implementation
 
-	public bool TryGetClosestPoint (Vector3 other, float maxDistance, out float t, out Vector3 pos)
+	new public bool TryGetClosestPoint (Vector3 other, float maxDistance, out float t, out Vector3 pos)
 	{
 		// TODO pre-calculate Edge bounding square and pre-check if that matches the point 
 		return base.TryGetClosestPoint (other, maxDistance, out t, out pos);
 	}
+	
+	public void ForEach (Action<Vector3> action)
+	{
+		for (int i = 0; i < positionCache.Count; i++) {
+			action(positionCache[i]);
+		}
+	}
+
+	public int NumberOfPoints {
+		get {
+			return positionCache.Count;
+		}
+	}
 
 	#endregion
+	
 }
