@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Linq;
+using System;
 
 public class EdgeRaycaster : MonoBehaviour {
 
@@ -17,6 +18,9 @@ public class EdgeRaycaster : MonoBehaviour {
 			return hit ? hover : null;
 		}
 	}
+	private Edge previous;
+
+	public event Action<Edge> OnEdgeChange;
 
 	// Prevent allocations
 	private float outT;
@@ -43,11 +47,15 @@ public class EdgeRaycaster : MonoBehaviour {
 		if (Time.frameCount % 4 != 0) return;
 
 		mp = MP;
+		previous = hover.Edge;
 		hover.Edge = graph.edges.MinBy (l => l.TryGetClosestPoint (mp, strict, out outT, out outP) ? (mp - outP).magnitude : float.MaxValue);
 		hit = hover.Edge.TryGetClosestPoint (mp, strict, out outT, out outP);
 		if (hit) {
 			hover.t = outT;
 			hover.pos = outP;
+			if(previous != hover.Edge && OnEdgeChange != null){
+				OnEdgeChange(hover.Edge);
+			}
 		}
 	}
 
