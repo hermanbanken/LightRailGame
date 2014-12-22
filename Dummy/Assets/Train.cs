@@ -234,10 +234,12 @@ public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandle
 			if(desiredSpeed == 0) break;
 
 			// TODO refine maths here; 
-			var block = Path [ahead].GetOccupants ().Where (o => accum + o.Location.Item2 < forZero && NeedBreak (o.Speed, accum + o.Location.Item2 - this.position));
+			var block = Path [ahead].GetOccupants ()
+				.Where (o => accum + o.Location.Item2 > this.position)
+				.Where (o => accum + o.Location.Item2 - this.position < forZero + clearange);
 			if (block.Any ()) {
-//				Debug.Log("Other ahead of "+this+": "+block.MinBy (o => (accum + o.Location.Item2 - this.position) / o.Speed));
-				desiredSpeed = Math.Min(desiredSpeed, block.MinBy (o => (accum + o.Location.Item2 - this.position) / o.Speed).Speed);
+				var min = block.MinBy (o => accum + o.Location.Item2 - this.position);
+				desiredSpeed = Math.Min(desiredSpeed, min.Speed);
 			}
 
 			accum += Path[ahead].GetUnitLength();
