@@ -220,7 +220,7 @@ public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandle
 		if (station != null && NeedBreak (station.MaxSpeed (this), cL - position)) {
 			desiredSpeed = station.MaxSpeed (this);
 		} else
-		if (traffic != null && NeedBreak (traffic.MaxSpeed (this), cL - position)) {
+		if (traffic != null && NeedBreak (traffic.MaxSpeed (this), cL - position - this.collider.bounds.size.magnitude / 2f)) {
 			desiredSpeed = traffic.MaxSpeed (this);
 		}
 
