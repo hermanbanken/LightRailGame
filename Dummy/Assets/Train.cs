@@ -69,7 +69,8 @@ public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandle
 				// At end of defined Path
 				break;
 			}
-		}
+		}		
+		current.Arrive(this);
 
 		position = initialUnitPositionOnLine;
 	}
@@ -227,6 +228,7 @@ public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandle
 		var ahead = currentTrack;
 		var accum = 0f;
 		var forZero = DistanceUntilSpeed(0);
+		var clearange = this.collider.bounds.size.magnitude * 2f;
 		do 
 		{
 			if(desiredSpeed == 0) break;
@@ -239,10 +241,10 @@ public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandle
 			}
 
 			accum += Path[ahead].GetUnitLength();
-			ahead++;
-		} 
+			ahead = (ahead + 1) % Path.Count;
+		}
 		// If we don't need to break for vehicles standing this far away, don't look further
-		while(accum < forZero);
+		while(accum - position < forZero + clearange);
 
 		// Limit de- or accelleration
 		var diff = desiredSpeed - this.speed;
