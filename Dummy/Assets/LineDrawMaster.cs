@@ -164,23 +164,6 @@ public class CombinedLine<T> : ILine where T : class, ILine {
 		Debug.Log ("Reached last point in Combined Line");
 		return lines.Last ().GetUnitPosition (lines.Last ().GetUnitLength ());
 	}
-
-	// TODO deprecate
-	public void ForEach(int precision, Action<Vector3> action, float start = 0f, float end = -1f){
-		end = end < 0f ? GetUnitLength() : end;
-		var piece = (end - start) / (float)precision;
-
-		var enumerator = lines.GetEnumerator ();
-		var before = start;
-		var length = enumerator.Current.GetUnitLength ();
-
-		for (float p = start; p < end; p += length) {
-			//enumerator.Current.ForEach((int)length/piece, action, p - before, end > before+length ? -1 : end-before);
-			before += length;
-			enumerator.MoveNext();
-		    length = enumerator.Current.GetUnitLength();
-   		}
-	}
 	#endregion
 
 	#region ILine implementation
