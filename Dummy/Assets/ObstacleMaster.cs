@@ -80,7 +80,6 @@ public class ObstacleMaster : MonoBehaviour {
 		if (incidents.Count <= LightRailGame.Difficulty) {
 			// TODO Rogier: move this to ScoreManager
 			if (!LastObstacle.HasValue || LastObstacle.Value + 5 < Time.time) {
-				Debug.Log ("Creating obstacle, difficulty = " + LightRailGame.Difficulty);
 				LastObstacle = Time.time;
 
 				if(obstacles.Count * 2 - 2f * (.5f + UnityEngine.Random.value) > incidents.Count)

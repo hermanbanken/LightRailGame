@@ -184,7 +184,7 @@ public class LightRailGame : MonoBehaviour
 			selectedTrainPathChangeAction = changedTrain => {
 				if(line != null) 
 					LineMaster.HideLine(line);
-				line = new CombinedLine(changedTrain.Path.AsEnumerable().Cast<ILine>());
+				line = new CombinedLine<Edge>(changedTrain.Path.AsEnumerable());
 				LineMaster.ShowLine(line, LineOpts);
 				RemoveKnots();
 				AddKnots(train, train.WayPoints);
@@ -207,7 +207,6 @@ public class LightRailGame : MonoBehaviour
 		
 		if (train != null) {
 			LineMaster.RemoveAll ();
-			this.CancelReroute (train);
 			train.OnPathChange -= selectedTrainPathChangeAction;
 		}
 
@@ -308,7 +307,6 @@ public class LightRailGame : MonoBehaviour
 			}
 		}
 
-		var edges = currentEdge.graph.edges.ToList ();
 		ILine reroute = null;
 		Edge lastEdge = currentEdge;
 
@@ -320,17 +318,13 @@ public class LightRailGame : MonoBehaviour
 
 				lastEdge = LightRailGame.EdgeRaycaster.CurrentHover.Edge;
 
-//				Debug.Log ("From: "+from);
-//				Debug.Log ("Visiting: "+lastEdge.From + " and " +lastEdge.To);
-//				Debug.Log ("To: "+to);
-				var a = new Dijkstra<Edge,Node>(edges).PlanRoute(from, lastEdge.To);
-				var b = new Dijkstra<Edge,Node>(edges).PlanRoute(lastEdge.To, from);
+				IEnumerable<Edge> a = graph.Dijkstra.PlanRoute(from, lastEdge.To);
+				IEnumerable<Edge> b = graph.Dijkstra.PlanRoute(lastEdge.To, to);
 
 				// Clear previous
 				if(reroute != null) LineMaster.HideLine(reroute);
-				reroute = new CombinedLine(a.Concat(b).Cast<ILine>());
+				reroute = new CombinedLine<Edge>(a.Concat(b));
 				LineMaster.ShowLine(reroute, LineOptsReRoute);
-//				Debug.Log ("Patch path = "+a+b);
 			} 
 			// Cannot Snap
 			else {
@@ -339,7 +333,7 @@ public class LightRailGame : MonoBehaviour
 				var c = Camera.main.ScreenToWorldPoint(obj).FixZ(currentEdge.To.position.z);
 				// Clear previous
 				if(reroute != null) LineMaster.HideLine(reroute);
-				reroute = new CombinedLine(new [] {
+				reroute = new CombinedLine<StraightLine>(new [] {
 					new StraightLine(from.position, c),
 					new StraightLine(c, to.position)
 				});
@@ -347,22 +341,22 @@ public class LightRailGame : MonoBehaviour
 			}
 		};
 		evt.OnRelease += (Vector3 obj) => {
+			Debug.LogWarning("Released Re-route");
 			if(reroute != null) LineMaster.HideLine(reroute);
 			if(LightRailGame.EdgeRaycaster.CurrentHover != null && (lastEdge == LightRailGame.EdgeRaycaster.CurrentHover.Edge) && lastEdge != currentEdge){
+				Debug.LogWarning("Re-route is in finished state");
 				var newWP = train.WayPoints.Where(n=>true).ToList();
 				if(LightRailGame.EdgeRaycaster.CurrentHover.t < 0.5)
 					newWP.Insert (newWP.IndexOf(from), lastEdge.From);
 				else 
 					newWP.Insert (newWP.IndexOf(from), lastEdge.To);
 				train.UpdatePath(newWP);
-				Debug.LogWarning("REROUTED!!");
 			}
 		};
 	}
 
 	void AddKnots (Train train, IList<Node> wayPoints)
 	{
-		Debug.Log ("Adding Knots");
 		var controls = GameObject.Find ("LRG_Controls");
 		// TODO cleanup this ugly mess
 		WPKnots = wayPoints.ToList().Select ((wp, i) => {
@@ -370,7 +364,6 @@ public class LightRailGame : MonoBehaviour
 			knot.transform.SetParent(controls.transform, true);
 			knot.SetActive (true);
 			knot.GetComponent<Button>().onClick.AddListener(() => {
-				Debug.Log ("There are "+train.WayPoints.Count()+" waypoints");
 				if(train.WayPoints.Count() > 2){
 					train.UpdatePath(train.WayPoints.Where(w => w != wp).ToList());
 				}

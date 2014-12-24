@@ -19,13 +19,22 @@ public class LineSchedule : System.Object
 
 public static class LineExt {
 	public static IList<Edge> RouteFromWayPoints(this IList<Node> waypoints, IList<Edge> allEdges){
+		var dijk = new Dijkstra<Edge,Node> (allEdges);
 		var path = new List<Edge>() { };
+		// Only single waypoint:
+		if (waypoints.Count == 1) {
+			try {
+				waypoints.Add(allEdges.Single(e => e.From == waypoints[0]).To);
+			} catch (Exception) {
+				throw new ArgumentException("The route is ambigous since no single outgoing edge from the one waypoint given exists");
+			}
+		}
 		// Dijkstra WayPoints together
 		for(int i = 1; i <= waypoints.Count; i++){
 			if(waypoints[i-1] == waypoints[i % waypoints.Count])
 				continue;
 			try {
-				var seg = new Dijkstra<Edge,Node>(allEdges).PlanRoute(waypoints[i-1], waypoints[i % waypoints.Count]);
+				var seg = dijk.PlanRoute(waypoints[i-1], waypoints[i % waypoints.Count]);
 				if(!seg.Any ())
 					throw new ArgumentException("No route exists between nodes "+waypoints[i-1]+" and "+waypoints[i % waypoints.Count]+" in these "+allEdges.Count+" edges");
 				path.AddRange(seg);

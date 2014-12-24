@@ -69,7 +69,8 @@ public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandle
 				// At end of defined Path
 				break;
 			}
-		}
+		}		
+		current.Arrive(this);
 
 		position = initialUnitPositionOnLine;
 	}
@@ -219,7 +220,7 @@ public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandle
 		if (station != null && NeedBreak (station.MaxSpeed (this), cL - position)) {
 			desiredSpeed = station.MaxSpeed (this);
 		} else
-		if (traffic != null && NeedBreak (traffic.MaxSpeed (this), cL - position)) {
+		if (traffic != null && NeedBreak (traffic.MaxSpeed (this), cL - position - this.collider.bounds.size.magnitude / 2f)) {
 			desiredSpeed = traffic.MaxSpeed (this);
 		}
 
@@ -227,22 +228,25 @@ public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandle
 		var ahead = currentTrack;
 		var accum = 0f;
 		var forZero = DistanceUntilSpeed(0);
+		var clearange = this.collider.bounds.size.magnitude * 2f;
 		do 
 		{
 			if(desiredSpeed == 0) break;
 
 			// TODO refine maths here; 
-			var block = Path [ahead].GetOccupants ().Where (o => accum + o.Location.Item2 < forZero && NeedBreak (o.Speed, accum + o.Location.Item2 - this.position));
+			var block = Path [ahead].GetOccupants ()
+				.Where (o => accum + o.Location.Item2 > this.position)
+				.Where (o => accum + o.Location.Item2 - this.position < forZero + clearange);
 			if (block.Any ()) {
-//				Debug.Log("Other ahead of "+this+": "+block.MinBy (o => (accum + o.Location.Item2 - this.position) / o.Speed));
-				desiredSpeed = Math.Min(desiredSpeed, block.MinBy (o => (accum + o.Location.Item2 - this.position) / o.Speed).Speed);
+				var min = block.MinBy (o => accum + o.Location.Item2 - this.position);
+				desiredSpeed = Math.Min(desiredSpeed, min.Speed);
 			}
 
 			accum += Path[ahead].GetUnitLength();
-			ahead++;
-		} 
+			ahead = (ahead + 1) % Path.Count;
+		}
 		// If we don't need to break for vehicles standing this far away, don't look further
-		while(accum < forZero);
+		while(accum - position < forZero + clearange);
 
 		// Limit de- or accelleration
 		var diff = desiredSpeed - this.speed;

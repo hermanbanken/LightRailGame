@@ -2,9 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 public class LineDrawMaster {
-	private static LineDrawMaster Instance;
 
 	private IDictionary<ILine,LineRenderer> renderers = new Dictionary<ILine, LineRenderer>();
 	private IList<LineRenderer> unused = new List<LineRenderer>();
@@ -14,7 +14,7 @@ public class LineDrawMaster {
 	}
 
 	public static LineDrawMaster getInstance(){
-		return (Instance = new LineDrawMaster()); 
+		return new LineDrawMaster(); 
 	}
 
 	public LineRenderer ShowLine(ILine e, LineOptions options = null){
@@ -24,15 +24,12 @@ public class LineDrawMaster {
 		options = options ?? new LineOptions();
 		var line = GetFreeLine ();
 		renderers [e] = line;
-		var length = e.GetUnitLength ();
-		var c = (int)length * 5;
-		line.SetVertexCount (c);
-		for (int i = 0; i < c; i++) {
-			line.SetPosition(i, e.GetUnitPosition(i / 5f) + options.offset);
-		}
+		line.SetVertexCount (e.NumberOfPoints);
 		line.materials = options.materials;
 		line.SetColors (options.colors [0], options.colors [1]);
 		line.SetWidth (options.widths [0], options.widths [1]);
+		int i = 0;
+		e.ForEach (v => line.SetPosition(i++, v));
 		return line;
 	}
 
@@ -116,15 +113,35 @@ public class StraightLine : ILine {
 		pos = Vector3.zero;
 		return false;
 	}
+	
+	public void ForEach (int precision, Action<Vector3> action, float start = 0f, float end = -1f)
+	{
+		end = end < 0f ? GetUnitLength() : end;
+		var piece = (end - start) / (float)precision;
+		for (float p = start; p < end; p += piece) {
+			action(Vector3.Lerp(from, to, p/(end-start)));
+		}
+	}
+
+	public void ForEach (Action<Vector3> action)
+	{
+		action (from);
+		action (to);
+	}
+
+	public int NumberOfPoints {
+		get {
+			return 2;
+		}
+	}
 
 	#endregion
-
-
 }
 
-public class CombinedLine : ILine {
-	private IEnumerable<ILine> lines;
-	public CombinedLine(IEnumerable<ILine> lines){
+public class CombinedLine<T> : ILine where T : class, ILine {
+	private IEnumerable<T> lines;
+
+	public CombinedLine(IEnumerable<T> lines) {
 		this.lines = lines;
 	}
 	
@@ -144,6 +161,7 @@ public class CombinedLine : ILine {
 				return l.GetUnitPosition(p);
 			}
 		}
+		Debug.Log ("Reached last point in Combined Line");
 		return lines.Last ().GetUnitPosition (lines.Last ().GetUnitLength ());
 	}
 	#endregion
@@ -156,6 +174,18 @@ public class CombinedLine : ILine {
 		return lines.MinBy (l => {
 			return l.TryGetClosestPoint(other, maxDistance, out _t, out _pos) ? (other-_pos).magnitude : float.MaxValue;
 		}).TryGetClosestPoint(other, maxDistance, out t, out pos);
+	}
+
+	public void ForEach (Action<Vector3> action)
+	{
+		foreach (T l in lines) 
+			l.ForEach (action);
+	}
+
+	public int NumberOfPoints {
+		get {
+			return lines.Sum(l => l.NumberOfPoints);
+		}
 	}
 
 	#endregion
