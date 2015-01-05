@@ -22,6 +22,7 @@ public abstract class AbstractIncident : IIncident {
 	}
 
 	#region IIncident implementation
+	public abstract string Description ();
 
 	public bool IsResolved ()
 	{

@@ -43,11 +43,14 @@ public class Edge : BezierSpline, IEdge<Node>, ILine, IKnowWhoIsHere
 	public Node From {
 		get { return _from; }
 		set {
+			if(value == null)
+				return;
+
 			// Convert Node position to World-relative-space and then to Spline-relative-space (this)
 			Vector3 pos = this.transform.InverseTransformPoint(value.graph.transform.TransformPoint(value.position));
-
-			if(value == null || this.points[0] == pos)
+			if(this.points[0] == pos && _from != null)
 				return;
+
 			this.points[0] = pos;
 			_from = value;
 		}
@@ -55,11 +58,14 @@ public class Edge : BezierSpline, IEdge<Node>, ILine, IKnowWhoIsHere
 	public Node To  {
 		get { return _to; }
 		set { 
+			if(value == null)
+				return;
+
 			// Convert Node position to World-relative-space and then to Spline-relative-space (this)
 			Vector3 pos = this.transform.InverseTransformPoint(value.graph.transform.TransformPoint(value.position));
-
-			if(value == null || this.points[this.points.Length-1] == pos)
+			if(this.points[this.points.Length-1] == pos && _to != null)
 				return;
+
 			this.points[this.points.Length-1] = pos;
 			_to = value;
 		}

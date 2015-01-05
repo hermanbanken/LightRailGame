@@ -50,14 +50,22 @@ public class PowerUp : Solution, ISolution, IPowerUp {
 public class TrainCollisionBlockage : AbstractIncident, IIncident {
 	Train self;
 	Train other;
+	Collision collision;
 
-	public TrainCollisionBlockage (Train self, Train other)
+	public TrainCollisionBlockage (Train self, Train other, Collision collision)
 	{
+		this.collision = collision;
 		this.other = other;
 		this.self = self;
 	}
 	// We still need to implement collision with an object that is not a tram
 	#region IIncident implementation
+
+	public override string Description ()
+	{
+		return "The train has collided with another train.";
+	}
+
 	public override IEnumerable<ISolution> PossibleActions ()
 	{
 		// Depending on this.self and this.other we can also change the possible actions
@@ -109,6 +117,14 @@ public class ObstacleBlockage : AbstractIncident, IIncident {
 	}
 
 	#region IIncident implementation
+
+	public override string Description ()
+	{
+		if(this.obstacle.type == ObstacleType.Car)
+			return "The train has collided with a car.";
+		throw new NotImplementedException ("Implement a description for the ObstacleType "+this.obstacle.type.ToString());
+	}
+
 	//Implementing four types of blockages, each with different set of correct actions: Car on tracks, Tram defect, Switch defect, Derailment
 	public override IEnumerable<ISolution> PossibleActions ()
 	{
@@ -170,6 +186,13 @@ public class TramCarIncident : AbstractIncident, IIncident {
 	}	
 	
 	#region IIncident implementation
+	public override string Description ()
+	{
+		if(this.type == ObstacleType.DrunkenPassenger)
+			return "There seems to be some drunken passenger onboard.";
+		throw new NotImplementedException ("Implement a description for the ObstacleType "+this.type);
+	}
+
 	public override IEnumerable<ISolution> PossibleActions ()
 	{
 		if (this.type == ObstacleType.DrunkenPassenger) {

@@ -9,6 +9,7 @@ public interface IIncident
 	event Action<IIncident> OnUserAction;
 	bool IsResolved();
 	TimeSpan? CountDownValue();
+	string Description();
 	IEnumerable<ISolution> PossibleActions();
 	int Suitability(ISolution solution);
 	void SetChosenSolution (ISolution solution);
