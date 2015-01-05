@@ -20,7 +20,7 @@ public static class GUIs
 		GUI.Box (new Rect (x - 5, y - 5, w + 10, h + 10), "");
 		GUILayout.BeginArea (new Rect (x, y, w, h));
 		GUI.skin.button.alignment = TextAnchor.MiddleLeft;
-		GUILayout.Label ("An incident occured. How would you like to resolve this issue?");
+		GUILayout.Label (incident.Description()+" How would you like to resolve this issue?");
 		
 		GUILayout.BeginHorizontal();
 		GUILayout.Label ("Action");
