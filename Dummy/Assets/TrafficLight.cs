@@ -8,8 +8,11 @@ public class TrafficLight : MonoBehaviour, IStop, IEnumerable<List<TrafficLight>
 	private IList<Train> Presence = new List<Train> ();
 	// The TrafficLight that might be green after this one turns red
 	public TrafficLight Next;
+	// The TrafficLight that mimmics the behavior of this one
 	public TrafficLight Slave;
+	[HideInInspector,NonSerialized]
 	public TrafficLight Master;
+	[HideInInspector,NonSerialized]
 	public Enumerator MasterEnumerator;
 
 	// Last time we changed colors
@@ -32,6 +35,7 @@ public class TrafficLight : MonoBehaviour, IStop, IEnumerable<List<TrafficLight>
 
 	void Start() {
 		lastChanged = Time.time;
+		State = TrafficLightState.Red;
 
 		var node = this.gameObject.GetComponent<Node> ();
 		var edge = node.graph.edges.FirstOrDefault (e => e.From == node || e.To == node);
@@ -64,18 +68,9 @@ public class TrafficLight : MonoBehaviour, IStop, IEnumerable<List<TrafficLight>
 		// Prepare main traffic light loop
 		MasterEnumerator = new Enumerator (this);
 
-		// Initialize colors
+		// Initialize first round greens
 		bool started = false;
-		foreach (var list in this) {
-			if(!started){
-				started = true;
-				list.ForEach(tl => tl.State = TrafficLightState.Green);
-				continue;
-			}
-			if(list.Contains(this))
-				break;
-			list.ForEach(tl => tl.State = TrafficLightState.Red);
-		}
+		MasterEnumerator.Current.ForEach (tl => tl.State = TrafficLightState.Green);
 	}
 
 	public void StartAsSlave(TrafficLight master)

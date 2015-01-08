@@ -261,32 +261,30 @@ public class LightRailGame : MonoBehaviour
 //		Test ();
 
 		// List all Traffic Light dependencies
-		IDictionary<TrafficLight,IEnumerable<TrafficLight>> dict = new Dictionary<TrafficLight, IEnumerable<TrafficLight>> ();
+		IDictionary<TrafficLight,TrafficLight> slaveToMaster = new Dictionary<TrafficLight, TrafficLight> ();
 		foreach (TrafficLight tl in GameObject.FindObjectsOfType<TrafficLight>()) {
-			var deps = new List<TrafficLight>();
-			dict.Add(tl, deps);
-			if(tl.Next != null){
-				deps.Add (tl.Next);
+			if(slaveToMaster.ContainsKey(tl))
+				continue;
+
+			// Take until recursion
+			var list = tl.SelectMany((l, i) => l.OrderBy(o => o == tl ? 1 : 0)).TakeWhile(o => o != tl);
+			if(!list.Any()){
+				// Should never happen, fix Scene when occurs!!
+				Debug.LogError (tl + " controls nothing ("+tl.SelectMany(l=>l).Take(10).Select(t => t.name).Aggregate("", (a,b) => a+b)+")");
+				continue;
 			}
-			if(tl.Slave!= null){
-				deps.Add (tl.Slave);
+
+			foreach(var o in list){
+				if(slaveToMaster.ContainsKey(o))
+					slaveToMaster[slaveToMaster[o]] = tl;
+				slaveToMaster[o] = tl;
 			}
 		}
 
-		// Remove all but roots of dependencies
-		for(int i = 0; i < dict.Keys.Count;){
-			var tl = dict.Keys.First();
-			foreach(var dp in dict[tl]){
-				if(dict.ContainsKey(dp)){
-					dict[tl] = dict[tl].Concat(dict[dp]);
-					dict.Remove(dp);
-				}
-			}
-			i++;
-		}
-
-		foreach (TrafficLight tl in dict.Keys) {
-			tl.StartAsMaster();
+		// Start master traffic lights
+		foreach (var g in slaveToMaster.GroupBy(p => p.Value)) {
+//			Debug.Log (g.Count()+" Traffic Lights under control by "+g.Key);
+			g.Key.StartAsMaster();
 		}
 	}
 
