@@ -63,7 +63,7 @@ public class TrainCollisionBlockage : AbstractIncident, IIncident {
 
 	public override string Description ()
 	{
-		return "The train has collided with another train.";
+		return "The train has COLLIDED WITH ANOTHER TRAIN.";
 	}
 
 	public override IEnumerable<ISolution> PossibleActions ()
@@ -121,7 +121,9 @@ public class ObstacleBlockage : AbstractIncident, IIncident {
 	public override string Description ()
 	{
 		if(this.obstacle.type == ObstacleType.Car)
-			return "The train has collided with a car.";
+			return "There is a CAR ON THE TRACK.";
+		// rogier // else if(this.obstacle.type == ObstacleType.Car)
+		// rogier // 	return "The train has collided with a car.";
 		throw new NotImplementedException ("Implement a description for the ObstacleType "+this.obstacle.type.ToString());
 	}
 
@@ -189,7 +191,13 @@ public class TramCarIncident : AbstractIncident, IIncident {
 	public override string Description ()
 	{
 		if(this.type == ObstacleType.DrunkenPassenger)
-			return "There seems to be some drunken passenger onboard.";
+			return "There seems to be some DRUNKEN PASSENGER onboard.";
+		else if (this.type == ObstacleType.WomenInLabour)
+			return "There IS a WOMAN IN LABOUR onboard.";
+		else if (this.type == ObstacleType.StenchOnBoard)
+			return "There is a STENCH onboard.";
+		else if (this.type == ObstacleType.AngryMob)
+			return "There is an ANGRY MOB onboard.";
 		throw new NotImplementedException ("Implement a description for the ObstacleType "+this.type);
 	}
 

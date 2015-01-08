@@ -6,13 +6,12 @@ using UnityEngine.UI;
 public class Tuturial : MonoBehaviour {
 	public GameObject ObStacleOccure;
 	public GameObject Quitgame;
-	public AudioClip warning;
-	private AudioSource source;
+	//public AudioClip warning;
+	//public AudioClip Pickup;
+	//private AudioSource source;
 	Text text;
 	// Use this for initialization
-	void Awake () {	
-		source = GetComponent<AudioSource>();
-	}
+
 
 	void Start () {
 		LightRailGame.Difficulty = -1;
@@ -30,7 +29,7 @@ public class Tuturial : MonoBehaviour {
 				text.text="Congratulations! You picked a Tram. The tram menu appeared.\n\n You can alter the tram's speed, route or stop it completely.\n\n"+
 					"The current route of the tram is also highlighted.\n\nTo change a route you can drag the blue line. Change its route to the left side and notice how it changes";
 				//LightRailGame.GetInstance().Obstacles.PlaceNewObstacle();
-			
+				//source.PlayOneShot(Pickup,0.5f);
 			
 			}
 			else 
@@ -52,7 +51,7 @@ public class Tuturial : MonoBehaviour {
 			text.text="There are several options to choose from and they differ in success rate.\n Please choose an action and try to resolve the issue.\n\n" +
 				"Normally, you will be facing a trade-off between rerouting and waiting and will need to decide whether you wish to alter the tram’s path.\n\n" +
 				"Now, Choose an action and see if it works out. If not, try again!";
-			source.PlayOneShot(warning,1.0f);
+			//source.PlayOneShot(warning,0.50f);
 
 
 		};
