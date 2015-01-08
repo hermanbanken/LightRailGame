@@ -3,19 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
-public class TrafficLight : MonoBehaviour, IStop {
+public class TrafficLight : MonoBehaviour, IStop, IEnumerable<List<TrafficLight>> {
 	[NonSerialized]
 	private IList<Train> Presence = new List<Train> ();
 	// The TrafficLight that might be green after this one turns red
 	public TrafficLight Next;
 	public TrafficLight Slave;
+	public TrafficLight Master;
+	public Enumerator MasterEnumerator;
 
 	// Last time we changed colors
 	[HideInInspector]
 	public float lastChanged = 0;
 	// Current color
 	[HideInInspector]
-	public TrafficLightState State = TrafficLightState.Green;
+	public TrafficLightState State = TrafficLightState.Red;
 
 	// Visual stuff
 	[NonSerialized]
@@ -29,8 +31,7 @@ public class TrafficLight : MonoBehaviour, IStop {
 	}
 
 	void Start() {
-		if (lastChanged == 0)    
-			SetGreen (this);
+		lastChanged = Time.time;
 
 		var node = this.gameObject.GetComponent<Node> ();
 		var edge = node.graph.edges.FirstOrDefault (e => e.From == node || e.To == node);
@@ -52,7 +53,34 @@ public class TrafficLight : MonoBehaviour, IStop {
 		sphere.transform.parent = quad.transform;
 		sphere.transform.localScale = 0.6f * Vector3.one;
 		sphere.transform.localPosition = Vector3.zero;
+		sphere.renderer.material.color = Color.red;
 		Destroy (sphere.collider);
+
+		Update ();
+	}
+
+	public void StartAsMaster ()
+	{
+		// Prepare main traffic light loop
+		MasterEnumerator = new Enumerator (this);
+
+		// Initialize colors
+		bool started = false;
+		foreach (var list in this) {
+			if(!started){
+				started = true;
+				list.ForEach(tl => tl.State = TrafficLightState.Green);
+				continue;
+			}
+			if(list.Contains(this))
+				break;
+			list.ForEach(tl => tl.State = TrafficLightState.Red);
+		}
+	}
+
+	public void StartAsSlave(TrafficLight master)
+	{
+		Master = master;
 	}
 
 	void Update(){
@@ -70,30 +98,28 @@ public class TrafficLight : MonoBehaviour, IStop {
 	}
 
 	/**
-	 * Detect if we can change from:
-	 *   green -> orange, 
-	 *   orange -> red, 
-	 * and, if no Next is defined, 
-	 *   red -> green
+	 * Implement color changing
 	 */
 	void FixedUpdate() {
-		if (lastChanged + Duration(State) < Time.time)
-		{
-			if(State == TrafficLightState.Green)
-				State = TrafficLightState.Orange;
-			else if(State == TrafficLightState.Orange){
-				State = TrafficLightState.Red;
-				if(Next != null)
-					Next.SetGreen(Next);
-			} else if(Next == null && State == TrafficLightState.Red){
-				State = TrafficLightState.Green;
-			}
+	
+		// Time to go orange
+		if (MasterEnumerator != null && MasterEnumerator.Current.First().State == TrafficLightState.Green && lastChanged + Duration (TrafficLightState.Green) < Time.time) {
+			MasterEnumerator.Current.ForEach (tl => {
+				tl.State = TrafficLightState.Orange;
+			});
+		}
 
-			if (Slave != null) {
-				Slave.State = State;
-				Slave.lastChanged = Time.time;
-			}
+		// Time to go red + make another green
+		if (MasterEnumerator != null && MasterEnumerator.Current.First().State == TrafficLightState.Orange && lastChanged + Duration (TrafficLightState.Green) + Duration (TrafficLightState.Orange) < Time.time) {
+			MasterEnumerator.Current.ForEach (tl => {
+				tl.State = TrafficLightState.Red;
+			});
+
 			lastChanged = Time.time;
+			MasterEnumerator.MoveNext ();
+			MasterEnumerator.Current.ForEach (tl => {
+				tl.State = TrafficLightState.Green;
+			});
 		}
 	}
 	
@@ -108,24 +134,7 @@ public class TrafficLight : MonoBehaviour, IStop {
 				return 3f;
 		}
 	}
-
-	/**
-	 * Allows traffic lights to receive the trigger to start being green
-	 */
-	public void SetGreen(TrafficLight greenOne){
-		// Bubble, (but prevent loop)
-		if (Next != null && Next != greenOne) {
-			Next.SetGreen (greenOne);
-		}
-
-		if (greenOne == this) {
-			State = TrafficLightState.Green;
-			if (Slave != null) 
-				Slave.State = TrafficLightState.Green;
-		}
-		lastChanged = Time.time;
-	}
-
+	
 	#region IStop implementation
 
 	public void Arrive (Train train)
@@ -157,7 +166,95 @@ public class TrafficLight : MonoBehaviour, IStop {
 
 	#endregion
 
+	#region IEnumerable implementation
+
+	public IEnumerator<List<TrafficLight>> GetEnumerator () { return new Enumerator(this, false); }
+	System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator (){ return new Enumerator(this, false); }
+
+	#endregion
+
 	public enum TrafficLightState {
 		Red, Green, Orange
+	}
+
+	public class Enumerator : IEnumerator<List<TrafficLight>> {
+		private TrafficLight root;
+		private List<TrafficLight> current;
+		private List<TrafficLight> prev;
+		private bool loop;
+
+		public Enumerator(TrafficLight root, bool loop = true) {
+			this.loop = loop;
+			this.root = root;
+			Reset ();
+		}
+
+		#region IEnumerator implementation
+		object System.Collections.IEnumerator.Current {
+			get {
+				return current;
+			}
+		}
+		#endregion
+
+		#region IEnumerator implementation
+		
+		public bool MoveNext ()
+		{
+			prev = current;
+			current = current.SelectMany (tl => new [] { tl.Next }.Concat(Slaves(tl.Next)).Where (t => t != null)).Distinct().ToList();
+			if (current.Count == 0 && loop) {
+				current = new [] { root }.Concat(Slaves (root)).ToList();
+			}
+			return current.Count > 0;
+		}
+
+		private IEnumerable<TrafficLight> Slaves(TrafficLight master){
+			if (master != null) {
+				TrafficLight slave = master.Slave;
+				var done = new List<TrafficLight> (new [] {master});
+				while (slave != null && !done.Contains(slave)) {
+					yield return slave;
+					done.Add (slave);
+					slave = slave.Slave;
+				}
+			}
+		}
+
+		public void Reset ()
+		{
+			prev = new List<TrafficLight>();
+			current = new List<TrafficLight>();
+			current.Add(root);	
+			current.AddRange (Slaves (root));
+		}
+		
+		#endregion
+		
+		#region IDisposable implementation
+		
+		public void Dispose ()
+		{
+			this.root = null;
+			this.current = null;
+		}
+		
+		#endregion
+		
+		#region IEnumerator implementation
+		
+		public List<TrafficLight> Current {
+			get {
+				return current;
+			}
+		}
+
+		public List<TrafficLight> Previous {
+			get {
+				return prev;
+			}
+		}
+
+		#endregion
 	}
 }

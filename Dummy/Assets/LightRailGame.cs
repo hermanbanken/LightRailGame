@@ -257,6 +257,37 @@ public class LightRailGame : MonoBehaviour
 				}
 			}
 		}
+
+//		Test ();
+
+		// List all Traffic Light dependencies
+		IDictionary<TrafficLight,IEnumerable<TrafficLight>> dict = new Dictionary<TrafficLight, IEnumerable<TrafficLight>> ();
+		foreach (TrafficLight tl in GameObject.FindObjectsOfType<TrafficLight>()) {
+			var deps = new List<TrafficLight>();
+			dict.Add(tl, deps);
+			if(tl.Next != null){
+				deps.Add (tl.Next);
+			}
+			if(tl.Slave!= null){
+				deps.Add (tl.Slave);
+			}
+		}
+
+		// Remove all but roots of dependencies
+		for(int i = 0; i < dict.Keys.Count;){
+			var tl = dict.Keys.First();
+			foreach(var dp in dict[tl]){
+				if(dict.ContainsKey(dp)){
+					dict[tl] = dict[tl].Concat(dict[dp]);
+					dict.Remove(dp);
+				}
+			}
+			i++;
+		}
+
+		foreach (TrafficLight tl in dict.Keys) {
+			tl.StartAsMaster();
+		}
 	}
 
 	private T GetComponentAtScreenPosition<T> (Vector3 position, bool increaseTouchRadius = false) where T : Component{
