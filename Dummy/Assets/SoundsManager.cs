@@ -25,7 +25,7 @@ public class SoundsManager : MonoBehaviour {
 	void Update () {
 
 		LightRailGame.GetInstance().OnSelectedGameObjectChanged += (GameObject obj) => {
-			// The user selected something
+			//source.Stop();
 			if(obj == null)
 				return;
 			if(obj.GetComponent<Train>() != null) {
@@ -34,24 +34,29 @@ public class SoundsManager : MonoBehaviour {
 		};
 
 		LightRailGame.GetInstance().OnIncidentMenuOpen += (IIncident obj) => {
+			source.Stop();
 			source.PlayOneShot(warning,0.50f);
 		};
 
 		LightRailGame.ScoreManager.OnReroute += (object sender, ScoreManager.RerouteEventArgs e)=>
 		{
+			source.Stop();
 			source.PlayOneShot(Reroutefinish,0.50f);
 		};
 
 		LightRailGame.ScoreManager.OnUserAction += (IIncident obj) => {
+			source.Stop();
 			source.PlayOneShot(action1,0.50f);
 			int suit = obj.Suitability(obj.GetChosenSolution());
 		};
 
 		LightRailGame.ScoreManager.OnOccur += (IIncident obj) => {
+			source.Stop();
 			source.PlayOneShot(Occur,0.5f);
 		};
 
 		LightRailGame.ScoreManager.OnResolved += (IIncident obj) => {
+			source.Stop();
 			source.PlayOneShot(SuccRemoved,0.50f);
 		};
 
