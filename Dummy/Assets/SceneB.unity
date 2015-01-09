@@ -567,7 +567,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f0a5c0edb64c4d1db0d7b56619473f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Next: {fileID: 0}
+  Next: {fileID: 1264758834}
   Slave: {fileID: 0}
   lastChanged: 0
   State: 1
@@ -17273,7 +17273,6 @@ MonoBehaviour:
   m_Script: {fileID: 1301386320, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Priority: 3
   ignoreReversedGraphics: 1
   blockingObjects: 0
   m_BlockingMask:
@@ -17821,7 +17820,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f0a5c0edb64c4d1db0d7b56619473f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Next: {fileID: 1264758834}
+  Next: {fileID: 97367931}
   Slave: {fileID: 0}
   lastChanged: 0
   State: 1
