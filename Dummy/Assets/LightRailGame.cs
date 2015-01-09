@@ -75,13 +75,18 @@ public class LightRailGame : MonoBehaviour
 
 	[NonSerialized]
 	private Tuple<GameObject,Node>[] WPKnots;
-
+	
+	[NonSerialized]
+	private BoxCollider2D Background;
+	
 	// Use this for initialization
 	void Start () {
 		QualitySettings.antiAliasing = 4;
 
 		LineMaster = LineDrawMaster.getInstance ();
-
+		
+		Background = GameObject.Find ("Quad").GetComponent<BoxCollider2D> ();
+		
 		Knot = GameObject.Find ("ReRouteKnot");
 		Knot.SetActive (false);
 
@@ -115,27 +120,32 @@ public class LightRailGame : MonoBehaviour
 			Debug.Log("An obstacle was resolved.");
 			ScoreManager.Score++;
 		});
-
+		
 		StartGame ();
 	}
-
+	
 	void Update(){
 		UpdateKnots ();
 	}
-
+	
 	/**
-	 * Handle mouse/scrolling/events
-	 */
+     * Handle mouse/scrolling/events
+     */
 	static Train _train;
 	void FixedUpdate () {
 		mouse.OnFrame ();
-
-		// Do scrolling
-		if(Input.mouseScrollDelta.magnitude > 0){
-			Camera.main.orthographicSize -= Input.mouseScrollDelta.y;
-			Camera.main.orthographicSize = Math.Max(3f, Camera.main.orthographicSize);
+		
+		//      // Do scrolling
+		Camera.main.orthographicSize -= Input.mouseScrollDelta.y;
+		if(Input.mouseScrollDelta.y > 0){
+			Camera.main.orthographicSize = Math.Max(Camera.main.orthographicSize,20f);
 		}
-
+		else{
+			Camera.main.orthographicSize = Math.Min(Camera.main.orthographicSize,Background.bounds.size.x / Camera.main.aspect / 2);
+		}
+		if (Input.mouseScrollDelta.y != 0)
+			FixCameraPosition (Vector3.zero, 0);
+		
 		// Show edge dragger
 		if (SelectedGameObject != null){
 			if(LightRailGame.EdgeRaycaster.CurrentHover != null) {
@@ -163,14 +173,25 @@ public class LightRailGame : MonoBehaviour
 				e.OnDrag += (Vector3 newPos) => {
 					// Pan background using the new mouse position
 					var diff = newPos - lastPos;
-					Camera.main.transform.Translate(-diff.x*speed, -diff.y*speed, 0, Space.Self);
+					FixCameraPosition (diff, speed);
 					lastPos = newPos;
 				};
 				return;
 			}
 		}
 	}
-
+	
+	void FixCameraPosition (Vector3 diff, float speed)
+	{
+		var c_w = Camera.main.orthographicSize * Camera.main.aspect;
+		var c_h = Camera.main.orthographicSize;
+		var pos = Camera.main.transform.position;
+		var b = Background.bounds;
+		pos.x = Math.Max (b.min.y + c_w, Math.Min (b.max.x - c_w, pos.x - diff.x * speed));
+		pos.y = Math.Max (b.min.y + c_h, Math.Min (b.max.y - c_h, pos.y - diff.y * speed));
+		Camera.main.transform.position = pos;
+	}
+	
 	public void DoSelect(GameObject obj){
 		if (SelectedGameObject != null) RequestDeselect ();
 

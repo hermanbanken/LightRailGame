@@ -861,8 +861,8 @@ AudioSource:
   MaxDistance: 500
   Pan2D: 0
   rolloffMode: 0
-  BypassEffects: 1
-  BypassListenerEffects: 1
+  BypassEffects: 0
+  BypassListenerEffects: 0
   BypassReverbZones: 1
   rolloffCustomCurve:
     serializedVersion: 2
@@ -916,6 +916,7 @@ MonoBehaviour:
   action1: {fileID: 8300000, guid: e66f2b5eeff245e43a7efc9f30f92af1, type: 3}
   SuccRemoved: {fileID: 8300000, guid: 33636941ac371474c9dba62ad76548ad, type: 3}
   Occur: {fileID: 8300000, guid: e23c918dd2deac14982dfad9b24abe45, type: 3}
+  fail: {fileID: 8300000, guid: cb2505fe3a735324faf87174c4bfcdff, type: 3}
 --- !u!114 &11400114
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -7,6 +7,7 @@ public abstract class AbstractIncident : IIncident {
 
 	public event Action<IIncident> OnResolved;
 	public event Action<IIncident> OnUserAction;
+	public event Action<IIncident> OnFailed;
 	protected ISolution solution;
 	protected float? solutionChosenAt;
 	private bool? resolved = null;
@@ -19,6 +20,7 @@ public abstract class AbstractIncident : IIncident {
 		this.OnUserAction += LightRailGame.ScoreManager.DoUserAction;
 		this.OnResolved += LightRailGame.ScoreManager.DoResolved;
 		this.OnResolved += (IIncident obj) => IncidentVisualizer.Remove (obj);
+		this.OnFailed += LightRailGame.ScoreManager.DoFailed;
 	}
 
 	#region IIncident implementation
@@ -39,6 +41,9 @@ public abstract class AbstractIncident : IIncident {
 				}
 			} else {
 				resolved = false;
+				var listeners = OnFailed;
+				if(listeners != null)
+					listeners(this);
 			}
 		}
 		return resolved.HasValue && resolved.Value;
