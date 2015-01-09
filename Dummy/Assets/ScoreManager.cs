@@ -116,6 +116,7 @@ public class ScoreManager : MonoBehaviour
 	public event Action<IIncident> OnOccur;
 	public event Action<IIncident> OnUserAction;
 	public event Action<IIncident> OnResolved;
+	public event Action<IIncident> OnFailed;
 	public event EventHandler<RerouteEventArgs> OnReroute;
 	public event EventHandler<DesiredSpeedChangeEventArgs> OnDesiredSpeedChange;
 	
@@ -172,6 +173,13 @@ public class ScoreManager : MonoBehaviour
 	public virtual void DoResolved (IIncident obj)
 	{
 		var handler = OnResolved;
+		if (handler != null)
+			handler (obj);
+	}
+	
+	public virtual void DoFailed (IIncident obj)
+	{
+		var handler = OnFailed;
 		if (handler != null)
 			handler (obj);
 	}
