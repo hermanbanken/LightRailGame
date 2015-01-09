@@ -18,13 +18,13 @@ public class SolutionIncidents {
 public class SolutionBlockages {
 	public static ISolution Backup = new Solution ("Drive tram backwards a little bit", TimeSpan.FromSeconds (10), 0.50f);
 	public static ISolution PushAside = new Solution ("Ask the tram driver to push the car aside", TimeSpan.FromSeconds (10), 0.25f);
-	public static ISolution Horn = new Solution ("Ask the tram driver to use the horm repeatedly", TimeSpan.FromSeconds (3), 0.10f);
+	public static ISolution Horn = new Solution ("Ask the tram driver to use the horm repeatedly", TimeSpan.FromSeconds (3), 0.20f);
 	public static ISolution Tow = new Solution ("Call for a towing service", TimeSpan.FromSeconds (30), 1.0f);
 	public static ISolution Maintenance = new Solution ("Call maintenance crew to deal with the problem", TimeSpan.FromSeconds (45), 0.9f);	
 	public static ISolution SwitchManually = new Solution ("Ask the tram driver to push the switch manually", TimeSpan.FromSeconds (15), 0.75f);
-	public static ISolution Crane = new Solution ("Call for a crane service", TimeSpan.FromSeconds (90), 0.90f);
-	public static ISolution EmergencyServices = new Solution ("Call for emergency services", TimeSpan.FromSeconds (120), 1.0f);
-	public static ISolution ContinueAnyway = new Solution ("Try to continue despite collision", TimeSpan.FromSeconds (20), 0.10f); //Only to be used if the collision is between tram and not tram
+	public static ISolution Crane = new Solution ("Call for a crane service", TimeSpan.FromSeconds (60), 0.90f);
+	public static ISolution EmergencyServices = new Solution ("Call for emergency services", TimeSpan.FromSeconds (20), 1.0f);
+	public static ISolution ContinueAnyway = new Solution ("Try to continue despite collision", TimeSpan.FromSeconds (5), 0.25f); //Only to be used if the collision is between tram and not tram
 }	
 
 public class PowerUps {
@@ -51,6 +51,7 @@ public class TrainCollisionBlockage : AbstractIncident, IIncident {
 	Train self;
 	Train other;
 	Collision collision;
+	bool ended = false;
 
 	public TrainCollisionBlockage (Train self, Train other, Collision collision)
 	{
@@ -63,6 +64,8 @@ public class TrainCollisionBlockage : AbstractIncident, IIncident {
 
 	public override string Description ()
 	{
+		if (ended)
+			return "The train is broken because of a previous collision.";
 		return "The train has COLLIDED WITH ANOTHER TRAIN.";
 	}
 
@@ -80,7 +83,7 @@ public class TrainCollisionBlockage : AbstractIncident, IIncident {
 	public override float MaxSpeedOfSubject ()
 	{
 		// TODO maybe look to collision impact if the tram should still be able to drive
-		if (
+		if (!ended &&
 			this.GetChosenSolution () != null && 
 			Suitability (this.GetChosenSolution ()) > 0 &&
 			this.solutionChosenAt.Value + this.solution.ResolveTime.TotalSeconds - 10f < Time.time && // Starting five seconds before resolving
@@ -112,11 +115,15 @@ public class TrainCollisionBlockage : AbstractIncident, IIncident {
 	}
 
 	public void CollisionEnded(){
+		ended = true;
+
 		if (solution != null) {
-			solution = new Solution (solution.ProposalText, TimeSpan.Zero, 1f);
 			Debug.Log ("Collision with other tram ended, this incident has a solution");
-		} else
-		Debug.Log ("Collision with other tram ended, this incident does not have a solution!");
+		}
+		else
+			Debug.Log ("Collision with other tram ended, this incident does not have a solution!");
+
+		solution = new Solution (solution != null ? solution.ProposalText : "The other tram moved away", TimeSpan.Zero, 1f);
 	}
 
 	#endregion
