@@ -7,8 +7,8 @@ public abstract class AbstractIncident : IIncident {
 
 	public event Action<IIncident> OnResolved;
 	public event Action<IIncident> OnUserAction;
-	private ISolution solution;
-	private float? solutionChosenAt;
+	protected ISolution solution;
+	protected float? solutionChosenAt;
 	private bool? resolved = null;
 
 	public AbstractIncident(){

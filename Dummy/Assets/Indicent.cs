@@ -68,18 +68,9 @@ public class TrainCollisionBlockage : AbstractIncident, IIncident {
 
 	public override IEnumerable<ISolution> PossibleActions ()
 	{
-		// Depending on this.self and this.other we can also change the possible actions
-		if (other == null) {
-			return new [] {
-				SolutionBlockages.EmergencyServices, SolutionBlockages.ContinueAnyway, SolutionBlockages.Backup
-			};
-		}
-		// if another
-		else {
-			return new [] {
-				SolutionBlockages.EmergencyServices, SolutionBlockages.ContinueAnyway, PowerUps.Magic
-			};
-		}
+		return new [] {
+			SolutionBlockages.EmergencyServices, SolutionBlockages.Crane, SolutionBlockages.ContinueAnyway, PowerUps.Magic, SolutionBlockages.Backup
+		};
 	}
 	
 	#endregion
@@ -89,7 +80,17 @@ public class TrainCollisionBlockage : AbstractIncident, IIncident {
 	public override float MaxSpeedOfSubject ()
 	{
 		// TODO maybe look to collision impact if the tram should still be able to drive
-		return 0.5f;
+		if (
+			this.GetChosenSolution () != null && 
+						Suitability (this.GetChosenSolution ()) >= 1 && 
+						this.solutionChosenAt + this.solution.ResolveTime.TotalSeconds - 5f < Time.time && // Starting five seconds before resolving
+						this.solutionChosenAt + this.solution.ResolveTime.TotalSeconds > Time.time // Ending @ resolving
+		) {
+			if(solution == SolutionBlockages.Backup)
+				return -0.5f;
+			return 0.5f;
+		}
+		return 0f;
 	}
 
 	public override GameObject Subject ()
@@ -97,11 +98,23 @@ public class TrainCollisionBlockage : AbstractIncident, IIncident {
 		return self != null ? self.gameObject : null;
 	}
 
-	//rogier - tweakit -- solution toevoegen
+	//TODO rogier - tweakit -- solution toevoegen
 	public override int Suitability (ISolution solution)
 	{
-		//if (this.obstacle.type == ObstacleType.Car && solution == SolutionIncidents.Ventilate) return -1;
-		return 1;
+		if (solution == null)
+			return 0;
+		if (solution == SolutionBlockages.Tow || solution == SolutionBlockages.Crane)
+			return 1;
+		if (solution == SolutionBlockages.Backup)
+			return 0;
+		return -1;
+	}
+
+	public void CollisionEnded(){
+		if(solution != null)
+			Debug.Log ("Collision with other tram ended, this incident has a solution");
+		else
+			Debug.Log ("Collision with other tram ended, this incident does not have a solution!");
 	}
 
 	#endregion
