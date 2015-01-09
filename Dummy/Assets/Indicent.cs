@@ -82,13 +82,14 @@ public class TrainCollisionBlockage : AbstractIncident, IIncident {
 		// TODO maybe look to collision impact if the tram should still be able to drive
 		if (
 			this.GetChosenSolution () != null && 
-			Suitability (this.GetChosenSolution ()) > 0 && 
-			this.solutionChosenAt.Value + this.solution.ResolveTime.TotalSeconds - 5f < Time.time && // Starting five seconds before resolving
+			Suitability (this.GetChosenSolution ()) > 0 &&
+			this.solutionChosenAt.Value + this.solution.ResolveTime.TotalSeconds - 10f < Time.time && // Starting five seconds before resolving
 			this.solutionChosenAt.Value + this.solution.ResolveTime.TotalSeconds > Time.time // Ending @ resolving
 		) {
-			if(solution == SolutionBlockages.Backup)
+			if(solution == SolutionBlockages.Backup || solution == SolutionBlockages.Crane)
 				return -0.5f;
-			return 0.5f;
+			if(solution == SolutionBlockages.ContinueAnyway || solution == SolutionBlockages.Tow)
+				return 0.5f;
 		}
 		return 0f;
 	}
@@ -111,10 +112,11 @@ public class TrainCollisionBlockage : AbstractIncident, IIncident {
 	}
 
 	public void CollisionEnded(){
-		if(solution != null)
+		if (solution != null) {
+			solution = new Solution (solution.ProposalText, TimeSpan.Zero, 1f);
 			Debug.Log ("Collision with other tram ended, this incident has a solution");
-		else
-			Debug.Log ("Collision with other tram ended, this incident does not have a solution!");
+		} else
+		Debug.Log ("Collision with other tram ended, this incident does not have a solution!");
 	}
 
 	#endregion

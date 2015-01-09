@@ -16,24 +16,30 @@ public static class GUIs
 	public static bool IncidentGUI(this IIncident incident){
 		int w = 600, h = 200;
 		int x, y;
-		CenterInScreen(w, h, out x, out y);
-		GUI.Box (new Rect (x - 5, y - 5, w + 10, h + 10), "");
-		GUILayout.BeginArea (new Rect (x, y, w, h));
-		GUI.skin.button.alignment = TextAnchor.MiddleLeft;
-		GUILayout.Label (incident.Description()+" How would you like to resolve this issue?");
-		
-		GUILayout.BeginHorizontal();
-		GUILayout.Label ("Action");
-		GUILayout.Label ("Duration", GUILayout.Width(50));
-		GUILayout.Label ("Succes%", GUILayout.Width(60));
-		GUILayout.EndHorizontal();
 
 		var actions = incident.PossibleActions ();
 		var incidents = new [] { incident }.ToList();
 		if (incident.Subject ().GetComponent<Train> () != null) {
 			incidents = incident.Subject ().GetComponent<Train> ().incident;
-			actions = incidents.SelectMany(i => i.PossibleActions());
+			actions = incidents.SelectMany(i => i.PossibleActions()).Distinct();
 		}
+
+		h = 100 + actions.Count () * 30;
+
+		CenterInScreen(w, h, out x, out y);
+		GUI.Box (new Rect (x - 5, y - 5, w + 10, h + 10), "");
+		GUILayout.BeginArea (new Rect (x, y, w, h));
+		GUI.skin.button.alignment = TextAnchor.MiddleLeft;
+		if(incidents.Distinct().Count () == 1)
+			GUILayout.Label (incident.Description()+" How would you like to resolve this issue?");
+		else
+			GUILayout.Label (incidents.Select(i => i.Description()).Distinct().Aggregate("Several incidents occured. ", (a,b) => a + b + " ") + "How would you like to resolve these issues?");
+
+		GUILayout.BeginHorizontal();
+		GUILayout.Label ("Action");
+		GUILayout.Label ("Duration", GUILayout.Width(50));
+		GUILayout.Label ("Succes%", GUILayout.Width(60));
+		GUILayout.EndHorizontal();
 
 		GUILayout.BeginScrollView (Vector2.zero);
 		foreach (ISolution s in actions) {
