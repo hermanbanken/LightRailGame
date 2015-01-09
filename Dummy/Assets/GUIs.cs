@@ -28,13 +28,20 @@ public static class GUIs
 		GUILayout.Label ("Succes%", GUILayout.Width(60));
 		GUILayout.EndHorizontal();
 
+		var actions = incident.PossibleActions ();
+		var incidents = new [] { incident }.ToList();
+		if (incident.Subject ().GetComponent<Train> () != null) {
+			incidents = incident.Subject ().GetComponent<Train> ().incident;
+			actions = incidents.SelectMany(i => i.PossibleActions());
+		}
+
 		GUILayout.BeginScrollView (Vector2.zero);
-		foreach (ISolution s in incident.PossibleActions()) {
+		foreach (ISolution s in actions) {
 			GUILayout.BeginHorizontal();
 			GUI.enabled = s as IPowerUp == null || (s as IPowerUp).IsAvailable();
 			if(GUILayout.Button (s.ProposalText)){
 				if(s as IPowerUp != null) (s as IPowerUp).Use();
-				incident.SetChosenSolution(s);
+				incidents.ForEach(i => i.SetChosenSolution(s));
 				return true;
 			}
 			GUI.enabled = true;
