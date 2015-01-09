@@ -8,7 +8,9 @@ public class SoundsManager : MonoBehaviour {
 	public AudioClip action1;
 	public AudioClip SuccRemoved;
 	public AudioClip Occur;
+	public AudioClip fail;
 	private AudioSource source;
+
 
 
 	void Awake () {	
@@ -20,7 +22,8 @@ public class SoundsManager : MonoBehaviour {
 	void Start () {
 	
 	}
-	
+
+
 	// Update is called once per frame
 	void Update () {
 
@@ -35,13 +38,13 @@ public class SoundsManager : MonoBehaviour {
 
 		LightRailGame.GetInstance().OnIncidentMenuOpen += (IIncident obj) => {
 			source.Stop();
-			source.PlayOneShot(warning,0.50f);
+			source.PlayOneShot(warning,0.1f);
 		};
 
 		LightRailGame.ScoreManager.OnReroute += (object sender, ScoreManager.RerouteEventArgs e)=>
 		{
 			source.Stop();
-			source.PlayOneShot(Reroutefinish,0.50f);
+			source.PlayOneShot(Reroutefinish,0.1f);
 		};
 
 		LightRailGame.ScoreManager.OnUserAction += (IIncident obj) => {
@@ -52,12 +55,17 @@ public class SoundsManager : MonoBehaviour {
 
 		LightRailGame.ScoreManager.OnOccur += (IIncident obj) => {
 			source.Stop();
-			source.PlayOneShot(Occur,0.5f);
+			source.PlayOneShot(Occur,0.2f);
 		};
 
 		LightRailGame.ScoreManager.OnResolved += (IIncident obj) => {
 			source.Stop();
-			source.PlayOneShot(SuccRemoved,0.50f);
+			source.PlayOneShot(SuccRemoved,0.2f);
+		};
+
+		LightRailGame.ScoreManager.OnFailed += (IIncident obj) => {
+			source.Stop();
+			source.PlayOneShot(fail,0.3f);
 		};
 
 	}
