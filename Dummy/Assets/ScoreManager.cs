@@ -41,8 +41,8 @@ public class ScoreManager : MonoBehaviour
 	{
 		ScoreText = ScoreText ?? GameObject.Find ("SM_Score").GetComponent<InputField>();
 		ImpactCounterText = ImpactCounterText ?? GameObject.Find ("SM_Impact").GetComponent<InputField>();
-		ProblemTimerText = ScoreText ?? GameObject.Find ("SM_ProblemTimer").GetComponent<InputField>();
-		DelayTimerText = ScoreText ?? GameObject.Find ("SM_DelayTimer").GetComponent<InputField>();
+		ProblemTimerText = ProblemTimerText ?? GameObject.Find ("SM_ProblemTimer").GetComponent<InputField>();
+		DelayTimerText = DelayTimerText ?? GameObject.Find ("SM_DelayTimer").GetComponent<InputField>();
 
 		OnResolved = null;
 		OnResolved += (IIncident obj) => { 
