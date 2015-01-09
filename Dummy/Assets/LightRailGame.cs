@@ -186,10 +186,14 @@ public class LightRailGame : MonoBehaviour
 		var c_w = Camera.main.orthographicSize * Camera.main.aspect;
 		var c_h = Camera.main.orthographicSize;
 		var pos = Camera.main.transform.position;
-		var b = Background.bounds;
-		pos.x = Math.Max (b.min.y + c_w, Math.Min (b.max.x - c_w, pos.x - diff.x * speed));
-		pos.y = Math.Max (b.min.y + c_h, Math.Min (b.max.y - c_h, pos.y - diff.y * speed));
+		pos.x = Math.Max (Background.bounds.min.y + c_w, Math.Min (Background.bounds.max.x - c_w, pos.x - diff.x * speed));
+		pos.y = Math.Max (Background.bounds.min.y + c_h, Math.Min (Background.bounds.max.y - c_h, pos.y - diff.y * speed));
 		Camera.main.transform.position = pos;
+//		Camera.main.transform.Translate (new Vector3 (
+//			Math.Max (Background.bounds.min.y + c_w - Camera.main.transform.position.x, Math.Min (Background.bounds.max.x - c_w - Camera.main.transform.position.x, - diff.x * speed)),
+//			Math.Max (Background.bounds.min.y + c_h - Camera.main.transform.position.y, Math.Min (Background.bounds.max.y - c_h - Camera.main.transform.position.y, - diff.y * speed)),
+//			0
+//		));
 	}
 	
 	public void DoSelect(GameObject obj){
