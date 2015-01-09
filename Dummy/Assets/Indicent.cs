@@ -82,9 +82,9 @@ public class TrainCollisionBlockage : AbstractIncident, IIncident {
 		// TODO maybe look to collision impact if the tram should still be able to drive
 		if (
 			this.GetChosenSolution () != null && 
-						Suitability (this.GetChosenSolution ()) >= 1 && 
-						this.solutionChosenAt + this.solution.ResolveTime.TotalSeconds - 5f < Time.time && // Starting five seconds before resolving
-						this.solutionChosenAt + this.solution.ResolveTime.TotalSeconds > Time.time // Ending @ resolving
+			Suitability (this.GetChosenSolution ()) > 0 && 
+			this.solutionChosenAt.Value + this.solution.ResolveTime.TotalSeconds - 5f < Time.time && // Starting five seconds before resolving
+			this.solutionChosenAt.Value + this.solution.ResolveTime.TotalSeconds > Time.time // Ending @ resolving
 		) {
 			if(solution == SolutionBlockages.Backup)
 				return -0.5f;
@@ -104,9 +104,9 @@ public class TrainCollisionBlockage : AbstractIncident, IIncident {
 		if (solution == null)
 			return 0;
 		if (solution == SolutionBlockages.Tow || solution == SolutionBlockages.Crane)
-			return 1;
+			return 2;
 		if (solution == SolutionBlockages.Backup)
-			return 0;
+			return 1;
 		return -1;
 	}
 
