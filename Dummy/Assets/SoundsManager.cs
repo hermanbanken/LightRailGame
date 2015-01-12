@@ -20,12 +20,6 @@ public class SoundsManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-	
-	}
-
-
-	// Update is called once per frame
-	void Update () {
 
 		LightRailGame.GetInstance().OnSelectedGameObjectChanged += (GameObject obj) => {
 			//source.Stop();
