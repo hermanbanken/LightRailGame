@@ -66,17 +66,13 @@ public class Tuturial : MonoBehaviour {
 		};
 
 	
-	}
-
-	void Update()
-	{
 		LightRailGame.ScoreManager.OnResolved += (IIncident obj) => {
 			text.text="Blockage removed!\n\nCongratulations, you now know the basics of the game. Good luck managing the network!";
 			Quitgame.SetActive(true);
 			ObStacleOccure.SetActive(false);
 		};
 
-		}
+	}
 
 	public void next()
 	{
