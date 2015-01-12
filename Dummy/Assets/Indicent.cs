@@ -16,15 +16,15 @@ public class SolutionIncidents {
 }
 
 public class SolutionBlockages {
-	public static ISolution Backup = new Solution ("Drive tram backwards a little bit", TimeSpan.FromSeconds (10), 0.50f);
+	public static ISolution Backup = new Solution ("Drive tram backwards a little bit", TimeSpan.FromSeconds (20), 1f); //(10), 0.50f);
 	public static ISolution PushAside = new Solution ("Ask the tram driver to push the car aside", TimeSpan.FromSeconds (10), 0.25f);
 	public static ISolution Horn = new Solution ("Ask the tram driver to use the horm repeatedly", TimeSpan.FromSeconds (3), 0.20f);
 	public static ISolution Tow = new Solution ("Call for a towing service", TimeSpan.FromSeconds (30), 1.0f);
 	public static ISolution Maintenance = new Solution ("Call maintenance crew to deal with the problem", TimeSpan.FromSeconds (45), 0.9f);	
 	public static ISolution SwitchManually = new Solution ("Ask the tram driver to push the switch manually", TimeSpan.FromSeconds (15), 0.75f);
-	public static ISolution Crane = new Solution ("Call for a crane service", TimeSpan.FromSeconds (60), 0.90f);
+	public static ISolution Crane = new Solution ("Call for a crane service", TimeSpan.FromSeconds (1), 1.0f);//(60), 0.90f);
 	public static ISolution EmergencyServices = new Solution ("Call for emergency services", TimeSpan.FromSeconds (20), 1.0f);
-	public static ISolution ContinueAnyway = new Solution ("Try to continue despite collision", TimeSpan.FromSeconds (5), 0.25f); //Only to be used if the collision is between tram and not tram
+	public static ISolution ContinueAnyway = new Solution ("Try to continue despite collision", TimeSpan.FromSeconds (5), 1f);//-r (5), 0.25f); //Only to be used if the collision is between tram and not tram
 }	
 
 public class PowerUps {
@@ -90,9 +90,9 @@ public class TrainCollisionBlockage : AbstractIncident, IIncident {
 			this.solutionChosenAt.Value + this.solution.ResolveTime.TotalSeconds > Time.time // Ending @ resolving
 		) {
 			if(solution == SolutionBlockages.Backup || solution == SolutionBlockages.Crane)
-				return -0.5f;
+				return -1f; //-r -0.5f;
 			if(solution == SolutionBlockages.ContinueAnyway || solution == SolutionBlockages.Tow)
-				return 0.5f;
+				return 1f; //-r 0.5f;
 		}
 		return 0f;
 	}
