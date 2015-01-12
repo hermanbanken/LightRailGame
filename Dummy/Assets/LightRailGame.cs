@@ -81,6 +81,7 @@ public class LightRailGame : MonoBehaviour
 	
 	// Use this for initialization
 	void Start () {
+		_scoreManager = null;
 		QualitySettings.antiAliasing = 4;
 
 		LineMaster = LineDrawMaster.getInstance ();
@@ -147,18 +148,16 @@ public class LightRailGame : MonoBehaviour
 			FixCameraPosition (Vector3.zero, 0);
 		
 		// Show edge dragger
-		if (SelectedGameObject != null){
-			if(LightRailGame.EdgeRaycaster.CurrentHover != null) {
-				Knot.transform.position = Camera.main.WorldToScreenPoint(LightRailGame.EdgeRaycaster.CurrentHover.pos);
-				Screen.showCursor = false;
-				Knot.SetActive(true);
-				if(mouse.Events.Any() && (_train = SelectedGameObject.GetComponent<Train>())){
-					HandleKnotClick(mouse.Events.Dequeue(), LightRailGame.EdgeRaycaster.CurrentHover.Edge, _train);
-				}
-			} else {
-				Knot.SetActive(false);
-				Screen.showCursor = true;
+		if (SelectedGameObject != null && LightRailGame.EdgeRaycaster.CurrentHover != null){
+			Knot.transform.position = Camera.main.WorldToScreenPoint(LightRailGame.EdgeRaycaster.CurrentHover.pos);
+			Screen.showCursor = false;
+			Knot.SetActive(true);
+			if(mouse.Events.Any() && (_train = SelectedGameObject.GetComponent<Train>())){
+				HandleKnotClick(mouse.Events.Dequeue(), LightRailGame.EdgeRaycaster.CurrentHover.Edge, _train);
 			}
+		} else {
+			Knot.SetActive(false);
+			Screen.showCursor = true;
 		}
 
 		// Handle all mouse events

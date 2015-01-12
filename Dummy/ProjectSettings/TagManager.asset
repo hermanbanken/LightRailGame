@@ -12,6 +12,7 @@ TagManager:
   - dig
   - car
   - diffLevel
+  - whenPaused
   - 
   Builtin Layer 0: Default
   Builtin Layer 1: TransparentFX

@@ -81,6 +81,11 @@ public class TrainMenu : MonoBehaviour {
 	void Update () 
 	{
 		if (Selected != null) {
+			if (Input.GetKeyDown(KeyCode.Escape)) {
+				game.RequestDeselect();
+				return;
+			}
+
 			slider.value = Selected.desiredSpeed;
 			slider.fillRect.anchoredPosition = new Vector2(-5,0);
 			slider.fillRect.sizeDelta = new Vector2(Selected.speed / Selected.desiredSpeed * 110f - 100f, slider.fillRect.sizeDelta.y);
