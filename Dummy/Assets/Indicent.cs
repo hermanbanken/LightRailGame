@@ -132,11 +132,13 @@ public class TrainCollisionBlockage : AbstractIncident, IIncident {
 		if(solution == SolutionBlockages.Backup)
 			self.desiredSpeed = 0;
 
-		// Re-evaluate
-//		var s = solution;
-//		solution = null;
-//		solutionChosenAt = null;
-		solution = new CollisionEndedSolution(solution);
+		// Assigning a solution, so make sure to fix state
+		var colsol = new CollisionEndedSolution (solution);
+		if (solution == null) {
+			SetChosenSolution (colsol);
+		} else {
+			solution = colsol;
+		}
 	}
 
 	public class CollisionEndedSolution : Solution {
