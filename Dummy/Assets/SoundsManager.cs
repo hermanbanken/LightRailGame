@@ -52,6 +52,7 @@ public class SoundsManager : MonoBehaviour {
 		LightRailGame.ScoreManager.OnResolved += (IIncident obj) => {
 
 			source.PlayOneShot(SuccRemoved,1.0f);
+			Debug.Log ("hi,sound");
 		};
 
 		LightRailGame.ScoreManager.OnFailed += (IIncident obj) => {
