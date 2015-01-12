@@ -8,6 +8,22 @@ public class Node : MonoBehaviour {
 	
 	private Graph _graph;
 	private GUIElement button;
+	
+	// Cache traffic light
+	private TrafficLight _tl;
+	public TrafficLight TrafficLight {
+		get { return _tl; }
+	}
+	// Cache station
+	private Station _station;
+	public Station Station {
+		get { return _station; }
+	}
+
+	public void Start() {
+		_tl = this.GetComponent<TrafficLight> ();
+		_station = this.GetComponent<Station> ();
+	}
 
 	public Graph graph {
 		get { 

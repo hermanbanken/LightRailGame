@@ -245,8 +245,8 @@ public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandle
 		/* check for stations/traffic lights/end of track here */
 		Edge _track; int _t;
 		var isEndOfPath = !TryGetNextTrack (out _t, out _track);
-		var station = current.To.gameObject.GetComponent<Station> ();
-		var traffic = current.To.gameObject.GetComponent<TrafficLight> ();
+		var station = current.To.Station;
+		var traffic = current.To.TrafficLight;
 
 		if (isEndOfPath && NeedBreak (0, cL - position)) {
 			desiredSpeed = 0;
