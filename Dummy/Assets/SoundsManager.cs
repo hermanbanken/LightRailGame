@@ -14,11 +14,11 @@ public class SoundsManager : MonoBehaviour {
 
 
 	void Awake () {	
-		source = GetComponent<AudioSource>();
-
 	}
 
 	void Start () {
+		source = GetComponent<AudioSource>();
+
 		LightRailGame.GetInstance().OnSelectedGameObjectChanged += (GameObject obj) => {
 			if(obj == null)
 				return;

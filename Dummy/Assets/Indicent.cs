@@ -16,15 +16,15 @@ public class SolutionIncidents {
 }
 
 public class SolutionBlockages {
-	public static ISolution Backup = new Solution ("Drive tram backwards a little bit", TimeSpan.FromSeconds (10), 0.50f);
+	public static ISolution Backup = new Solution ("Drive tram backwards a little bit", TimeSpan.FromSeconds (20), 1f); //(10), 0.50f);
 	public static ISolution PushAside = new Solution ("Ask the tram driver to push the car aside", TimeSpan.FromSeconds (10), 0.25f);
 	public static ISolution Horn = new Solution ("Ask the tram driver to use the horm repeatedly", TimeSpan.FromSeconds (3), 0.20f);
 	public static ISolution Tow = new Solution ("Call for a towing service", TimeSpan.FromSeconds (30), 1.0f);
 	public static ISolution Maintenance = new Solution ("Call maintenance crew to deal with the problem", TimeSpan.FromSeconds (45), 0.9f);	
 	public static ISolution SwitchManually = new Solution ("Ask the tram driver to push the switch manually", TimeSpan.FromSeconds (15), 0.75f);
-	public static ISolution Crane = new Solution ("Call for a crane service", TimeSpan.FromSeconds (60), 0.90f);
+	public static ISolution Crane = new Solution ("Call for a crane service", TimeSpan.FromSeconds (1), 1.0f);//(60), 0.90f);
 	public static ISolution EmergencyServices = new Solution ("Call for emergency services", TimeSpan.FromSeconds (20), 1.0f);
-	public static ISolution ContinueAnyway = new Solution ("Try to continue despite collision", TimeSpan.FromSeconds (5), 0.25f); //Only to be used if the collision is between tram and not tram
+	public static ISolution ContinueAnyway = new Solution ("Try to continue despite collision", TimeSpan.FromSeconds (5), 1f);//-r (5), 0.25f); //Only to be used if the collision is between tram and not tram
 }	
 
 public class PowerUps {
@@ -71,6 +71,8 @@ public class TrainCollisionBlockage : AbstractIncident, IIncident {
 
 	public override IEnumerable<ISolution> PossibleActions ()
 	{
+		if (ended)
+			return new [] { SolutionBlockages.Maintenance };
 		return new [] {
 			SolutionBlockages.EmergencyServices, SolutionBlockages.Crane, SolutionBlockages.ContinueAnyway, PowerUps.Magic, SolutionBlockages.Backup
 		};
@@ -85,14 +87,14 @@ public class TrainCollisionBlockage : AbstractIncident, IIncident {
 		// TODO maybe look to collision impact if the tram should still be able to drive
 		if (!ended &&
 			this.GetChosenSolution () != null && 
-			Suitability (this.GetChosenSolution ()) > 0 &&
+			//-r Suitability (this.GetChosenSolution ()) > 0 &&
 			this.solutionChosenAt.Value + this.solution.ResolveTime.TotalSeconds - 10f < Time.time && // Starting five seconds before resolving
 			this.solutionChosenAt.Value + this.solution.ResolveTime.TotalSeconds > Time.time // Ending @ resolving
 		) {
 			if(solution == SolutionBlockages.Backup || solution == SolutionBlockages.Crane)
-				return -0.5f;
+				return -2f; //-r -0.5f;
 			if(solution == SolutionBlockages.ContinueAnyway || solution == SolutionBlockages.Tow)
-				return 0.5f;
+				return 2f; //-r 0.5f;
 		}
 		return 0f;
 	}
@@ -107,9 +109,13 @@ public class TrainCollisionBlockage : AbstractIncident, IIncident {
 	{
 		if (solution == null)
 			return 0;
+		if (solution == SolutionBlockages.Maintenance)
+			return 1;
 		if (solution == SolutionBlockages.Tow || solution == SolutionBlockages.Crane)
 			return 2;
-		if (solution == SolutionBlockages.Backup)
+		if (solution == SolutionBlockages.Backup || solution == SolutionBlockages.ContinueAnyway)
+			return 1;
+		if (solution as CollisionEndedSolution != null)
 			return 1;
 		return -1;
 	}
@@ -123,7 +129,20 @@ public class TrainCollisionBlockage : AbstractIncident, IIncident {
 		else
 			Debug.Log ("Collision with other tram ended, this incident does not have a solution!");
 
-		solution = new Solution (solution != null ? solution.ProposalText : "The other tram moved away", TimeSpan.Zero, 1f);
+		if(solution == SolutionBlockages.Backup)
+			self.desiredSpeed = 0;
+
+		// Assigning a solution, so make sure to fix state
+		var colsol = new CollisionEndedSolution (solution);
+		if (solution == null) {
+			SetChosenSolution (colsol);
+		} else {
+			solution = colsol;
+		}
+	}
+
+	public class CollisionEndedSolution : Solution {
+		public CollisionEndedSolution(ISolution initial) : base(initial != null ? initial.ProposalText : "The other tram moved away", initial != null ? initial.ResolveTime : TimeSpan.Zero, 1f) {}
 	}
 
 	#endregion

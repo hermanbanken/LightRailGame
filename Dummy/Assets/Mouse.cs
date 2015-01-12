@@ -28,7 +28,7 @@ public class Mouse {
 		}
 
 		// End of click
-		if (down && Input.GetMouseButtonUp (0)) {
+		if (down && !Input.GetMouseButton (0)) {
 			down = false;
 			Last.HandleRelease(Input.mousePosition);
 		}
