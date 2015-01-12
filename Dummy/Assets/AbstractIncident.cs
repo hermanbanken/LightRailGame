@@ -10,7 +10,7 @@ public abstract class AbstractIncident : IIncident {
 	public event Action<IIncident> OnFailed;
 	protected ISolution solution;
 	protected float? solutionChosenAt;
-	private bool? resolved = null;
+	protected bool? resolved = null;
 
 	public AbstractIncident(){
 		// Fire occur event

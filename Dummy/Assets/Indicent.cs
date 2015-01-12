@@ -85,14 +85,14 @@ public class TrainCollisionBlockage : AbstractIncident, IIncident {
 		// TODO maybe look to collision impact if the tram should still be able to drive
 		if (!ended &&
 			this.GetChosenSolution () != null && 
-			Suitability (this.GetChosenSolution ()) > 0 &&
+			//-r Suitability (this.GetChosenSolution ()) > 0 &&
 			this.solutionChosenAt.Value + this.solution.ResolveTime.TotalSeconds - 10f < Time.time && // Starting five seconds before resolving
 			this.solutionChosenAt.Value + this.solution.ResolveTime.TotalSeconds > Time.time // Ending @ resolving
 		) {
 			if(solution == SolutionBlockages.Backup || solution == SolutionBlockages.Crane)
-				return -1f; //-r -0.5f;
+				return -2f; //-r -0.5f;
 			if(solution == SolutionBlockages.ContinueAnyway || solution == SolutionBlockages.Tow)
-				return 1f; //-r 0.5f;
+				return 2f; //-r 0.5f;
 		}
 		return 0f;
 	}
@@ -127,11 +127,16 @@ public class TrainCollisionBlockage : AbstractIncident, IIncident {
 
 		if(solution == SolutionBlockages.Backup)
 			self.desiredSpeed = 0;
-		solution = new CollisionEndedSolution(solution != null ? solution.ProposalText : "The other tram moved away");
+
+		// Re-evaluate
+//		var s = solution;
+//		solution = null;
+//		solutionChosenAt = null;
+		solution = new CollisionEndedSolution(solution);
 	}
 
 	public class CollisionEndedSolution : Solution {
-		public CollisionEndedSolution(string ProposalText) : base(ProposalText, TimeSpan.FromSeconds(1), 1f) {}
+		public CollisionEndedSolution(ISolution initial) : base(initial != null ? initial.ProposalText : "The other tram moved away", initial.ResolveTime, 1f) {}
 	}
 
 	#endregion
