@@ -172,13 +172,10 @@ public class BezierSpline : MonoBehaviour {
 
 	public float GetLength(){
 		cachePositions ();
-		var length = 0f;
-		for (int i = 0; i < lengthCache.Count; i++) {
-			length += lengthCache[i];
-		}
-		return length;
+		return _length;
 	}
-	
+
+	private float _length = -1f;
 	private void cachePositions(bool forceReset = false){
 		if(positionCache == null || forceReset)
 			positionCache = Enumerable.Range (0, precision + 1).Select (t => t / (float) precision).Select (t => this.GetPoint (t)).ToList();
@@ -188,6 +185,13 @@ public class BezierSpline : MonoBehaviour {
 			boundingBox = new Bounds(positionCache[0], Vector3.zero);
 			foreach(Vector3 p in positionCache)
 				boundingBox.Encapsulate(p);
+		}
+		if (_length < 0) {
+			_length = 0f;
+			var c = lengthCache.Count;
+			for (int i = 0; i < c; i++) {
+				_length += lengthCache[i];
+			}
 		}
 	}
 	
