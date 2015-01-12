@@ -109,7 +109,9 @@ public class TrainCollisionBlockage : AbstractIncident, IIncident {
 			return 0;
 		if (solution == SolutionBlockages.Tow || solution == SolutionBlockages.Crane)
 			return 2;
-		if (solution == SolutionBlockages.Backup)
+		if (solution == SolutionBlockages.Backup || solution == SolutionBlockages.ContinueAnyway)
+			return 1;
+		if (solution as CollisionEndedSolution != null)
 			return 1;
 		return -1;
 	}
@@ -123,7 +125,13 @@ public class TrainCollisionBlockage : AbstractIncident, IIncident {
 		else
 			Debug.Log ("Collision with other tram ended, this incident does not have a solution!");
 
-		solution = new Solution (solution != null ? solution.ProposalText : "The other tram moved away", TimeSpan.Zero, 1f);
+		if(solution == SolutionBlockages.Backup)
+			self.desiredSpeed = 0;
+		solution = new CollisionEndedSolution(solution != null ? solution.ProposalText : "The other tram moved away");
+	}
+
+	public class CollisionEndedSolution : Solution {
+		public CollisionEndedSolution(string ProposalText) : base(ProposalText, TimeSpan.FromSeconds(1), 1f) {}
 	}
 
 	#endregion
