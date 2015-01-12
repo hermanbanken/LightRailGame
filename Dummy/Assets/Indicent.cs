@@ -136,7 +136,7 @@ public class TrainCollisionBlockage : AbstractIncident, IIncident {
 	}
 
 	public class CollisionEndedSolution : Solution {
-		public CollisionEndedSolution(ISolution initial) : base(initial != null ? initial.ProposalText : "The other tram moved away", initial.ResolveTime, 1f) {}
+		public CollisionEndedSolution(ISolution initial) : base(initial != null ? initial.ProposalText : "The other tram moved away", initial != null ? initial.ResolveTime : TimeSpan.Zero, 1f) {}
 	}
 
 	#endregion
