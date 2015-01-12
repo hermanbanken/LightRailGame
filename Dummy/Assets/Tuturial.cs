@@ -17,10 +17,7 @@ public class Tuturial : MonoBehaviour {
 		LightRailGame.Difficulty = -1;
 		text = GetComponent<Text>();
 		text.text="Have a look at the map, you should see two trams moving. There are some stations that the trams visit.\n\nFirstly, try to click on a tram.";
-	}
-	
-	// Update is called once per frame
-	void Update () {
+
 		LightRailGame.GetInstance().OnSelectedGameObjectChanged += (GameObject obj) => {
 			// The user selected something
 			if(obj == null)
@@ -68,14 +65,13 @@ public class Tuturial : MonoBehaviour {
 
 		};
 
+	
 		LightRailGame.ScoreManager.OnResolved += (IIncident obj) => {
 			text.text="Blockage removed!\n\nCongratulations, you now know the basics of the game. Good luck managing the network!";
 			Quitgame.SetActive(true);
 			ObStacleOccure.SetActive(false);
 		};
 
-	
-		
 	}
 
 	public void next()

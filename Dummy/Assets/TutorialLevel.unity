@@ -5485,11 +5485,11 @@ AudioSource:
   serializedVersion: 3
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: .116999999
+  m_Volume: .153999999
   m_Pitch: 1
   Loop: 0
   Mute: 0
-  Priority: 128
+  Priority: 112
   DopplerLevel: 1
   MinDistance: 1
   MaxDistance: 500
@@ -5630,6 +5630,18 @@ Prefab:
     - target: {fileID: 22489106, guid: 062ce65807c764d6dbc263e35809010a, type: 2}
       propertyPath: m_Pivot.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8200000, guid: 062ce65807c764d6dbc263e35809010a, type: 2}
+      propertyPath: BypassReverbZones
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8200000, guid: 062ce65807c764d6dbc263e35809010a, type: 2}
+      propertyPath: m_Volume
+      value: .153999999
+      objectReference: {fileID: 0}
+    - target: {fileID: 8200000, guid: 062ce65807c764d6dbc263e35809010a, type: 2}
+      propertyPath: Priority
+      value: 112
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 062ce65807c764d6dbc263e35809010a, type: 2}
