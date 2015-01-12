@@ -13,7 +13,13 @@ public class TrafficLight : MonoBehaviour, IStop, IEnumerable<List<TrafficLight>
 	[HideInInspector,NonSerialized]
 	public TrafficLight Master;
 	[HideInInspector,NonSerialized]
+	private bool isMaster = false;
+	[HideInInspector,NonSerialized]
 	public Enumerator MasterEnumerator;
+	[HideInInspector,NonSerialized]
+	public List<TrafficLight> AllInGroup;
+	[HideInInspector,NonSerialized]
+	public List<Edge> Guard;
 
 	// Last time we changed colors
 	[HideInInspector]
@@ -65,11 +71,18 @@ public class TrafficLight : MonoBehaviour, IStop, IEnumerable<List<TrafficLight>
 
 	public void StartAsMaster ()
 	{
+		isMaster = true;
+
 		// Prepare main traffic light loop
 		MasterEnumerator = new Enumerator (this);
 
+		// Slaves
+		AllInGroup = this.Take (4).SelectMany (l => l).Distinct ().ToList ();
+		AllInGroup.Where (a => a != this).ToList().ForEach (tl => StartAsSlave(this));
+
+		Guard = AllInGroup.SelectMany (tl => tl.GetComponent<Node> ().OutGoing()).ToList();
+
 		// Initialize first round greens
-		bool started = false;
 		MasterEnumerator.Current.ForEach (tl => tl.State = TrafficLightState.Green);
 	}
 
@@ -106,15 +119,22 @@ public class TrafficLight : MonoBehaviour, IStop, IEnumerable<List<TrafficLight>
 
 		// Time to go red + make another green
 		if (MasterEnumerator != null && MasterEnumerator.Current.First().State == TrafficLightState.Orange && lastChanged + Duration (TrafficLightState.Green) + Duration (TrafficLightState.Orange) < Time.time) {
-			MasterEnumerator.Current.ForEach (tl => {
-				tl.State = TrafficLightState.Red;
-			});
 
-			lastChanged = Time.time;
-			MasterEnumerator.MoveNext ();
-			MasterEnumerator.Current.ForEach (tl => {
-				tl.State = TrafficLightState.Green;
-			});
+			// Only go green if there is no train here
+			if(!Guard.SelectMany(e => e.GetOccupants()).Any())
+			{
+				MasterEnumerator.Current.ForEach (tl => {
+					tl.State = TrafficLightState.Red;
+				});
+
+				lastChanged = Time.time;
+				MasterEnumerator.MoveNext ();
+				MasterEnumerator.Current.ForEach (tl => {
+					tl.State = TrafficLightState.Green;
+				});
+//			} else {
+//				Debug.Log (Guard.SelectMany(e => e.GetOccupants()).Aggregate("Blocking Traffic Light: ", (o, s) => s + o.ToString()));
+			}
 		}
 	}
 	

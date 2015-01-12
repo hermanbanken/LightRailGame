@@ -65,6 +65,10 @@ public class Node : MonoBehaviour {
 		return GUI.Button (new Rect (sp.x - w/2, Screen.height - (sp.y + w/2), w, w), "");
 	}
 
+	public IEnumerable<Edge> OutGoing(){
+		return graph.edges.Where (e => e.From == this);
+	}
+
 	public override bool Equals (object o)
 	{
 		Node a = o as Node;

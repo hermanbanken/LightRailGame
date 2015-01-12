@@ -173,6 +173,7 @@ public class Edge : BezierSpline, IEdge<Node>, ILine, IKnowWhoIsHere
 	}
 
 	#region IKnowWhoIsHere implementation
+	private List<IOccupy> _Occupants = new List<IOccupy>();
 	private IDictionary<Type,IList<IOccupy>> Occupants = new Dictionary<Type, IList<IOccupy>>();
 
 	public IEnumerable<T> GetOccupants<T> () where T : IOccupy
@@ -186,9 +187,9 @@ public class Edge : BezierSpline, IEdge<Node>, ILine, IKnowWhoIsHere
 
 	public IEnumerable<IOccupy> GetOccupants ()
 	{
-		if (Occupants == null)
+		if (_Occupants == null)
 			Debug.LogError ("Occupants is null");
-		return Occupants.SelectMany (p => p.Value).ToArray ();
+		return _Occupants;
 	}
 
 	public void Arrive<T> (T who) where T : IOccupy
@@ -203,12 +204,15 @@ public class Edge : BezierSpline, IEdge<Node>, ILine, IKnowWhoIsHere
 		} else {
 			objs.Add(who);
 		}
+		_Occupants.Add (who);
 	}
 
 	public void Leave<T> (T who) where T : IOccupy
 	{
 		if(Occupants != null && Occupants.ContainsKey(typeof(T)) && Occupants[typeof(T)].Contains(who))
 			Occupants [typeof(T)].Remove (who);
+		if (_Occupants != null && _Occupants.Contains (who))
+			_Occupants.Remove (who);
 	}
 
 	#endregion
