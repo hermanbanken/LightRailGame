@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Linq;
+using System;
 
 public class TrainMenu : MonoBehaviour {
 
@@ -13,9 +14,22 @@ public class TrainMenu : MonoBehaviour {
 	private Vector3 visiblePosition;
 	private Vector3 hidePosition = new Vector3(200,0,0);
 
+	[NonSerialized]
+	private LightRailGame _lrg;
+	[NonSerialized]
+	private bool _haslrg = false;
+
+	public LightRailGame game { get {
+		if(!_haslrg){
+			_haslrg = true;
+			_lrg = LightRailGame.GetInstance();
+		}
+		return _lrg;
+	} }
+
 	public Train Selected {
 		get {
-			return LightRailGame.GetInstance ().SelectedGameObject != null ? LightRailGame.GetInstance ().SelectedGameObject.GetComponent<Train>() : null;
+			return game.SelectedGameObject != null ? game.SelectedGameObject.GetComponent<Train>() : null;
 		}
 	}
 
@@ -30,7 +44,7 @@ public class TrainMenu : MonoBehaviour {
 	{
 		close = this.GetComponentsInChildren<Button>().First(b=>b.gameObject.name == "Deselect");
 		close.onClick.RemoveAllListeners ();
-		close.onClick.AddListener(() => LightRailGame.GetInstance ().RequestDeselect());
+		close.onClick.AddListener(() => game.RequestDeselect());
 
 		stop = this.GetComponentsInChildren<Button>().First(b=>b.gameObject.name == "Stop");
 		stop.onClick.RemoveAllListeners ();
