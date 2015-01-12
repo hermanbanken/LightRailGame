@@ -16,12 +16,25 @@ public static class GUIs
 	public static bool IncidentGUI(this IIncident incident){
 		int w = 600, h = 200;
 		int x, y;
+
+		var actions = incident.PossibleActions ();
+		var incidents = new [] { incident }.ToList();
+		if (incident.Subject ().GetComponent<Train> () != null) {
+			incidents = incident.Subject ().GetComponent<Train> ().incident;
+			actions = incidents.SelectMany(i => i.PossibleActions()).Distinct();
+		}
+
+		h = 100 + actions.Count () * 30;
+
 		CenterInScreen(w, h, out x, out y);
 		GUI.Box (new Rect (x - 5, y - 5, w + 10, h + 10), "");
 		GUILayout.BeginArea (new Rect (x, y, w, h));
 		GUI.skin.button.alignment = TextAnchor.MiddleLeft;
-		GUILayout.Label (incident.Description()+" How would you like to resolve this issue?");
-		
+		if(incidents.Distinct().Count () == 1)
+			GUILayout.Label (incident.Description()+" How would you like to resolve this issue?");
+		else
+			GUILayout.Label (incidents.Select(i => i.Description()).Distinct().Aggregate("Several incidents occured. ", (a,b) => a + b + " ") + "How would you like to resolve these issues?");
+
 		GUILayout.BeginHorizontal();
 		GUILayout.Label ("Action");
 		GUILayout.Label ("Duration", GUILayout.Width(50));
@@ -29,12 +42,12 @@ public static class GUIs
 		GUILayout.EndHorizontal();
 
 		GUILayout.BeginScrollView (Vector2.zero);
-		foreach (ISolution s in incident.PossibleActions()) {
+		foreach (ISolution s in actions) {
 			GUILayout.BeginHorizontal();
 			GUI.enabled = s as IPowerUp == null || (s as IPowerUp).IsAvailable();
 			if(GUILayout.Button (s.ProposalText)){
 				if(s as IPowerUp != null) (s as IPowerUp).Use();
-				incident.SetChosenSolution(s);
+				incidents.ForEach(i => i.SetChosenSolution(s));
 				return true;
 			}
 			GUI.enabled = true;

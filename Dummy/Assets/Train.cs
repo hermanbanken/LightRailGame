@@ -17,7 +17,7 @@ public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandle
 	public float desiredSpeed = 10f;
 	private float position = 0f;
 
-	public IIncident incident { get; private set; }
+	public List<IIncident> incident { get; private set; }
 	private bool hasIncident; // For performance : null checks are costly
 	public IStop stop { get; private set; }
 	private bool isAtStop;
@@ -47,6 +47,8 @@ public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandle
 			Debug.LogWarning("Either define a Path for this train.");
 			return;		
 		}
+
+		incident = new List<IIncident> ();
 
 		FixedUpdate ();
 	}
@@ -105,9 +107,9 @@ public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandle
 	// Update is called once per frame
 	void FixedUpdate () {
 		// Clean resolved incidents
-		if (hasIncident && incident.IsResolved ()) {
-			hasIncident = false;
-			incident = null;
+		if (hasIncident && incident.Any (i => i.IsResolved ())) {
+			incident.RemoveAll(i => i.IsResolved());
+			hasIncident = incident.Any();
 		}
 
 		// Leave stops, if possible
@@ -123,7 +125,7 @@ public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandle
 
 		// Limit speed
 		if (hasIncident) {
-			this.speed = Math.Min(this.speed, incident.MaxSpeedOfSubject());
+			this.speed = Math.Min(this.speed, incident.MinBy(i => Math.Abs(i.MaxSpeedOfSubject())).MaxSpeedOfSubject());
 		}
 
 		// Stop at stops
@@ -158,8 +160,25 @@ public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandle
 			track = Path[nI];
 			return true;
 		}
+		// When fail
 		track = Path [currentTrack];
 		nextTrack = currentTrack;
+		return false;
+	}
+
+	/**
+	 * Get prev track segment, if there is any
+	 */
+	public bool TryGetPrevTrack(out int prevTrack, out Edge track) {
+		var nI = (currentTrack - 1) % Path.Count;
+		if (Path [currentTrack].From == Path [nI].To) {
+			prevTrack = nI;
+			track = Path[nI];
+			return true;
+		}
+		// When fail
+		track = Path [currentTrack];
+		prevTrack = currentTrack;
 		return false;
 	}
 
@@ -169,6 +188,7 @@ public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandle
 	public void UpdateToNextPosition(float unitsFromStation){
 		Edge current = Path [currentTrack];
 
+		// Moving forwards
 		while (current.GetLength () < unitsFromStation) {
 			unitsFromStation -= current.GetLength();
 			var previous = current;
@@ -181,6 +201,20 @@ public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandle
 			current.Arrive(this);
 			previous.Leave(this);
 			LightRailGame.ScoreManager.DoNodeVisit(new ScoreManager.NodeVisitEventArgs { Train = this, Node = current.From });
+			LightRailGame.ScoreManager.DoNextSegment(new ScoreManager.NextSegmentEventArgs { Train = this, PreviousSegment = previous, Segment = current });
+		}
+
+		// Moving backwards
+		while (unitsFromStation < 0) {
+			var previous = current;
+			if(!TryGetPrevTrack(out this.currentTrack, out current)){
+				// At beginning of defined Path
+				return;
+			}
+			unitsFromStation += current.GetLength();
+			current.Arrive(this);
+			previous.Leave(this);
+			LightRailGame.ScoreManager.DoNodeVisit(new ScoreManager.NodeVisitEventArgs { Train = this, Node = current.To });
 			LightRailGame.ScoreManager.DoNextSegment(new ScoreManager.NextSegmentEventArgs { Train = this, PreviousSegment = previous, Segment = current });
 		}
 
@@ -267,8 +301,9 @@ public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandle
 
 	public void Incident (IIncident incident)
 	{
-		this.incident = incident;
+		this.incident.Add(incident);
 		this.hasIncident = true;
+		this.speed = Math.Min(this.speed, incident.MaxSpeedOfSubject());
 	}
 
 	public static bool nearlyEqual(float a, float b, float epsilon) {
