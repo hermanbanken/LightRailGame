@@ -151,18 +151,22 @@ public class BezierSpline : MonoBehaviour {
 	[NonSerialized]
 	protected IList<Vector3> positionCache;
 	[NonSerialized]
+	protected float[] distanceCache;
+	[NonSerialized]
 	protected Bounds boundingBox;
 	[NonSerialized]
 	private IList<float> lengthCache; 
 	private int precision = 100;
+	[NonSerialized]
+	private float _length = -1f;
 
 	public float GetPositionOfUnitPoint(float units){
 		cachePositions ();
-		var distance = 0f;
-		var i = 0;
-		while (distance < units && i < lengthCache.Count)
-			distance += lengthCache [i++];
 
+		var i = Array.BinarySearch<float> (distanceCache, units);
+		if (i < 0)
+			i = ~i;
+		var distance = distanceCache [i - 1 >= 0 ? i - 1 : 0];
 		var segmentLength = i - 1 >= 0 ? lengthCache [i - 1] : 1;
 		var inSegment = units - distance + segmentLength;
 		var relativeInSegment = inSegment / segmentLength;
@@ -175,23 +179,26 @@ public class BezierSpline : MonoBehaviour {
 		return _length;
 	}
 
-	private float _length = -1f;
 	private void cachePositions(bool forceReset = false){
 		if(positionCache == null || forceReset)
 			positionCache = Enumerable.Range (0, precision + 1).Select (t => t / (float) precision).Select (t => this.GetPoint (t)).ToList();
 		if (lengthCache == null || forceReset)
 			lengthCache = positionCache.TakeWhile ((_, i) => i < positionCache.Count - 1).Select ((p, i) => Vector3.Distance (p, positionCache [i + 1])).ToList();
+		if (distanceCache == null || forceReset)
+			distanceCache = lengthCache.Skip (1).Scan ((a,b) => a + b, lengthCache[0]).ToArray ();
 		if (boundingBox.size == Vector3.zero || forceReset){
 			boundingBox = new Bounds(positionCache[0], Vector3.zero);
 			foreach(Vector3 p in positionCache)
 				boundingBox.Encapsulate(p);
 		}
+
 		if (_length < 0) {
 			_length = 0f;
 			var c = lengthCache.Count;
 			for (int i = 0; i < c; i++) {
 				_length += lengthCache[i];
 			}
+//			assertEquals(_length, distanceCache.Last());
 		}
 	}
 	
@@ -273,5 +280,15 @@ public class BezierSpline : MonoBehaviour {
 			BezierControlPointMode.Free,
 			BezierControlPointMode.Free
 		};
+	}
+}
+
+public static class FunctExt {
+	public static IEnumerable<U> Scan<T, U>(this IEnumerable<T> input, Func<U, T, U> next, U state) {
+		yield return state;
+		foreach(var item in input) {
+			state = next(state, item);
+			yield return state;
+		}
 	}
 }
