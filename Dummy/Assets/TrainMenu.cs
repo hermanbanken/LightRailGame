@@ -64,10 +64,14 @@ public class TrainMenu : MonoBehaviour {
 		slider.fillRect.GetComponent<Image> ().color = Color.blue;
 	
 		game.OnSelectedGameObjectChanged += (GameObject obj) => {
-			if(IsOpen && obj == null)
+			if(IsOpen && obj == null){
 				this.gameObject.transform.position += hidePosition;
-			if(!IsOpen && obj != null)
+				IsOpen = false;
+			}
+			if(!IsOpen && obj != null){
 				this.gameObject.transform.position -= hidePosition;
+				IsOpen = true;
+			}
 		};
 
 		gameObject.transform.position += hidePosition;
