@@ -36,7 +36,7 @@ public class ScoreManager : MonoBehaviour
 		treshholdPT = 4; // start timer after the 4th incident
 
 	}
-
+	
 	void Start()
 	{
 		ScoreText = ScoreText ?? GameObject.Find ("SM_Score").GetComponent<InputField>();
@@ -44,7 +44,6 @@ public class ScoreManager : MonoBehaviour
 		ProblemTimerText = ProblemTimerText ?? GameObject.Find ("SM_ProblemTimer").GetComponent<InputField>();
 		DelayTimerText = DelayTimerText ?? GameObject.Find ("SM_DelayTimer").GetComponent<InputField>();
 
-		OnResolved = null;
 		OnResolved += (IIncident obj) => { 
 			PTcount -= 1; 
 			Score += 10;
