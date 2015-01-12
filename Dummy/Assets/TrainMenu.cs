@@ -33,11 +33,8 @@ public class TrainMenu : MonoBehaviour {
 		}
 	}
 
-	public bool IsOpen {
-		get {
-			return Selected != null;
-		}
-	}
+	[NonSerialized]
+	public bool IsOpen = false;
 	
 	// Use this for initialization
 	void Start () 
@@ -66,7 +63,13 @@ public class TrainMenu : MonoBehaviour {
 		slider.onValueChanged.AddListener((float val) => Selected.desiredSpeed = val);
 		slider.fillRect.GetComponent<Image> ().color = Color.blue;
 	
-		visiblePosition = gameObject.transform.position;
+		game.OnSelectedGameObjectChanged += (GameObject obj) => {
+			if(IsOpen && obj == null)
+				this.gameObject.transform.position += hidePosition;
+			if(!IsOpen && obj != null)
+				this.gameObject.transform.position -= hidePosition;
+		};
+
 		gameObject.transform.position += hidePosition;
 	}
 	
@@ -81,6 +84,5 @@ public class TrainMenu : MonoBehaviour {
 
 			stopText.text = Selected.desiredSpeed == 0f ? "Start vehicle" : "Stop vehicle";
 		}
-		this.gameObject.transform.position = visiblePosition + (IsOpen ? Vector3.zero : hidePosition);
 	}
 }
