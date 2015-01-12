@@ -71,6 +71,8 @@ public class TrainCollisionBlockage : AbstractIncident, IIncident {
 
 	public override IEnumerable<ISolution> PossibleActions ()
 	{
+		if (ended)
+			return new [] { SolutionBlockages.Maintenance };
 		return new [] {
 			SolutionBlockages.EmergencyServices, SolutionBlockages.Crane, SolutionBlockages.ContinueAnyway, PowerUps.Magic, SolutionBlockages.Backup
 		};
@@ -107,6 +109,8 @@ public class TrainCollisionBlockage : AbstractIncident, IIncident {
 	{
 		if (solution == null)
 			return 0;
+		if (solution == SolutionBlockages.Maintenance)
+			return 1;
 		if (solution == SolutionBlockages.Tow || solution == SolutionBlockages.Crane)
 			return 2;
 		if (solution == SolutionBlockages.Backup || solution == SolutionBlockages.ContinueAnyway)
