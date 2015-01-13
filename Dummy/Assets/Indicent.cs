@@ -7,7 +7,7 @@ using System.Linq;
 // Given 1s real time is 60s in game
 
 public class SolutionIncidents {
-	public static ISolution Shout = new Solution ("Shout at passenger to be quiet", TimeSpan.FromSeconds (5), 0.80f);
+	public static ISolution Shout = new Solution ("Shout at passenger to be quiet", TimeSpan.FromSeconds (3), 0.80f);
 	public static ISolution Police = new Solution ("Call police to arrest troublemakers", TimeSpan.FromSeconds (10), 0.90f); //stops the tram and it needs to be restarted manually
 	public static ISolution Ambulance = new Solution ("Call for an ambulance", TimeSpan.FromSeconds (10), 0.90f); //stops the tram and it needs to be restarted manually
 	public static ISolution Calm = new Solution ("Try to calm the passengers down", TimeSpan.FromSeconds (5), 0.50f);
@@ -16,15 +16,15 @@ public class SolutionIncidents {
 }
 
 public class SolutionBlockages {
-	public static ISolution Backup = new Solution ("Drive tram backwards a little bit", TimeSpan.FromSeconds (20), 1f); //(10), 0.50f);
+	public static ISolution Backup = new Solution ("Drive tram backwards a little bit", TimeSpan.FromSeconds (11), 1f); //(10), 0.50f);
 	public static ISolution PushAside = new Solution ("Ask the tram driver to push the car aside", TimeSpan.FromSeconds (10), 0.25f);
 	public static ISolution Horn = new Solution ("Ask the tram driver to use the horm repeatedly", TimeSpan.FromSeconds (3), 0.20f);
-	public static ISolution Tow = new Solution ("Call for a towing service", TimeSpan.FromSeconds (30), 1.0f);
+	public static ISolution Tow = new Solution ("Call for a towing service", TimeSpan.FromSeconds (10), 1.0f);
 	public static ISolution Maintenance = new Solution ("Call maintenance crew to deal with the problem", TimeSpan.FromSeconds (45), 0.9f);	
 	public static ISolution SwitchManually = new Solution ("Ask the tram driver to push the switch manually", TimeSpan.FromSeconds (15), 0.75f);
-	public static ISolution Crane = new Solution ("Call for a crane service", TimeSpan.FromSeconds (1), 1.0f);//(60), 0.90f);
+	public static ISolution Crane = new Solution ("Call for a crane service", TimeSpan.FromSeconds (5), 1.0f);//(60), 0.90f);
 	public static ISolution EmergencyServices = new Solution ("Call for emergency services", TimeSpan.FromSeconds (20), 1.0f);
-	public static ISolution ContinueAnyway = new Solution ("Try to continue despite collision", TimeSpan.FromSeconds (5), 1f);//-r (5), 0.25f); //Only to be used if the collision is between tram and not tram
+	public static ISolution ContinueAnyway = new Solution ("Try to continue despite collision", TimeSpan.FromSeconds (11), 1f);//-r (5), 0.25f); //Only to be used if the collision is between tram and not tram
 }	
 
 public class PowerUps {
