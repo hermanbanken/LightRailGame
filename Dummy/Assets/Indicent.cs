@@ -7,28 +7,28 @@ using System.Linq;
 // Given 1s real time is 60s in game
 
 public class SolutionIncidents {
-	public static ISolution Shout = new Solution ("Shout at passenger to be quiet", TimeSpan.FromSeconds (3), 0.80f);
-	public static ISolution Police = new Solution ("Call police to arrest troublemakers", TimeSpan.FromSeconds (10), 0.90f); //stops the tram and it needs to be restarted manually
-	public static ISolution Ambulance = new Solution ("Call for an ambulance", TimeSpan.FromSeconds (10), 0.90f); //stops the tram and it needs to be restarted manually
-	public static ISolution Calm = new Solution ("Try to calm the passengers down", TimeSpan.FromSeconds (5), 0.50f);
-	public static ISolution Ventilate = new Solution ("Ventilate the tram thoroughly", TimeSpan.FromSeconds (5), 0.80f);
-	public static ISolution DeliverBaby	= new Solution ("Help in delivering the baby until professionals come", TimeSpan.FromSeconds (5), 0.80f);
+	public static ISolution Shout = new Solution ("SHOUT at passenger to be quiet", TimeSpan.FromSeconds (3), 0.80f);
+	public static ISolution Police = new Solution ("Call POLICE to arrest troublemakers", TimeSpan.FromSeconds (10), 0.90f); //stops the tram and it needs to be restarted manually
+	public static ISolution Ambulance = new Solution ("Call for an AMBULANCE", TimeSpan.FromSeconds (10), 0.9f); //stops the tram and it needs to be restarted manually
+	public static ISolution Calm = new Solution ("Try to CALM DOWN the passengers", TimeSpan.FromSeconds (5), 0.50f);
+	public static ISolution Ventilate = new Solution ("VENTILATE the tram thoroughly", TimeSpan.FromSeconds (5), 0.80f);
+	public static ISolution DeliverBaby	= new Solution ("HELP DELIVERING the baby until professionals come", TimeSpan.FromSeconds (5), 0.80f);
 }
 
 public class SolutionBlockages {
-	public static ISolution Backup = new Solution ("Drive tram backwards a little bit", TimeSpan.FromSeconds (11), 1f); //(10), 0.50f);
-	public static ISolution PushAside = new Solution ("Ask the tram driver to push the car aside", TimeSpan.FromSeconds (10), 0.25f);
-	public static ISolution Horn = new Solution ("Ask the tram driver to use the horm repeatedly", TimeSpan.FromSeconds (3), 0.20f);
-	public static ISolution Tow = new Solution ("Call for a towing service", TimeSpan.FromSeconds (10), 1.0f);
-	public static ISolution Maintenance = new Solution ("Call maintenance crew to deal with the problem", TimeSpan.FromSeconds (45), 0.9f);	
-	public static ISolution SwitchManually = new Solution ("Ask the tram driver to push the switch manually", TimeSpan.FromSeconds (15), 0.75f);
-	public static ISolution Crane = new Solution ("Call for a crane service", TimeSpan.FromSeconds (5), 1.0f);//(60), 0.90f);
-	public static ISolution EmergencyServices = new Solution ("Call for emergency services", TimeSpan.FromSeconds (20), 1.0f);
-	public static ISolution ContinueAnyway = new Solution ("Try to continue despite collision", TimeSpan.FromSeconds (11), 1f);//-r (5), 0.25f); //Only to be used if the collision is between tram and not tram
+	public static ISolution PushAside = new Solution ("Ask the tram driver to PUSH the car aside", TimeSpan.FromSeconds (10), 0.25f);
+	public static ISolution Horn = new Solution ("Ask the tram driver to use the HORN repeatedly", TimeSpan.FromSeconds (3), 0.20f);
+	public static ISolution Tow = new Solution ("Call for a TOWING service", TimeSpan.FromSeconds (10), 1.0f);
+	public static ISolution Maintenance = new Solution ("Call MAINTENANCE CREW to deal with the problem", TimeSpan.FromSeconds (45), 0.9f);	
+	public static ISolution SwitchManually = new Solution ("Ask the tram driver to push the SWITCH MANUALLY", TimeSpan.FromSeconds (15), 0.75f);
+	public static ISolution Crane = new Solution ("Call for a CRANE service", TimeSpan.FromSeconds (5), 1.0f);//(60), 0.90f);
+	public static ISolution EmergencyServices = new Solution ("Call for EMERGENCY service", TimeSpan.FromSeconds (20), 1.0f);
+	public static ISolution Backup = new Solution ("BACKUP the tram a little bit", TimeSpan.FromSeconds (11), 1f); //(10), 0.50f);
+	public static ISolution ContinueAnyway = new Solution ("Try to CONTINUE despite collision", TimeSpan.FromSeconds (11), 1f);//-r (5), 0.25f); //Only to be used if the collision is between tram and not tram
 }	
 
 public class PowerUps {
-	public static ISolution Magic = new PowerUp ("Call your friend Gandalf", TimeSpan.FromSeconds (5f), 1f, 1);
+	public static ISolution Magic = new PowerUp ("Call your friend GANDALF", TimeSpan.FromSeconds (5f), 1f, 1);
 }
 
 public class PowerUp : Solution, ISolution, IPowerUp {
@@ -65,8 +65,8 @@ public class TrainCollisionBlockage : AbstractIncident, IIncident {
 	public override string Description ()
 	{
 		if (ended)
-			return "The train is broken because of a previous collision.";
-		return "The train has COLLIDED WITH ANOTHER TRAIN.";
+			return "The train is BROKEN because of a previous collision.";
+		return "The train has COLLIDED with ANOTHER TRAIN.";
 	}
 
 	public override IEnumerable<ISolution> PossibleActions ()
@@ -74,8 +74,25 @@ public class TrainCollisionBlockage : AbstractIncident, IIncident {
 		if (ended)
 			return new [] { SolutionBlockages.Maintenance };
 		return new [] {
-			SolutionBlockages.EmergencyServices, SolutionBlockages.Crane, SolutionBlockages.ContinueAnyway, PowerUps.Magic, SolutionBlockages.Backup
-		};
+			// --- One complet list to check the order of menu items ---
+			//
+			//SolutionBlockages.PushAside,
+			//SolutionBlockages.Horn,
+			//SolutionBlockages.Tow,
+			//SolutionBlockages.Maintenance,
+			//SolutionBlockages.SwitchManually,
+			SolutionBlockages.Crane, 
+			SolutionBlockages.EmergencyServices, 
+			SolutionBlockages.Backup,
+			SolutionBlockages.ContinueAnyway, 
+			//SolutionIncidents.Shout,
+			//SolutionIncidents.Police,
+			//SolutionIncidents.Ambulance,
+			//SolutionIncidents.Calm,
+			//SolutionIncidents.Ventilate,
+			//SolutionIncidents.DeliverBaby,
+			PowerUps.Magic 
+			};
 	}
 	
 	#endregion
@@ -174,22 +191,32 @@ public class ObstacleBlockage : AbstractIncident, IIncident {
 		// Depending on this.obstacle we can also change the possible actions
 			if (this.obstacle.type == ObstacleType.Car) {
 					return new [] {
-						SolutionBlockages.Tow, SolutionBlockages.Horn, SolutionBlockages.PushAside, SolutionIncidents.Ventilate, PowerUps.Magic
+						SolutionBlockages.PushAside,
+						SolutionBlockages.Horn, 
+						SolutionBlockages.Tow,
+						SolutionIncidents.Ventilate,
+						PowerUps.Magic
 					};
 			} 
 			else if (this.obstacle.type == ObstacleType.Defect) {
 					return new [] {
-					SolutionBlockages.Maintenance, SolutionBlockages.ContinueAnyway,PowerUps.Magic
+						SolutionBlockages.Maintenance,
+						SolutionBlockages.ContinueAnyway,
+						PowerUps.Magic
 					};
 			} 
 			else if (this.obstacle.type == ObstacleType.SwitchDefect) { //one needs to make sure it can happen only at a node with more than one possible direction
 					return new [] {
-				SolutionBlockages.Maintenance, SolutionBlockages.SwitchManually,PowerUps.Magic
+						SolutionBlockages.Maintenance, 
+						SolutionBlockages.SwitchManually,
+						PowerUps.Magic
 					};	
 			}
 			else {
 					return new [] {
-				SolutionBlockages.Crane, SolutionBlockages.EmergencyServices,PowerUps.Magic
+						SolutionBlockages.Crane, 
+						SolutionBlockages.EmergencyServices,
+						PowerUps.Magic
 					};
 			}
 	}
@@ -246,23 +273,28 @@ public class TramCarIncident : AbstractIncident, IIncident {
 	{
 		if (this.type == ObstacleType.DrunkenPassenger) {
 			return new [] {
-				SolutionIncidents.Shout, SolutionIncidents.Police,
+				SolutionIncidents.Shout, 
+				SolutionIncidents.Police,
 			};
 		}
 		else if (this.type == ObstacleType.AngryMob) {
 			return new [] {
-				SolutionIncidents.Calm, SolutionIncidents.Police,
+				SolutionIncidents.Police,
+				SolutionIncidents.Calm, 
 			};
 		}
 		else if (this.type == ObstacleType.WomenInLabour) {
 			return new [] {
-				SolutionIncidents.Ambulance, SolutionIncidents.DeliverBaby, SolutionBlockages.Crane
+				SolutionBlockages.Crane,
+				SolutionIncidents.Ambulance, 
+				SolutionIncidents.DeliverBaby, 
 			};
 		}
 		else if (this.type == ObstacleType.StenchOnBoard) {
 			return new [] {
-				SolutionIncidents.Ventilate, SolutionIncidents.Calm,
-			};
+				SolutionIncidents.Calm,
+				SolutionIncidents.Ventilate, 
+				};
 		}
 
 		return new ISolution[] {};
@@ -301,5 +333,3 @@ public class TramCarIncident : AbstractIncident, IIncident {
 
 	#endregion
 }
-
-		
