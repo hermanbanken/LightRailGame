@@ -254,7 +254,7 @@ public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandle
 		if (station != null && NeedBreak (station.MaxSpeed (this), cL - position)) {
 			desiredSpeed = station.MaxSpeed (this);
 		} else
-		if (traffic != null && NeedBreak (traffic.MaxSpeed (this), cL - position - this.collider.bounds.size.magnitude / 2f)) {
+		if (traffic != null && NeedBreak (traffic.MaxSpeed (this), cL - position - this.collider.bounds.size.magnitude / 2.2f)) {
 			desiredSpeed = traffic.MaxSpeed (this);
 		}
 
@@ -262,7 +262,7 @@ public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandle
 		var ahead = currentTrack;
 		var accum = 0f;
 		var forZero = DistanceUntilSpeed(0);
-		var clearange = this.collider.bounds.size.magnitude * 2f;
+		var clearange = this.collider.bounds.size.magnitude * 3f;
 		do 
 		{
 			if(desiredSpeed == 0) break;
