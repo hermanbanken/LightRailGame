@@ -63,8 +63,8 @@ namespace Eppy
 		public override int GetHashCode()
 		{
 			int hash = 17;
-			hash = hash * 23 + item1.GetHashCode();
-			hash = hash * 23 + item2.GetHashCode();
+			hash = hash * 23 + (item1 != null ? item1.GetHashCode() : 1);
+			hash = hash * 23 + (item2 != null ? item2.GetHashCode() : 1);
 			return hash;
 		}
 		
@@ -81,9 +81,11 @@ namespace Eppy
 		
 		public static bool operator==(Tuple<T1, T2> a, Tuple<T1, T2> b)
 		{
+			if(((object)a) == ((object)b)) return true;
+			if(((object)a) == null || ((object)b) == null) return false;
 			return 
 				a.item1.Equals(b.item1) && 
-					a.item2.Equals(b.item2);            
+				a.item2.Equals(b.item2);            
 		}
 		
 		public static bool operator!=(Tuple<T1, T2> a, Tuple<T1, T2> b)
