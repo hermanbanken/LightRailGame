@@ -70,10 +70,20 @@ public class ScoreManager : MonoBehaviour
 	
 			// DUmmy
 			var suitability = obj.Suitability(obj.GetChosenSolution());
-			if (suitability <= 0) Score -= 100000;
+			if (suitability <= 0) Score -= 1000;
 
-			// Insert smartness here
-			if (timeSince <= 10) Score += 1000; else Score -= 1000;
+			// Swift bonus / malus : If one plays a disruption quick ther is a bonus, when ik takes long a malus
+			if (timeSince <= 10) Score += 100; 
+			else if(timeSince <= 20)Score += 50;
+			else if(timeSince <= 30)Score += 25;
+			else if(timeSince <= 40)Score += 10;
+			else if(timeSince <= 60)Score += 0;
+			else if(timeSince <= 90)Score -= 10;
+			else if(timeSince <= 120)Score -= 20;
+			else if(timeSince <= 150)Score -= 30;
+			else if(timeSince <= 180)Score -= 40;
+			else if(timeSince <= 210)Score -= 50;
+			else Score -= 60;
 
 			// Prepare for possible fail
 			StartTime[obj] = Time.time;
