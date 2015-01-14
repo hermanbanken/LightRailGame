@@ -5,7 +5,7 @@ using System;
 using System.Linq;
 using UnityEngine.EventSystems;
 
-public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandler {
+public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandler, IEnumerable<Edge>  {
 
 	private LightRailGame lightRailGame;
 
@@ -78,10 +78,16 @@ public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandle
 	}
 
 	public void UpdatePath(IList<Node> wayPoints, IList<Edge> preCalculatedPath = null){
-		if (wayPoints.Count < 2)
+		if (wayPoints.Count < 2 && preCalculatedPath == null)
 			return;
 
+		if (preCalculatedPath != null && preCalculatedPath.Count == 0)
+			throw new ArgumentException ("Empty path given");
+
 		var path = preCalculatedPath ?? wayPoints.RouteFromWayPoints (wayPoints.First ().graph.edges.ToList());
+
+		if (path != null && path.Count == 0)
+			throw new ArgumentException ("No route is plannable");
 
 		var prev = this.Path;
 		var prevCurrentTrack = currentTrack;
@@ -351,9 +357,80 @@ public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandle
 
 	void ISelectHandler.OnSelect (BaseEventData eventData)
 	{
-		Debug.LogWarning ("Select!"+this);
 		LightRailGame.GetInstance ().DoSelect (gameObject);
 	}
 
 	#endregion
+
+	#region IEnumerable implementation
+
+	public IEnumerator<Edge> GetEnumerator ()
+	{
+		return new EdgeEnumerator (this, Path, currentTrack);
+	}
+
+	#endregion
+
+	#region IEnumerable implementation
+
+	IEnumerator IEnumerable.GetEnumerator ()
+	{
+		return new EdgeEnumerator (this, Path, currentTrack);
+	}
+
+	#endregion
+
+	public class EdgeEnumerator : IEnumerator<Edge> {
+		IList<Edge> edges;
+		int i;
+		int start;
+		Train self;
+		int loops = 0;
+
+		public EdgeEnumerator(Train self, IList<Edge> edges, int start = 0){
+			this.self = self;
+			this.edges = edges;
+			this.i = start - 1;
+			this.start = start;
+		}
+
+		#region IEnumerator implementation
+		public bool MoveNext ()
+		{
+			if (edges.Count > i + 1) {
+				i++;
+				return true;
+			} else
+			if (edges[i].To == edges[0].From){
+				loops++;
+				if(loops > 4){
+					Debug.LogWarning("Looping Train iterator", self);
+					return false;
+				}
+				i = 0;
+				return true;
+			}
+			return false;
+		}
+		public void Reset ()
+		{
+			i = start - 1;
+		}
+		public Edge Current {
+			get {
+				return edges[i];
+			}
+		}
+		#endregion
+		#region IDisposable implementation
+		public void Dispose ()
+		{
+			edges = null;
+		}
+		#endregion
+
+		#region IEnumerator implementation
+		object IEnumerator.Current { get { return Current; } }
+		#endregion
+	}
 }
