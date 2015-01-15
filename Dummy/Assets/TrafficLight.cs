@@ -121,7 +121,7 @@ public class TrafficLight : MonoBehaviour, IStop, IEnumerable<List<TrafficLight>
 		if (MasterEnumerator != null && MasterEnumerator.Current.First().State == TrafficLightState.Orange && lastChanged + Duration (TrafficLightState.Green) + Duration (TrafficLightState.Orange) < Time.time) {
 
 			// Only go green if there is no train here
-			if(!Guard.SelectMany(e => e.GetOccupants()).Any())
+			if(!Guard.SelectMany(e => e.GetOccupants<Train>()).Any())
 			{
 				MasterEnumerator.Current.ForEach (tl => {
 					tl.State = TrafficLightState.Red;
@@ -197,6 +197,7 @@ public class TrafficLight : MonoBehaviour, IStop, IEnumerable<List<TrafficLight>
 		private List<TrafficLight> current;
 		private List<TrafficLight> prev;
 		private bool loop;
+		private bool started = false;
 
 		public Enumerator(TrafficLight root, bool loop = true) {
 			this.loop = loop;
@@ -216,6 +217,10 @@ public class TrafficLight : MonoBehaviour, IStop, IEnumerable<List<TrafficLight>
 		
 		public bool MoveNext ()
 		{
+			if (!started){
+				started = true;
+				return true;
+			}
 			prev = current;
 			current = current.SelectMany (tl => new [] { tl.Next }.Concat(Slaves(tl.Next)).Where (t => t != null)).Distinct().ToList();
 			if (current.Count == 0 && loop) {
@@ -238,6 +243,7 @@ public class TrafficLight : MonoBehaviour, IStop, IEnumerable<List<TrafficLight>
 
 		public void Reset ()
 		{
+			this.started = false;
 			prev = new List<TrafficLight>();
 			current = new List<TrafficLight>();
 			current.Add(root);	

@@ -247,7 +247,7 @@ public class LightRailGame : MonoBehaviour
 				continue;
 
 			// Take until recursion
-			var list = tl.SelectMany((l, i) => l.OrderBy(o => o == tl ? 1 : 0)).TakeWhile(o => o != tl);
+			var list = tl.Skip (1).SelectMany((l, i) => l.OrderBy(o => o == tl ? 1 : 0)).TakeWhile(o => o != tl);
 			if(!list.Any()){
 				// Should never happen, fix Scene when occurs!!
 				Debug.LogError (tl + " controls nothing ("+tl.SelectMany(l=>l).Take(10).Select(t => t.name).Aggregate("", (a,b) => a+b)+")");
