@@ -78,11 +78,20 @@ public class LightRailGame : MonoBehaviour
 
 	[NonSerialized]
 	private Tuple<GameObject,Node>[] WPKnots;
-	
+
+	[NonSerialized]
+	public Sprite GhostTram;
+	[NonSerialized]
+	public Sprite NormalTram;
+
 	// Use this for initialization
 	void Start () {
 		_scoreManager = null;
 		QualitySettings.antiAliasing = 4;
+
+		GhostTram = Resources.Load("GhostTram", typeof(Sprite)) as Sprite;
+		NormalTram = Resources.Load("HTMTram", typeof(Sprite)) as Sprite;
+
 
 		LineMaster = LineDrawMaster.getInstance ();
 
