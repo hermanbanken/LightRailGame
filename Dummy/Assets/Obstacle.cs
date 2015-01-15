@@ -40,6 +40,12 @@ public class Obstacle : MonoBehaviour, IOccupy {
 
 		block.transform.parent = Wrapper.transform;
 		block.transform.localPosition = Vector3.zero;
+
+		Vector3 v3position = block.transform.position;
+		//v3position.z =-2.0f;
+		v3position.z = v3position.z - 2;
+		block.transform.position=v3position;
+
 	}
 
 	void Update(){

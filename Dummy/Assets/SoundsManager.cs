@@ -10,7 +10,7 @@ public class SoundsManager : MonoBehaviour {
 	public AudioClip Occur;
 	public AudioClip fail;
 	private AudioSource source;
-
+	private GameObject seletedtram;
 
 
 	void Awake () {	
@@ -18,14 +18,21 @@ public class SoundsManager : MonoBehaviour {
 
 	void Start () {
 		source = GetComponent<AudioSource>();
+		Sprite mytram1 = Resources.Load("GhostTram", typeof(Sprite)) as Sprite;
 
 		LightRailGame.GetInstance().OnSelectedGameObjectChanged += (GameObject obj) => {
 			if(obj == null)
 				return;
 			if(obj.GetComponent<Train>() != null) {
+				seletedtram=obj;
+				GameObject hi1=obj.transform.FindChild("tramA").gameObject;
+				GameObject hi2=obj.transform.FindChild("tramB").gameObject;
+				hi1.GetComponent<SpriteRenderer>().sprite=mytram1;
+				hi2.GetComponent<SpriteRenderer>().sprite=mytram1;
 				source.PlayOneShot(Pickup,0.1f);
 			}
 		};
+	
 
 		LightRailGame.GetInstance().OnIncidentMenuOpen += (IIncident obj) => {
 		
@@ -62,5 +69,16 @@ public class SoundsManager : MonoBehaviour {
 	
 	}
 
+	public void changeback()
+	{
+		Sprite mytram2 = Resources.Load("HTMTram", typeof(Sprite)) as Sprite;
+		Debug.Log ("hi, i am back");
+		if(seletedtram.GetComponent<Train>() != null) {
+			GameObject hi3=seletedtram.transform.FindChild("tramA").gameObject;
+			GameObject hi4=seletedtram.transform.FindChild("tramB").gameObject;
+			hi3.GetComponent<SpriteRenderer>().sprite=mytram2;
+			hi4.GetComponent<SpriteRenderer>().sprite=mytram2;
+		}
 
+	}
 }
