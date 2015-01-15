@@ -27,7 +27,8 @@ public class Obstacle : MonoBehaviour, IOccupy {
 			this.block = a;
 			break;
 		case ObstacleType.Tree:
-			this.block = GameObject.CreatePrimitive (PrimitiveType.Cube);
+			GameObject b =(GameObject)Instantiate(Resources.Load("tree"));
+			this.block = b;
 			break;
 		case ObstacleType.Barrel:
 			this.block = GameObject.CreatePrimitive (PrimitiveType.Cylinder);
