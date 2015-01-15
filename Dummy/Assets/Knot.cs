@@ -8,13 +8,14 @@ using System.Reactive.Linq;
 using System.Collections.Generic;
 using System.Reactive.Concurrency;
 
-public class Knot : MonoBehaviour, IDragHandler, IEndDragHandler, IBeginDragHandler, IInitializePotentialDragHandler {
+public class Knot : MonoBehaviour, IPointerClickHandler, IDragHandler, IEndDragHandler, IBeginDragHandler, IInitializePotentialDragHandler {
 
 	public bool isDragging { get; private set; }
 
 	LightRailGame game;
 	Train train;
-	Node origin; 
+	Node origin;
+	Node wp;
 
 	event Action<PointerEventData> _OnDrag;
 	event Action<PointerEventData> _OnEndDrag;
@@ -41,6 +42,25 @@ public class Knot : MonoBehaviour, IDragHandler, IEndDragHandler, IBeginDragHand
 	bool IsRayCastHit(){
 		return Physics2D.Raycast (Input.mousePosition, -Vector2.up).collider == this.collider2D;
 	}
+
+	#region IPointerClickHandler implementation
+
+	public void SetWayPoint(Node wp){
+		this.wp = wp;
+	}
+
+	public void OnPointerClick (PointerEventData eventData)
+	{
+		if (this.wp == null)
+			return;
+
+		train = game.SelectedGameObject.GetComponent<Train> ();
+		if(train.WayPoints.Count() > 2){
+			train.UpdatePath(train.WayPoints.Where(w => w != this.wp).ToList());
+		}
+	}
+
+	#endregion
 
 	#region IBeginDragHandler implementation
 	

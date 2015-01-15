@@ -300,17 +300,11 @@ public class LightRailGame : MonoBehaviour
 	
 	void AddKnots (Train train, IList<Node> wayPoints)
 	{
-		var controls = GameObject.Find ("LRG_Controls");
-		// TODO cleanup this ugly mess
 		WPKnots = wayPoints.ToList().Select ((wp, i) => {
 			var knot = Instantiate(Knot.gameObject, Camera.main.WorldToScreenPoint(wp.position), Quaternion.identity) as GameObject;
 			knot.transform.SetParent(BelowMenuSpawnPoint, true);
 			knot.SetActive (true);
-			knot.GetComponent<Button>().onClick.AddListener(() => {
-				if(train.WayPoints.Count() > 2){
-					train.UpdatePath(train.WayPoints.Where(w => w != wp).ToList());
-				}
-			});
+			knot.GetComponent<Knot>().SetWayPoint(wp);
 			return Tuple.Create(knot, wp);
 		}).ToArray();
 	}
