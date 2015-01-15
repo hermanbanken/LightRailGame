@@ -28,6 +28,8 @@ public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandle
 	public IList<Edge> OriginalPath { get; private set; }
 	public int currentTrack;
 
+	public LimitingCause Cause;
+
 	public event Action<Train> OnPathChange;
 
 	void Awake (){
@@ -112,6 +114,8 @@ public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandle
 
 	// Update is called once per frame
 	void FixedUpdate () {
+		Cause = LimitingCause.None;
+
 		// Clean resolved incidents
 		if (hasIncident && incident.Any (i => i.IsResolved ())) {
 			incident.RemoveAll(i => i.IsResolved());
@@ -126,12 +130,17 @@ public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandle
 	
 		// Don't move tram if the game is paused or there is no path
 		if (lightRailGame.paused || Path.Count == 0 || isAtStop) {
+			if(isAtStop)
+				Cause = LimitingCause.AtStation;
 			return;
 		}
 
 		// Limit speed
 		if (hasIncident) {
+			var old = this.speed;
 			this.speed = Math.Min(this.speed, incident.MinBy(i => Math.Abs(i.MaxSpeedOfSubject())).MaxSpeedOfSubject());
+			if(old != this.speed)
+				Cause = LimitingCause.Incident;
 		}
 
 		// Stop at stops
@@ -262,6 +271,7 @@ public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandle
 		} else
 		if (traffic != null && NeedBreak (traffic.MaxSpeed (this), cL - position - this.collider.bounds.size.magnitude / 2.2f)) {
 			desiredSpeed = traffic.MaxSpeed (this);
+			Cause = LimitingCause.WaitingForTrafficLight;
 		}
 
 		/* Stop for vehicles and obstacles ahead */
@@ -279,7 +289,9 @@ public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandle
 				.Where (o => accum + o.Location.Item2 - this.position < forZero + clearange);
 			if (block.Any ()) {
 				var min = block.MinBy (o => accum + o.Location.Item2 - this.position);
+				var old = desiredSpeed;
 				desiredSpeed = Math.Min(desiredSpeed, min.Speed);
+				if(old != desiredSpeed) Cause = LimitingCause.BehindTram;
 			}
 
 			accum += Path[ahead].GetUnitLength();
@@ -466,4 +478,12 @@ public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandle
 		object IEnumerator.Current { get { return Current; } }
 		#endregion
 	}
+
+	public enum LimitingCause {
+		None,
+		BehindTram,
+		Incident,
+		AtStation,
+		WaitingForTrafficLight,
+	} 
 }

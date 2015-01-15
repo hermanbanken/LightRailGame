@@ -10,6 +10,7 @@ public class TrainMenu : MonoBehaviour {
 	private Button close;
 	private Button stop;
 	private Text stopText;
+	private Text reasonText;
 	private Slider slider;
 	private Vector3 visiblePosition;
 	private Vector3 hidePosition = new Vector3(200,0,0);
@@ -54,13 +55,15 @@ public class TrainMenu : MonoBehaviour {
 				Current = Selected.desiredSpeed
 			});
 		});
+
 		stopText = stop.GetComponentInChildren<Text>();
+		reasonText = this.GetComponentsInChildren<Text> ().Single (t => t.gameObject.name.Equals ("Reason"));
 
 		slider = GetComponentInChildren<Slider> ();
 		slider.minValue = 0f;
 		slider.maxValue = 10f;
 		slider.onValueChanged.RemoveAllListeners ();
-		slider.onValueChanged.AddListener((float val) => Selected.desiredSpeed = val);
+		slider.onValueChanged.AddListener((float val) => { if(Selected != null) Selected.desiredSpeed = val; });
 		slider.fillRect.GetComponent<Image> ().color = Color.blue;
 	
 		game.OnSelectedGameObjectChanged += (GameObject obj) => {
@@ -84,6 +87,20 @@ public class TrainMenu : MonoBehaviour {
 			if (Input.GetKeyDown(KeyCode.Escape)) {
 				game.RequestDeselect();
 				return;
+			}
+
+			if(Time.frameCount % 5 == 0)
+			switch(Selected.Cause){
+			case Train.LimitingCause.BehindTram:
+				reasonText.text = "The tram is waiting behind another tram."; break;
+			case Train.LimitingCause.AtStation:
+				reasonText.text = "The tram is loading passengers at a station."; break;
+			case Train.LimitingCause.WaitingForTrafficLight:
+				reasonText.text = "The tram is waiting for a traffic light."; break;
+			case Train.LimitingCause.Incident:
+				reasonText.text = "An incident is preventing this tram from going full speed."; break;
+			default:
+				reasonText.text = ""; break;
 			}
 
 			slider.value = Selected.desiredSpeed;
