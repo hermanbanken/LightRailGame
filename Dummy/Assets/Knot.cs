@@ -235,6 +235,10 @@ public class Knot : MonoBehaviour, IPointerClickHandler, IDragHandler, IEndDragH
 		EventSystem.current.SetSelectedGameObject (this.gameObject);
 	}
 
+	void OnDeselect(){
+		OnEndDrag (null);
+	}
+
 	#endregion
 
 	bool tracking;
