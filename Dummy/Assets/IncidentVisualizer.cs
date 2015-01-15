@@ -23,7 +23,7 @@ public class IncidentVisualizer : MonoBehaviour
 		incidents [incident] = warning;
 	}
 
-	void Update(){
+	void LateUpdate(){
 		foreach (var pair in incidents) {
 			var warning = pair.Value;
 			warning.gameObject.transform.position = Position(pair.Key) + (15f + warning.Width()/2f) * Vector3.right + 30f * Vector3.up;
