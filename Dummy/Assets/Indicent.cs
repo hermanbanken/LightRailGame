@@ -36,14 +36,16 @@ public class PowerUp : Solution, ISolution, IPowerUp {
 
 		_powerUpCounter = initialAvailibility	;
 	}
-	public int _powerUpCounter;
+	private int _powerUpCounter;
 	public void Use(){
 		this._powerUpCounter --;
 	}
 	public bool IsAvailable(){
 		return this._powerUpCounter > 0;
 	}
-
+	public void Receive(int count = 1){ // = 1 means default  = 1 in here
+		_powerUpCounter += count;
+	}
 }
 
 // Given two types of collision: with another tram or something else (like a car)

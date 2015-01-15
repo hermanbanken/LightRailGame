@@ -38,7 +38,7 @@ public class Warning : MonoBehaviour {
 
 		var v = incident.CountDownValue ();
 
-		var newText = v.HasValue ? (!v.Value.Equals(TimeSpan.Zero) ? v.Value.FormatMinSec() : fail) : "";
+		var newText = incident.HandleText();
 
 		if (!newText.Equals(text))
 		{
@@ -49,7 +49,9 @@ public class Warning : MonoBehaviour {
 			icon.anchoredPosition = new Vector2 (v.HasValue ? -38f : 0f, 0);
 			line.anchoredPosition = new Vector2 (v.HasValue ? -38f : 0f, 0) + new Vector2(-22f, -22f);
 			timer.text = newText;
-			timer.color = newText.Equals(fail) ? Color.red : Color.white;
+
+			if(incident.CountDownValue().HasValue)
+				timer.color = incident.CountDownValue().Value == TimeSpan.Zero && !incident.IsResolved() ? Color.red : Color.white;
 
 			text = newText;
 		}

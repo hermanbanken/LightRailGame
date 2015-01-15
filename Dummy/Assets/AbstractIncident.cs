@@ -88,5 +88,22 @@ public abstract class AbstractIncident : IIncident {
 
 	public abstract int Suitability (ISolution solution);
 
+	private const string wrong = "wrong";
+	private const string fail = "fail";
+
+	public virtual string HandleText ()
+	{
+		if (!CountDownValue ().HasValue)
+			return String.Empty;
+
+		if (CountDownValue ().Value != TimeSpan.Zero)
+			return CountDownValue ().Value.FormatMinSec ();
+
+		if (Suitability (solution) < 1)
+			return wrong;
+
+		return fail;
+	}
+
 	#endregion
 }
