@@ -34,7 +34,7 @@ public class EdgeRaycaster : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (mp == MP || (mp - MP).magnitude < 1f)
+		if (mp == MP || (mp - MP).magnitude < 0.2f)
 			return;
 
 		// Tight loop: only check current Edge
@@ -43,8 +43,8 @@ public class EdgeRaycaster : MonoBehaviour {
 			hover.pos = outP;
 		}
 
-		// Limit more expensive computation to 1/4-th the frame-rate
-		if (Time.frameCount % 4 != 0) return;
+		// Limit more expensive computation to 1/2-th the frame-rate
+		if (Time.frameCount % 2 != 0) return;
 
 		mp = MP;
 		previous = hover.Edge;
