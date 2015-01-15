@@ -82,12 +82,12 @@ public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandle
 			return;
 
 		if (preCalculatedPath != null && preCalculatedPath.Count == 0)
-			throw new ArgumentException ("Empty path given");
+			return;//throw new ArgumentException ("Empty path given");
 
 		var path = preCalculatedPath ?? wayPoints.RouteFromWayPoints (wayPoints.First ().graph.edges.ToList());
 
 		if (path != null && path.Count == 0)
-			throw new ArgumentException ("No route is plannable");
+			return;// throw new ArgumentException ("No route is plannable");
 
 		var prev = this.Path;
 		var prevCurrentTrack = currentTrack;
