@@ -16,6 +16,7 @@ public interface IIncident
 	ISolution GetChosenSolution ();
 	float MaxSpeedOfSubject();
 	GameObject Subject();
+	string HandleText();
 }
 
 public interface ISolution {

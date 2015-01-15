@@ -45,8 +45,12 @@ public class ObstacleMaster : MonoBehaviour {
 		Vector3 buttonPosition = getButtonPosition (pos, dir, 12);
 
 		Obstacle obstacle = new GameObject ().AddComponent<Obstacle> ();
-	
-		obstacle.init(pos, Eppy.Tuple.Create<ILine,float>(edge, randU), ObstacleType.Car, onUserActioned);
+		System.Random gen = new System.Random ();
+		int prob = gen.Next (0, 10);
+		if (prob < 5)
+			obstacle.init(pos, Eppy.Tuple.Create<ILine,float>(edge, randU), ObstacleType.Car, onUserActioned);
+		else
+			obstacle.init(pos, Eppy.Tuple.Create<ILine,float>(edge, randU), ObstacleType.Tree, onUserActioned);
 		obstacle.buttonPosition = buttonPosition;
 		obstacles.Add (obstacle);
 		incidents.Add (obstacle.Incident);

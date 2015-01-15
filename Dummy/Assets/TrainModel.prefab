@@ -29,7 +29,7 @@ GameObject:
   - 4: {fileID: 400002}
   - 212: {fileID: 21200000}
   m_Layer: 9
-  m_Name: tram
+  m_Name: tramB
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -45,7 +45,7 @@ GameObject:
   - 4: {fileID: 400004}
   - 212: {fileID: 21200002}
   m_Layer: 9
-  m_Name: tram
+  m_Name: tramA
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

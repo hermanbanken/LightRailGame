@@ -23,10 +23,12 @@ public class Obstacle : MonoBehaviour, IOccupy {
 		this.type = type;
 		switch (type) {
 		case ObstacleType.Car:
-			this.block = GameObject.CreatePrimitive (PrimitiveType.Capsule);
+			GameObject a=(GameObject)Instantiate(Resources.Load("car_accident"));
+			this.block = a;
 			break;
 		case ObstacleType.Tree:
-			this.block = GameObject.CreatePrimitive (PrimitiveType.Cube);
+			GameObject b =(GameObject)Instantiate(Resources.Load("tree"));
+			this.block = b;
 			break;
 		case ObstacleType.Barrel:
 			this.block = GameObject.CreatePrimitive (PrimitiveType.Cylinder);
@@ -39,6 +41,12 @@ public class Obstacle : MonoBehaviour, IOccupy {
 
 		block.transform.parent = Wrapper.transform;
 		block.transform.localPosition = Vector3.zero;
+
+		Vector3 v3position = block.transform.position;
+		//v3position.z =-2.0f;
+		v3position.z = v3position.z - 2;
+		block.transform.position=v3position;
+
 	}
 
 	void Update(){
