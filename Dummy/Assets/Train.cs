@@ -37,7 +37,7 @@ public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandle
 
 	// Use this for initialization
 	void Start () {
-		lightRailGame = GameObject.Find("LightRailGame").GetComponent<LightRailGame> ();
+		lightRailGame = LightRailGame.GetInstance();
 
 		// Add collider script to TrainModel
 		Collider c = GetComponentInChildren<Collider> ();
@@ -357,9 +357,21 @@ public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandle
 
 	void ISelectHandler.OnSelect (BaseEventData eventData)
 	{
-		LightRailGame.GetInstance ().DoSelect (gameObject);
-	}
+		lightRailGame.DoSelect (gameObject);
+		
+		foreach (var renderer in this.GetComponentsInChildren<SpriteRenderer>())
+			renderer.sprite = lightRailGame.GhostTram;
 
+		lightRailGame.OnSelectedGameObjectChanged += ChangeSpriteBack;
+	}
+	
+	void ChangeSpriteBack (GameObject _)
+	{
+		lightRailGame.OnSelectedGameObjectChanged -= this.ChangeSpriteBack;
+
+		foreach (var renderer in this.GetComponentsInChildren<SpriteRenderer>())
+			renderer.sprite = lightRailGame.NormalTram;
+	}
 	#endregion
 
 	#region IEnumerable implementation
