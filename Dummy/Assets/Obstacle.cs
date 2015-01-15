@@ -23,7 +23,7 @@ public class Obstacle : MonoBehaviour, IOccupy {
 		this.type = type;
 		switch (type) {
 		case ObstacleType.Car:
-			GameObject a=(GameObject)Instantiate(Resources.Load("tree"));
+			GameObject a=(GameObject)Instantiate(Resources.Load("car_accident"));
 			this.block = a;
 			break;
 		case ObstacleType.Tree:
