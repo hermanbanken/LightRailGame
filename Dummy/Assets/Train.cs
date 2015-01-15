@@ -5,7 +5,7 @@ using System;
 using System.Linq;
 using UnityEngine.EventSystems;
 
-public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandler, IEnumerable<Edge>  {
+public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandler, IPointerEnterHandler, IPointerExitHandler, IEnumerable<Edge>  {
 
 	private LightRailGame lightRailGame;
 
@@ -372,6 +372,27 @@ public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandle
 		foreach (var renderer in this.GetComponentsInChildren<SpriteRenderer>())
 			renderer.sprite = lightRailGame.NormalTram;
 	}
+	#endregion
+
+	#region IPointerEnterHandler implementation
+
+	public void OnPointerEnter (PointerEventData eventData)
+	{
+		foreach (var renderer in this.GetComponentsInChildren<SpriteRenderer>())
+			renderer.sprite = lightRailGame.GhostTram;
+	}
+
+	#endregion
+
+	#region IPointerExitHandler implementation
+
+	public void OnPointerExit (PointerEventData eventData)
+	{
+		if(lightRailGame.SelectedGameObject != this.gameObject)
+		foreach (var renderer in this.GetComponentsInChildren<SpriteRenderer>())
+			renderer.sprite = lightRailGame.NormalTram;
+	}
+
 	#endregion
 
 	#region IEnumerable implementation
