@@ -28,8 +28,10 @@ public class SolutionBlockages {
 }	
 
 public class PowerUps {
-	public static ISolution Magic = new PowerUp ("Call your friend GANDALF", TimeSpan.FromSeconds (5f), 1f, 1);
+	public static PowerUp Magic = new PowerUp ("Call your friend GANDALF", TimeSpan.FromSeconds (5f), 1f, 1);
 }
+
+//PowerUps.Magic.Receive();
 
 public class PowerUp : Solution, ISolution, IPowerUp {
 	public PowerUp(string ProposalText, TimeSpan ResolveTime, float SuccessRatio, int initialAvailibility) : base(ProposalText, ResolveTime, SuccessRatio) {
