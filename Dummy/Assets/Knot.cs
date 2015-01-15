@@ -63,7 +63,6 @@ public class Knot : MonoBehaviour, IDragHandler, IEndDragHandler, IBeginDragHand
 					origin = h.t > 0.5f ? h.Edge.To : h.Edge.From;	
 				}
 			})
-			.Do (n => Debug.Log ("Hovering over "+n.Edge, n.Edge))
 			.CombineLatest(
 				Observable.FromEvent<Train>(a => train.OnPathChange += a, a => train.OnPathChange -= a).StartWith(train).Select(t => t.Path[t.currentTrack]),
 				(p, activeEdge) => Eppy.Tuple.Create<EdgeRaycaster.Hover,Edge>(p, activeEdge)
@@ -85,14 +84,9 @@ public class Knot : MonoBehaviour, IDragHandler, IEndDragHandler, IBeginDragHand
 				() => {
 					if(reroute != null){
 						game.LineMaster.HideLine(reroute);
-						Debug.Log ("[O] Reroute completed, old length was "+train.Path.Count+" new length is "+result.WayPoints.Count);
-						Debug.Log ("[O] Old WayPoints: "+train.WayPoints.Count+" new count is "+result.WayPoints.Count);
 						train.UpdatePath(result.WayPoints, result.Route);
-					} else 
-						Debug.Log ("[O] Reroute cancelled");
+					} 
 				});
-
-		Debug.Log ("Begin Drag");
 	}
 
 	#endregion
@@ -172,28 +166,6 @@ public class Knot : MonoBehaviour, IDragHandler, IEndDragHandler, IBeginDragHand
 			WayPoints = wps.ToList(),
 			NewPiece = a.Concat(b),
 		};
-
-//		Node from; 
-//		Node to;
-//
-//		// Dragging WayPoint
-//		if (train.WayPoints.Contains (origin)) {
-//			from = train.WayPoints.TakeWhile (n => n != origin).LastOrDefault () ?? train.WayPoints.Last ();
-//			to = train.WayPoints.SkipWhile (n => n != origin).Skip (1).FirstOrDefault () ?? train.WayPoints.First ();
-//		} 
-//		// Dragging in-between
-//		else {
-//			from = train.Skip (1).Select(e => e.From).TakeWhile(n => n != origin).LastOrDefault(n => train.WayPoints.Contains(n)) ?? origin;
-//			to = train.Skip (1).Select(e => e.To).SkipWhile(n => n != origin).FirstOrDefault(n => train.WayPoints.Contains(n)) ?? origin;
-//		}
-//
-//		IEnumerable<Edge> a = origin.graph.Dijkstra.PlanRoute(from, newWP);
-//		IEnumerable<Edge> b = origin.graph.Dijkstra.PlanRoute(newWP, to);
-//
-//		return Eppy.Tuple.Create<IList<Node>,IList<Edge>>(
-//			train.WayPoints.SelectMany (n => n == from ? new [] { from, newWP } : new [] { n }).ToList(),
-//			train.TakeWhile(e => e.From != from).Concat(a).Concat(b).Concat(train.SkipWhile(e => e.From != to).TakeWhile(e => e.To != train.First().From)).ToList()
-//		);
 	}
 
 	public class ComputationResult
@@ -217,59 +189,6 @@ public class Knot : MonoBehaviour, IDragHandler, IEndDragHandler, IBeginDragHand
 		var handler = _OnDrag;
 		if (handler != null)
 			handler (eventData);
-
-//		if(OnDrag)
-//		Thread
-//		Task UITask= task.ContinueWith(() =>
-//		                               {
-//			this.TextBlock1.Text = "Complete"; 
-//		}, TaskScheduler.FromCurrentSynchronizationContext());
-//		ILine reroute = null;
-//		Edge lastEdge = currentEdge;
-//		
-//		evt.OnDrag += (Vector3 obj) => {
-//			// If we can Snap
-//			if(LightRailGame.EdgeRaycaster.CurrentHover != null){
-//				if(lastEdge == LightRailGame.EdgeRaycaster.CurrentHover.Edge)
-//					return;
-//				
-//				lastEdge = LightRailGame.EdgeRaycaster.CurrentHover.Edge;
-//				
-//				IEnumerable<Edge> a = graph.Dijkstra.PlanRoute(from, lastEdge.To);
-//				IEnumerable<Edge> b = graph.Dijkstra.PlanRoute(lastEdge.To, to);
-//				
-//				// Clear previous
-//				if(reroute != null) LineMaster.HideLine(reroute);
-//				reroute = new CombinedLine<Edge>(a.Concat(b));
-//				LineMaster.ShowLine(reroute, LineOptsReRoute);
-//			} 
-//			// Cannot Snap
-//			else {
-//				lastEdge = currentEdge;
-//				Knot.transform.position = obj;
-//				var c = Camera.main.ScreenToWorldPoint(obj).FixZ(currentEdge.To.position.z);
-//				// Clear previous
-//				if(reroute != null) LineMaster.HideLine(reroute);
-//				reroute = new CombinedLine<StraightLine>(new [] {
-//					new StraightLine(from.position, c),
-//					new StraightLine(c, to.position)
-//				});
-//				LineMaster.ShowLine(reroute, LineOptsReRoute);
-//			}
-//		};
-//		evt.OnRelease += (Vector3 obj) => {
-//			Debug.LogWarning("Released Re-route");
-//			if(reroute != null) LineMaster.HideLine(reroute);
-//			if(LightRailGame.EdgeRaycaster.CurrentHover != null && (lastEdge == LightRailGame.EdgeRaycaster.CurrentHover.Edge) && lastEdge != currentEdge){
-//				Debug.LogWarning("Re-route is in finished state");
-//				var newWP = train.WayPoints.Where(n=>true).ToList();
-//				if(LightRailGame.EdgeRaycaster.CurrentHover.t < 0.5)
-//					newWP.Insert (newWP.IndexOf(from), lastEdge.From);
-//				else 
-//					newWP.Insert (newWP.IndexOf(from), lastEdge.To);
-//				train.UpdatePath(newWP);
-//			}
-//		};
 	}
 
 	#endregion
