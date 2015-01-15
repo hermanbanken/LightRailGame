@@ -28,7 +28,7 @@ public class LightRailGame : MonoBehaviour
 	[NonSerialized]
 	private LineOptions LineOpts;
 	[NonSerialized]
-	private LineOptions LineOptsReRoute;
+	public LineOptions LineOptsReRoute;
 
 	private Graph _graph;
 	[HideInInspector]
@@ -343,69 +343,6 @@ public class LightRailGame : MonoBehaviour
 	}
 
 	void HandleKnotClick(MouseEvent evt, Edge currentEdge, Train train){
-		Node from = null; Node to = null;
-		int edgeIndex = train.Path.IndexOf(currentEdge);
-		// Loop back, find previous WayPoint
-		for (int i = (edgeIndex-1+train.Path.Count)%train.Path.Count; i < edgeIndex || i > edgeIndex; i = (i-1+train.Path.Count)%train.Path.Count) {
-			if(train.WayPoints.Contains(train.Path[i].To)){
-				from = train.Path[i].To;
-				break;
-			}
-		}
-		// Loop forward, find next WayPoint
-		for (int i = (edgeIndex+1)%train.Path.Count; i < edgeIndex || i > edgeIndex; i = (i+1)%train.Path.Count) {
-			if(train.WayPoints.Contains(train.Path[i].From)){
-				to = train.Path[i].From;
-				break;
-			}
-		}
-
-		ILine reroute = null;
-		Edge lastEdge = currentEdge;
-
-		evt.OnDrag += (Vector3 obj) => {
-			// If we can Snap
-			if(LightRailGame.EdgeRaycaster.CurrentHover != null){
-				if(lastEdge == LightRailGame.EdgeRaycaster.CurrentHover.Edge)
-					return;
-
-				lastEdge = LightRailGame.EdgeRaycaster.CurrentHover.Edge;
-
-				IEnumerable<Edge> a = graph.Dijkstra.PlanRoute(from, lastEdge.To);
-				IEnumerable<Edge> b = graph.Dijkstra.PlanRoute(lastEdge.To, to);
-
-				// Clear previous
-				if(reroute != null) LineMaster.HideLine(reroute);
-				reroute = new CombinedLine<Edge>(a.Concat(b));
-				LineMaster.ShowLine(reroute, LineOptsReRoute);
-			} 
-			// Cannot Snap
-			else {
-				lastEdge = currentEdge;
-				Knot.transform.position = obj;
-				var c = Camera.main.ScreenToWorldPoint(obj).FixZ(currentEdge.To.position.z);
-				// Clear previous
-				if(reroute != null) LineMaster.HideLine(reroute);
-				reroute = new CombinedLine<StraightLine>(new [] {
-					new StraightLine(from.position, c),
-					new StraightLine(c, to.position)
-				});
-				LineMaster.ShowLine(reroute, LineOptsReRoute);
-			}
-		};
-		evt.OnRelease += (Vector3 obj) => {
-			Debug.LogWarning("Released Re-route");
-			if(reroute != null) LineMaster.HideLine(reroute);
-			if(LightRailGame.EdgeRaycaster.CurrentHover != null && (lastEdge == LightRailGame.EdgeRaycaster.CurrentHover.Edge) && lastEdge != currentEdge){
-				Debug.LogWarning("Re-route is in finished state");
-				var newWP = train.WayPoints.Where(n=>true).ToList();
-				if(LightRailGame.EdgeRaycaster.CurrentHover.t < 0.5)
-					newWP.Insert (newWP.IndexOf(from), lastEdge.From);
-				else 
-					newWP.Insert (newWP.IndexOf(from), lastEdge.To);
-				train.UpdatePath(newWP);
-			}
-		};
 	}
 
 	void AddKnots (Train train, IList<Node> wayPoints)
