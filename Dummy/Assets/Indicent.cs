@@ -16,7 +16,7 @@ public class SolutionIncidents {
 }
 
 public class SolutionBlockages {
-	public static ISolution PushAside = new Solution ("Ask the tram driver to PUSH the car aside", TimeSpan.FromSeconds (10), 0.25f);
+	public static ISolution PushAside = new Solution ("Ask the tram driver to PUSH it aside", TimeSpan.FromSeconds (10), 0.25f);
 	public static ISolution Horn = new Solution ("Ask the tram driver to use the HORN repeatedly", TimeSpan.FromSeconds (3), 0.20f);
 	public static ISolution Tow = new Solution ("Call for a TOWING service", TimeSpan.FromSeconds (10), 1.0f);
 	public static ISolution Maintenance = new Solution ("Call MAINTENANCE CREW to deal with the problem", TimeSpan.FromSeconds (45), 0.9f);	
@@ -182,6 +182,8 @@ public class ObstacleBlockage : AbstractIncident, IIncident {
 	{
 		if(this.obstacle.type == ObstacleType.Car)
 			return "There is a CAR ON THE TRACK.";
+		else if (this.obstacle.type == ObstacleType.Tree)
+			return "There is a FALLEN TREE ON THE TRACK.";
 		// rogier // else if(this.obstacle.type == ObstacleType.Car)
 		// rogier // 	return "The train has collided with a car.";
 		throw new NotImplementedException ("Implement a description for the ObstacleType "+this.obstacle.type.ToString());
@@ -200,6 +202,15 @@ public class ObstacleBlockage : AbstractIncident, IIncident {
 						PowerUps.Magic
 					};
 			} 
+		if (this.obstacle.type == ObstacleType.Tree) {
+			return new [] {
+				SolutionBlockages.PushAside,
+				SolutionBlockages.Crane, 
+				SolutionBlockages.Tow,
+				SolutionIncidents.Police,
+				PowerUps.Magic
+			};
+		} 
 			else if (this.obstacle.type == ObstacleType.Defect) {
 					return new [] {
 						SolutionBlockages.Maintenance,
@@ -240,6 +251,8 @@ public class ObstacleBlockage : AbstractIncident, IIncident {
 	public override int Suitability (ISolution solution)
 	{
 		if (this.obstacle.type == ObstacleType.Car && solution == SolutionIncidents.Ventilate) return -1;
+		if (this.obstacle.type == ObstacleType.Tree && solution == SolutionIncidents.Police) return -1;
+		if (this.obstacle.type == ObstacleType.Tree && solution == SolutionBlockages.PushAside) return -1;
 		return 1;
 	}
 
@@ -295,7 +308,8 @@ public class TramCarIncident : AbstractIncident, IIncident {
 		else if (this.type == ObstacleType.StenchOnBoard) {
 			return new [] {
 				SolutionIncidents.Calm,
-				SolutionIncidents.Ventilate, 
+				SolutionIncidents.Ventilate,
+				SolutionIncidents.Police,
 				};
 		}
 
