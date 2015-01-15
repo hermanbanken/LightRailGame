@@ -134,67 +134,9 @@ public class LightRailGame : MonoBehaviour
      */
 	static Train _train;
 	void FixedUpdate () {
-		mouse.OnFrame ();
-		
-		//      // Do scrolling
-		Camera.main.orthographicSize -= Input.mouseScrollDelta.y;
-		if(Input.mouseScrollDelta.y > 0){
-			Camera.main.orthographicSize = Math.Max(Camera.main.orthographicSize,20f);
-		}
-		else{
-			Camera.main.orthographicSize = Math.Min(Camera.main.orthographicSize,Background.bounds.size.x / Camera.main.aspect / 2 );
-		}
-		if (Input.mouseScrollDelta.y != 0)
-			FixCameraPosition (Vector3.zero, 0);
-		
-		// Show edge dragger
-		if (SelectedGameObject != null && LightRailGame.EdgeRaycaster.CurrentHover != null){
-			Knot.transform.position = Camera.main.WorldToScreenPoint(LightRailGame.EdgeRaycaster.CurrentHover.pos);
-			Screen.showCursor = false;
-			Knot.SetActive(true);
-			if(mouse.Events.Any() && (_train = SelectedGameObject.GetComponent<Train>())){
-				HandleKnotClick(mouse.Events.Dequeue(), LightRailGame.EdgeRaycaster.CurrentHover.Edge, _train);
-			}
-		} else {
-			Knot.SetActive(false);
-			Screen.showCursor = true;
-		}
-
-		// Handle all mouse events
-		while (mouse.Events.Any()) {
-			var e = mouse.Events.Dequeue();
-
-			// Handle panning
-			var speed = 0.5f * Camera.main.orthographicSize / 100f;
-			var background = this.GetComponentAtScreen2DPosition<BoxCollider2D>(e.position);
-			if(background != null && background.gameObject.name == "Quad"){
-				var lastPos = e.position;
-				e.OnDrag += (Vector3 newPos) => {
-					// Pan background using the new mouse position
-					var diff = newPos - lastPos;
-					FixCameraPosition (diff, speed);
-					lastPos = newPos;
-				};
-				return;
-			}
-		}
+//		mouse.OnFrame ();
 	}
 
-	private float rightmenuoffset;
-	void FixCameraPosition (Vector3 diff, float speed)
-	{
-
-		var c_w = Camera.main.orthographicSize * Camera.main.aspect;
-		var c_h = Camera.main.orthographicSize;
-		var pos = Camera.main.transform.position;
-		pos.x = Math.Max (Background.bounds.min.y  + c_w, Math.Min (Background.bounds.max.x - c_w + rightmenuoffset, pos.x - diff.x * speed));
-		pos.y = Math.Max (Background.bounds.min.y + c_h  , Math.Min (Background.bounds.max.y - c_h + (10*Camera.main.orthographicSize/88), pos.y - diff.y * speed));
-		Camera.main.transform.position = pos;
-
-		OnSelectedGameObjectChanged += (GameObject obj) => {
-			rightmenuoffset = (obj == null) ? 0 :30*Camera.main.orthographicSize* Camera.main.aspect/88 ;
-		};
-	}
 	public void DoSelect(GameObject obj){
 		if (SelectedGameObject != null) RequestDeselect ();
 
