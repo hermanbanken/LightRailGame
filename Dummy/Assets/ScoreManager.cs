@@ -68,12 +68,15 @@ public class ScoreManager : MonoBehaviour
 			// Time since occur/last action
 			var timeSince = Time.time - StartTime[obj];
 	
-			// DUmmy
+			//score item - wrong solution chosen
+			// Solutions that are provided may not be suitable. If chosen it is punnished.
 			var suitability = obj.Suitability(obj.GetChosenSolution());
 			if (suitability <= 0) Score -= 1000;
 
-			// Swift bonus / malus : If one plays a disruption quick ther is a bonus, when ik takes long a malus
-			if (timeSince <= 10) Score += 100; 
+			// Score item - Swiftness
+			// Swift bonus / malus : If one plays a disruption quick there is a bonus, when ik takes long a malus
+			if (timeSince <= 9) PowerUps.Magic.Receive ();	// powerup plus
+			else if (timeSince <= 10) Score += 100; 
 			else if(timeSince <= 20)Score += 50;
 			else if(timeSince <= 30)Score += 25;
 			else if(timeSince <= 40)Score += 10;
@@ -85,11 +88,14 @@ public class ScoreManager : MonoBehaviour
 			else if(timeSince <= 210)Score -= 50;
 			else Score -= 60;
 
+		
 			// Prepare for possible fail
 			StartTime[obj] = Time.time;
 		};
 
 		OnDesiredSpeedChange += (object sender, DesiredSpeedChangeEventArgs e) => {
+
+			//score item stop/start tram manualy 
 			// als de previous > 0 en current == 0 dan net gestopt.
 			if (e.Previous > 0 && e.Current == 0) ImpactCount += 100;
 			if (e.Previous == 0 && e.Current > 0) ImpactCount -= 50;
