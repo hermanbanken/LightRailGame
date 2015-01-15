@@ -6,6 +6,8 @@ using System;
 using System.Runtime.Serialization;
 using Eppy;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
+using System.Reactive.Linq;
 
 public class LightRailGame : MonoBehaviour 
 {
@@ -29,6 +31,9 @@ public class LightRailGame : MonoBehaviour
 	private LineOptions LineOpts;
 	[NonSerialized]
 	public LineOptions LineOptsReRoute;
+
+	[NonSerialized]
+	public Transform BelowMenuSpawnPoint;
 
 	private Graph _graph;
 	[HideInInspector]
@@ -55,8 +60,6 @@ public class LightRailGame : MonoBehaviour
 	[HideInInspector,NonSerialized]
 	public ObstacleMaster Obstacles;
 
-	private Mouse mouse = new Mouse ();
-
 	public Transform Train;
 
 	public Transform WarningPrefab;
@@ -71,13 +74,10 @@ public class LightRailGame : MonoBehaviour
 	public List<LineSchedule> Schedule = new List<LineSchedule> ();
 
 	[NonSerialized]
-	private GameObject Knot;
+	private Knot Knot;
 
 	[NonSerialized]
 	private Tuple<GameObject,Node>[] WPKnots;
-	
-	[NonSerialized]
-	private BoxCollider2D Background;
 	
 	// Use this for initialization
 	void Start () {
@@ -85,11 +85,11 @@ public class LightRailGame : MonoBehaviour
 		QualitySettings.antiAliasing = 4;
 
 		LineMaster = LineDrawMaster.getInstance ();
+
+		BelowMenuSpawnPoint = GameObject.Find ("BelowMenuSpawnPoint").transform;
 		
-		Background = GameObject.Find ("Quad").GetComponent<BoxCollider2D> ();
-		
-		Knot = GameObject.Find ("ReRouteKnot");
-		Knot.SetActive (false);
+		Knot = GameObject.Find ("ReRouteKnot").GetComponent<Knot>();
+		Knot.gameObject.SetActive (false);
 
 		if (LineRendererMaterial == null)
 			Debug.LogWarning ("You did not set the Material of the LineRenderer. Please go to the Inspector of the LightRailGame object and set its material");
@@ -121,20 +121,25 @@ public class LightRailGame : MonoBehaviour
 			Debug.Log("An obstacle was resolved.");
 			ScoreManager.Score++;
 		});
+
+		Observable
+			.FromEvent<GameObject>(a => OnSelectedGameObjectChanged += a, a => OnSelectedGameObjectChanged -= a)
+			.Select(obj => obj != null)
+			.CombineLatest(
+				Observable
+					.FromEvent<Edge>(a => LightRailGame.EdgeRaycaster.OnEdgeChange += a, a => LightRailGame.EdgeRaycaster.OnEdgeChange -= a)
+					.Select(e => e != null),
+				(a, b) => a && b
+			).Subscribe(show => {
+				Knot.gameObject.SetActive(show);
+				Knot.SetTracking(show);
+			});
 		
 		StartGame ();
 	}
 	
 	void Update(){
 		UpdateKnots ();
-	}
-	
-	/**
-     * Handle mouse/scrolling/events
-     */
-	static Train _train;
-	void FixedUpdate () {
-//		mouse.OnFrame ();
 	}
 
 	public void DoSelect(GameObject obj){
@@ -283,17 +288,14 @@ public class LightRailGame : MonoBehaviour
 	public static LightRailGame GetInstance(){
 		return GameObject.FindObjectOfType<LightRailGame>();
 	}
-
-	void HandleKnotClick(MouseEvent evt, Edge currentEdge, Train train){
-	}
-
+	
 	void AddKnots (Train train, IList<Node> wayPoints)
 	{
 		var controls = GameObject.Find ("LRG_Controls");
 		// TODO cleanup this ugly mess
 		WPKnots = wayPoints.ToList().Select ((wp, i) => {
-			var knot = Instantiate(Knot, Camera.main.WorldToScreenPoint(wp.position), Quaternion.identity) as GameObject;
-			knot.transform.SetParent(controls.transform, true);
+			var knot = Instantiate(Knot.gameObject, Camera.main.WorldToScreenPoint(wp.position), Quaternion.identity) as GameObject;
+			knot.transform.SetParent(BelowMenuSpawnPoint, true);
 			knot.SetActive (true);
 			knot.GetComponent<Button>().onClick.AddListener(() => {
 				if(train.WayPoints.Count() > 2){

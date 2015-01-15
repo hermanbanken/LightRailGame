@@ -17,7 +17,7 @@ public class IncidentVisualizer : MonoBehaviour
 	public static void Add(IIncident incident){
 		var w = Instantiate(_HandlePrefab, Position (incident), Quaternion.identity) as GameObject;
 
-		w.transform.SetParent (GameObject.FindObjectsOfType<Canvas> ().First(c => c.gameObject.name == "LRG_Controls").transform, false);
+		w.transform.SetParent (LightRailGame.GetInstance().BelowMenuSpawnPoint, false);
 		var warning = w.GetComponent<Warning> ();
 		warning.incident = incident;
 		incidents [incident] = warning;
