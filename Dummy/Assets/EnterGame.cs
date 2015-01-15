@@ -11,6 +11,8 @@ public class EnterGame : MonoBehaviour {
 	public GameObject Exist;
 	public GameObject train;
 	public GameObject back;
+	public GameObject returnButton;
+	public GameObject banner;
 	//public AudioClip click;
 	//private AudioSource source;
 	void Start()
@@ -18,10 +20,7 @@ public class EnterGame : MonoBehaviour {
 		map1.SetActive (false);
 		map2.SetActive (false);
 		map3.SetActive (false);
-
-
-
-
+		returnButton.SetActive (false);
 	}
 
 
@@ -29,6 +28,7 @@ public class EnterGame : MonoBehaviour {
 	void OnMouseDown()
 	{
 		//source.PlayOneShot(click,1);
+		banner.SetActive (false);
 		map1.SetActive (true);
 		map2.SetActive (true);
 		train.SetActive (false);
@@ -38,6 +38,8 @@ public class EnterGame : MonoBehaviour {
 		back.SetActive (true);
 		Exist.SetActive (false);
 		gameObject.SetActive (false);
+		returnButton.SetActive (true);
+
 		//Application.LoadLevel ("Scene");
 
 		//Time.timeScale = 1;
