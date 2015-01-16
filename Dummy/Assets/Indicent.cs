@@ -53,14 +53,14 @@ public class PowerUp : Solution, ISolution, IPowerUp {
 // Given two types of collision: with another tram or something else (like a car)
 public class TrainCollisionBlockage : AbstractIncident, IIncident {
 	Train self;
-	Train other;
-	Collision collision;
+//	Train other;
+//	Collision collision;
 	bool ended = false;
 
 	public TrainCollisionBlockage (Train self, Train other, Collision collision)
 	{
-		this.collision = collision;
-		this.other = other;
+//		this.collision = collision;
+//		this.other = other;
 		this.self = self;
 	}
 	// We still need to implement collision with an object that is not a tram
@@ -143,12 +143,6 @@ public class TrainCollisionBlockage : AbstractIncident, IIncident {
 
 	public void CollisionEnded(){
 		ended = true;
-
-		if (solution != null) {
-			Debug.Log ("Collision with other tram ended, this incident has a solution");
-		}
-		else
-			Debug.Log ("Collision with other tram ended, this incident does not have a solution!");
 
 		if(solution == SolutionBlockages.Backup)
 			self.desiredSpeed = 0;

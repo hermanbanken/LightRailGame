@@ -40,7 +40,7 @@ public class SoundsManager : MonoBehaviour {
 		LightRailGame.ScoreManager.OnUserAction += (IIncident obj) => {
 		
 			source.PlayOneShot(action1,0.50f);
-			int suit = obj.Suitability(obj.GetChosenSolution());
+//			int suit = obj.Suitability(obj.GetChosenSolution());
 		};
 
 		LightRailGame.ScoreManager.OnOccur += (IIncident obj) => {
@@ -51,7 +51,6 @@ public class SoundsManager : MonoBehaviour {
 		LightRailGame.ScoreManager.OnResolved += (IIncident obj) => {
 
 			source.PlayOneShot(SuccRemoved,1.0f);
-			Debug.Log ("hi,sound");
 		};
 
 		LightRailGame.ScoreManager.OnFailed += (IIncident obj) => {
