@@ -22,7 +22,7 @@ public class Panner : MonoBehaviour, IDragHandler {
 			Camera.main.orthographicSize = Math.Max(Camera.main.orthographicSize,20f);
 		}
 		else{
-			Camera.main.orthographicSize = Math.Min(Camera.main.orthographicSize,Background.bounds.size.x / Camera.main.aspect / 2 );
+			Camera.main.orthographicSize = Math.Min(Camera.main.orthographicSize,Background.bounds.size.y / Camera.main.aspect / 2 );
 		}
 		if (Input.mouseScrollDelta.y != 0)
 			FixCameraPosition (Vector3.zero, 0);
