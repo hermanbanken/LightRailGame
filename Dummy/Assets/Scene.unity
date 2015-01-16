@@ -4008,7 +4008,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   points:
-  - {x: -16.9069557, y: 36.8197937, z: -4}
+  - {x: -16.1520767, y: 36.8197937, z: -4}
   - {x: -14.468606, y: 44.7394066, z: -4}
   - {x: -12.5644417, y: 52.6590157, z: -4}
   - {x: -10.8889122, y: 60.6444397, z: -4}
@@ -9257,8 +9257,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   points:
-  - {x: -16.9069557, y: 36.8197937, z: -4}
-  - {x: -16.3285522, y: 38.6271629, z: -4}
+  - {x: -16.1520767, y: 36.8197937, z: -4}
+  - {x: -14.9026604, y: 38.123909, z: -4}
   - {x: -5.63565159, y: 40.9406013, z: -4}
   - {x: 0, y: 43.4904213, z: -4}
   modes: 0000000000000000
@@ -18244,7 +18244,7 @@ MonoBehaviour:
   - {x: -26.0404625, y: 24.8816853, z: -4}
   - {x: -24.1183319, y: 28.8610554, z: -4}
   - {x: -19.1315613, y: 32.8404236, z: -4}
-  - {x: -16.9069557, y: 36.8197937, z: -4}
+  - {x: -16.1520767, y: 36.8197937, z: -4}
   modes: 0000000000000000
   loop: 0
   _from: {fileID: 1179992355}
@@ -19921,7 +19921,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1364435620}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -16.9069557, y: 36.8197937, z: 4}
+  m_LocalPosition: {x: -16.1520767, y: 36.8197937, z: 4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1367576509}
@@ -26891,7 +26891,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   points:
   - {x: -21.1754513, y: 36.6452827, z: -4}
-  - {x: -21.4948502, y: 34.8408241, z: -4}
+  - {x: -22.2497311, y: 34.8408241, z: -4}
   - {x: -38.4550438, y: 21.0900803, z: -4}
   - {x: -43.295433, y: 17.8594208, z: -4}
   modes: 0000000000000000
@@ -29631,7 +29631,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   points:
   - {x: -21.1754513, y: 36.6452827, z: -4}
-  - {x: -21.4035282, y: 34.9828148, z: -4}
+  - {x: -22.9264755, y: 34.9828148, z: -4}
   - {x: -32.6552658, y: 24.0215969, z: -4}
   - {x: -32.7170181, y: 20.2730007, z: -4}
   modes: 0000000000000000
@@ -30539,52 +30539,52 @@ MonoBehaviour:
   RailShader: {fileID: 51, guid: 0000000000000000f000000000000000, type: 0}
   Schedule:
   - Name: Line 1
-    TramCount: 3
+    TramCount: 2
     WayPoints:
     - {fileID: 685075327}
     - {fileID: 62744178}
     - {fileID: 1584373358}
   - Name: Line 2
-    TramCount: 3
+    TramCount: 2
     WayPoints:
     - {fileID: 47704885}
     - {fileID: 1582563299}
   - Name: Line 3
-    TramCount: 5
+    TramCount: 2
     WayPoints:
     - {fileID: 2133062511}
     - {fileID: 1639871203}
     - {fileID: 457323627}
   - Name: Line 4
-    TramCount: 4
+    TramCount: 2
     WayPoints:
     - {fileID: 1590313684}
     - {fileID: 195667331}
     - {fileID: 138756178}
   - Name: Line 5
-    TramCount: 4
+    TramCount: 2
     WayPoints:
     - {fileID: 1203269150}
     - {fileID: 1219066870}
     - {fileID: 457522446}
     - {fileID: 1590313684}
   - Name: Line 6
-    TramCount: 4
+    TramCount: 2
     WayPoints:
     - {fileID: 1771203472}
     - {fileID: 1158142123}
   - Name: Line 7
-    TramCount: 4
+    TramCount: 2
     WayPoints:
     - {fileID: 1407690247}
     - {fileID: 1959625737}
   - Name: Line 8
-    TramCount: 4
+    TramCount: 2
     WayPoints:
     - {fileID: 1327217206}
     - {fileID: 1373930320}
   - Name: Line 99
-    TramCount: 1
+    TramCount: 2
     WayPoints:
     - {fileID: 379983532}
     - {fileID: 700932557}
@@ -30592,19 +30592,19 @@ MonoBehaviour:
     - {fileID: 1582563299}
     - {fileID: 1987109959}
   - Name: Line 98
-    TramCount: 1
+    TramCount: 2
     WayPoints:
     - {fileID: 422198024}
     - {fileID: 1269728039}
   - Name: Line 97
-    TramCount: 1
+    TramCount: 2
     WayPoints:
     - {fileID: 47704885}
     - {fileID: 333243971}
     - {fileID: 2032551520}
     - {fileID: 1735957386}
   - Name: Line 96
-    TramCount: 1
+    TramCount: 2
     WayPoints:
     - {fileID: 1001958213}
     - {fileID: 1743607736}
@@ -30613,7 +30613,7 @@ MonoBehaviour:
     - {fileID: 761100521}
     - {fileID: 138756178}
   - Name: Line 94
-    TramCount: 1
+    TramCount: 2
     WayPoints:
     - {fileID: 996603363}
     - {fileID: 1171081817}
