@@ -1,0 +1,201 @@
+fileFormatVersion: 2
+guid: f94da6cacf6a04ef481e3585e3424843
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: HTM-icons-Los_0
+    21300002: HTM-icons-Los_1
+    21300004: HTM-icons-Los_2
+    21300006: HTM-icons-Los_3
+    21300008: HTM-icons-Los_4
+    21300010: HTM-icons-Los_5
+    21300012: HTM-icons-Los_6
+    21300014: HTM-icons-Los_7
+    21300016: HTM-icons-Los_8
+    21300018: HTM-icons-Los_9
+    21300020: HTM-icons-Los_10
+    21300022: HTM-icons-Los_11
+    21300024: HTM-icons-Los_12
+    21300026: HTM-icons-Los_13
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 1
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: .25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  seamlessCubemap: 0
+  textureFormat: -1
+  maxTextureSize: 1024
+  textureSettings:
+    filterMode: -1
+    aniso: 16
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: .5, y: .5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings: []
+  spriteSheet:
+    sprites:
+    - name: HTM-icons-Los_0
+      rect:
+        serializedVersion: 2
+        x: 38
+        y: 623
+        width: 87
+        height: 95
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: HTM-icons-Los_1
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 491
+        width: 126
+        height: 98
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: HTM-icons-Los_2
+      rect:
+        serializedVersion: 2
+        x: 13
+        y: 343
+        width: 150
+        height: 113
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: HTM-icons-Los_3
+      rect:
+        serializedVersion: 2
+        x: 35
+        y: 193
+        width: 106
+        height: 97
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: HTM-icons-Los_4
+      rect:
+        serializedVersion: 2
+        x: 28
+        y: 35
+        width: 130
+        height: 100
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: HTM-icons-Los_5
+      rect:
+        serializedVersion: 2
+        x: 247
+        y: 54
+        width: 170
+        height: 126
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: HTM-icons-Los_6
+      rect:
+        serializedVersion: 2
+        x: 259
+        y: 200
+        width: 140
+        height: 110
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: HTM-icons-Los_7
+      rect:
+        serializedVersion: 2
+        x: 263
+        y: 337
+        width: 150
+        height: 102
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: HTM-icons-Los_8
+      rect:
+        serializedVersion: 2
+        x: 265
+        y: 460
+        width: 150
+        height: 102
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: HTM-icons-Los_9
+      rect:
+        serializedVersion: 2
+        x: 304
+        y: 598
+        width: 93
+        height: 94
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: HTM-icons-Los_10
+      rect:
+        serializedVersion: 2
+        x: 549
+        y: 463
+        width: 135
+        height: 119
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: HTM-icons-Los_11
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 333
+        width: 153
+        height: 92
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: HTM-icons-Los_12
+      rect:
+        serializedVersion: 2
+        x: 510
+        y: 181
+        width: 136
+        height: 98
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: HTM-icons-Los_13
+      rect:
+        serializedVersion: 2
+        x: 504
+        y: 18
+        width: 156
+        height: 126
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+  spritePackingTag: 
+  userData: 

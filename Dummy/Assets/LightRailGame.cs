@@ -63,6 +63,9 @@ public class LightRailGame : MonoBehaviour
 	public Transform Train;
 
 	public Transform WarningPrefab;
+	
+	public Transform SolutionMenuPrefab;
+	private SolutionMenu SolutionMenu;
 
 	// Set Line for Unity to package in Build
 	public Material LineRendererMaterial;
@@ -91,11 +94,15 @@ public class LightRailGame : MonoBehaviour
 
 		GhostTram = Resources.Load("GhostTram", typeof(Sprite)) as Sprite;
 		NormalTram = Resources.Load("HTMTram", typeof(Sprite)) as Sprite;
+		
+		BelowMenuSpawnPoint = GameObject.Find ("BelowMenuSpawnPoint").transform;
 
+		var menu = (Instantiate (SolutionMenuPrefab) as Transform).gameObject;
+		SolutionMenu = menu.GetComponent<SolutionMenu>();
+		menu.transform.SetParent (BelowMenuSpawnPoint.parent);
+		SolutionMenu.gameObject.SetActive (false);
 
 		LineMaster = LineDrawMaster.getInstance ();
-
-		BelowMenuSpawnPoint = GameObject.Find ("BelowMenuSpawnPoint").transform;
 		
 		Knot = GameObject.Find ("ReRouteKnot").GetComponent<Knot>();
 		Knot.gameObject.SetActive (false);
@@ -195,23 +202,18 @@ public class LightRailGame : MonoBehaviour
 		if (OnSelectedGameObjectChanged != null)
 			OnSelectedGameObjectChanged (null);
 	}
-
-	// Draw menu's
-	void OnGUI(){
-		// Handle Obstacle clicks
-		if (ClickedIncident != null) {
-			// If user chooses an action this is true
-			if(ClickedIncident.IncidentGUI()){
-				var obs = (ClickedIncident as ObstacleBlockage);
-				if(obs!=null)
-					obs.Subject().GetComponent<Obstacle>().DoUserAction();
-				ClickedIncident = null;
-			}
-		}
-	}
-
+	
 	public void ShowMenu(IIncident inc){
 		ClickedIncident = inc;
+		SolutionMenu.gameObject.SetActive (true);
+
+		SolutionMenu.Show (inc, (ISolution s) => {
+			var obs = (inc as ObstacleBlockage);
+			if(obs!=null)
+				obs.Subject().GetComponent<Obstacle>().DoUserAction();
+			ClickedIncident = null;
+		});
+
 		if(OnIncidentMenuOpen != null)
 			OnIncidentMenuOpen (inc);
 	}
