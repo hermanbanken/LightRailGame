@@ -21,11 +21,14 @@ public class ObstacleMaster : MonoBehaviour {
 	Action<Obstacle> onResolved;
 
 	float? LastObstacle = null;
+	float LastResolved;
 
 	void Start (){
 		game = GetComponent<LightRailGame> ();
 		obstacles = new List<Obstacle>();
 		incidents = new List<IIncident>();
+
+		LastResolved = Time.time;
 	}
 
 	public void init(Action<Obstacle> onOccur, Action<Obstacle> onUserActioned, Action<Obstacle> onResolved) {
@@ -81,9 +84,9 @@ public class ObstacleMaster : MonoBehaviour {
 
 	void Update (){
 		// Introduce obstacles
-		if (incidents.Count <= LightRailGame.Difficulty) {
+		if (incidents.Count < LightRailGame.Difficulty && (LastResolved + 2 + 10 * UnityEngine.Random.value < Time.time)) {
 			// TODO Rogier: move this to ScoreManager
-			if (!LastObstacle.HasValue || LastObstacle.Value + 5 < Time.time) {
+			if (!LastObstacle.HasValue || LastObstacle.Value + 10 < Time.time) {
 				LastObstacle = Time.time;
 
 				if(obstacles.Count * 2 - 2f * (.5f + UnityEngine.Random.value) > incidents.Count)
@@ -96,6 +99,7 @@ public class ObstacleMaster : MonoBehaviour {
 		var resolved = obstacles.Where (p => p.Incident.IsResolved()).ToList ();
 		resolved.ForEach((ob) => { 
 			obstacles.Remove(ob);
+			LastResolved = Time.time;
 			if(onResolved != null)
 				onResolved(ob); 
 		});
