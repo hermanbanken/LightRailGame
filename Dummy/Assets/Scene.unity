@@ -8384,7 +8384,6 @@ GameObject:
   m_Component:
   - 4: {fileID: 508501576}
   - 114: {fileID: 508501577}
-  - 114: {fileID: 508501578}
   m_Layer: 0
   m_Name: Node 10
   m_TagString: Untagged
@@ -8415,19 +8414,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6aac013bf9c9482093feac57521c94e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &508501578
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 508501575}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 522d79e7c27b84f478c20239aa0ceb80, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dueTime: 60
-  dangerTime: 40
 --- !u!1 &514282552
 GameObject:
   m_ObjectHideFlags: 0

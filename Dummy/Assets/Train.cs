@@ -281,7 +281,7 @@ public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandle
 		var ahead = currentTrack;
 		var accum = 0f;
 		var forZero = DistanceUntilSpeed(0);
-		var clearange = this.collider.bounds.size.magnitude * 3f;
+		var clearange = this.collider.bounds.size.magnitude * 1.5f;
 		do 
 		{
 			if(desiredSpeed == 0) break;
