@@ -10,9 +10,11 @@ public class Station : MonoBehaviour, IStop {
 	private float stopTime = 5f;
 	[NonSerialized]
 	private float lastVisited = 0;
-
-	public float dueTime = 60f;
-	public float dangerTime = 40f;
+	
+	[NonSerialized]
+	public float dueTime = 160f;
+	[NonSerialized]
+	public float dangerTime = 80f;
 
 	[NonSerialized]
 	private State _state;
