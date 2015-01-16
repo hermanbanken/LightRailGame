@@ -89,6 +89,18 @@ public class TrainMenu : MonoBehaviour {
 				return;
 			}
 
+//			// Show which other train is blocking the traffic light 
+//			if(Selected.Cause == Train.LimitingCause.WaitingForTrafficLight && Selected.stop as TrafficLight != null){
+//				var tl = Selected.stop as TrafficLight;
+//				tl = tl != null ? tl.Master ?? tl : null;
+//				tl.Guard
+//					.SelectMany(e => e.GetOccupants())
+//					.Where (o => o != Selected).ToList ()
+//					.ForEach(o => {
+//						Debug.Log("Also at station next to this ("+Selected+") is "+o);
+//					});
+//			}
+
 			if(Time.frameCount % 5 == 0)
 			switch(Selected.Cause){
 			case Train.LimitingCause.BehindTram:

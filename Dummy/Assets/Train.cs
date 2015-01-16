@@ -130,8 +130,11 @@ public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandle
 	
 		// Don't move tram if the game is paused or there is no path
 		if (lightRailGame.paused || Path.Count == 0 || isAtStop) {
-			if(isAtStop)
+			if(isAtStop && this.stop.GetType() == typeof(TrafficLight))
+				Cause = LimitingCause.WaitingForTrafficLight;
+			if(isAtStop && this.stop.GetType() == typeof(Station))
 				Cause = LimitingCause.AtStation;
+			this.speed = 0; // For showing as not driving in menu
 			return;
 		}
 
