@@ -43,7 +43,18 @@ public static class LineExt {
 				break;
 			}
 		}
+
+		/* Validate route: */
+		assert (waypoints.All(wp => path.Any(e => e.To == wp || e.From == wp)), "All waypoints are covered");
+		path.Scan((a, b) => { assert (a.To == b.From, "All edges are connected"); return b; }, path.Last());
+		path.ForEach (e => assert (allEdges.Contains (e), "Edge "+e+" does not exist."));
+
 		return path;
+	}
+
+	public static void assert(bool a, string message){
+		if(!a)
+			Debug.LogError(message);
 	}
 
 	public static IList<Edge> RouteFromWayPoints(this LineSchedule line, IList<Edge> allEdges){

@@ -164,7 +164,7 @@ public class LightRailGame : MonoBehaviour
 			selectedTrainPathChangeAction = changedTrain => {
 				if(line != null) 
 					LineMaster.HideLine(line);
-				line = new CombinedLine<Edge>(changedTrain.Path.AsEnumerable());
+				line = new CombinedLine<Edge>(changedTrain.TakeWhile((e, i) => i == 0 || e != changedTrain.First()));
 				LineMaster.ShowLine(line, LineOpts);
 				RemoveKnots();
 				AddKnots(train, train.WayPoints);
