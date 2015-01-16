@@ -69,7 +69,7 @@ public class Node : MonoBehaviour {
 	}
 
 	public IEnumerable<Edge> OutGoing(){
-		return _outgoing;
+		return _outgoing ?? (_outgoing = graph.edges.Where (e => e.From == this).ToArray());
 	}
 
 	public override bool Equals (object o)
