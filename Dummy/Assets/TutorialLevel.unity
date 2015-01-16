@@ -2588,8 +2588,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 522d79e7c27b84f478c20239aa0ceb80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dueTime: 60
-  dangerTime: 40
 --- !u!114 &690859482
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3109,8 +3107,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 522d79e7c27b84f478c20239aa0ceb80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dueTime: 60
-  dangerTime: 40
 --- !u!1 &888122745
 GameObject:
   m_ObjectHideFlags: 0
@@ -6983,8 +6979,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 522d79e7c27b84f478c20239aa0ceb80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dueTime: 60
-  dangerTime: 40
 --- !u!1 &1912535027
 GameObject:
   m_ObjectHideFlags: 0
