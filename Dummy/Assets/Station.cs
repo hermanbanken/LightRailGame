@@ -45,6 +45,7 @@ public class Station : MonoBehaviour, IStop {
 
 	void Start(){
 		_state = State.OK;
+		lastVisited = Time.time;
 
 		var node = this.gameObject.GetComponent<Node> ();
 		var dir = node.graph.edges.FirstOrDefault (e => e.From == node).GetDirection(0f);
