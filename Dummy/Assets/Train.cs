@@ -287,7 +287,7 @@ public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandle
 			if(desiredSpeed == 0) break;
 
 			// TODO refine maths here; 
-			var block = Path [ahead].GetOccupants ()
+			var block = Path [ahead].From.OutGoing().SelectMany(e => e.GetOccupants())
 				.Where (o => accum + o.Location.Item2 > this.position)
 				.Where (o => accum + o.Location.Item2 - this.position < forZero + clearange);
 			if (block.Any ()) {

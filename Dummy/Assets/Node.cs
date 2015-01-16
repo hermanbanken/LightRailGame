@@ -20,9 +20,12 @@ public class Node : MonoBehaviour {
 		get { return _station; }
 	}
 
+	private IEnumerable<Edge> _outgoing;
+
 	public void Start() {
 		_tl = this.GetComponent<TrafficLight> ();
 		_station = this.GetComponent<Station> ();
+		_outgoing = graph.edges.Where (e => e.From == this).ToArray();
 	}
 
 	public Graph graph {
@@ -66,7 +69,7 @@ public class Node : MonoBehaviour {
 	}
 
 	public IEnumerable<Edge> OutGoing(){
-		return graph.edges.Where (e => e.From == this);
+		return _outgoing;
 	}
 
 	public override bool Equals (object o)
