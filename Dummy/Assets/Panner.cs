@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using UnityEngine.EventSystems;
 using System;
@@ -23,7 +23,6 @@ public class Panner : MonoBehaviour, IDragHandler {
 		}
 		else{
 			Camera.main.orthographicSize = Math.Min(Camera.main.orthographicSize, (float)Background.bounds.size.y/2/Camera.main.aspect);
-
 		}
 		if (Input.mouseScrollDelta.y != 0)
 			FixCameraPosition (Vector3.zero, 0);

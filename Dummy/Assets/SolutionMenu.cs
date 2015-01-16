@@ -77,7 +77,7 @@ public class SolutionMenu : MonoBehaviour {
 	}
 	IEnumerable<ISolution> Actions(){
 		var incidents = Incidents ();
-		var actions = incidents.SelectMany(i => i.PossibleActions()).Distinct();
+		var actions = incidents.SelectMany(i => i.PossibleActions()).Where(a => a.GetType() != typeof(PowerUp) || (a as PowerUp).IsAvailable()).Distinct();
 		return actions;
 	}
 
