@@ -52,7 +52,7 @@ public class LightRailGame : MonoBehaviour
 	private static EdgeRaycaster _edgeRaycaster;
 	[HideInInspector]
 	public static EdgeRaycaster EdgeRaycaster { 
-		get { return _edgeRaycaster ?? (_edgeRaycaster = GameObject.FindObjectOfType<EdgeRaycaster> ()); } 
+		get { return _edgeRaycaster ?? (_edgeRaycaster = GetInstance().GetComponent<EdgeRaycaster> ()); } 
 		set { _edgeRaycaster = value; } 
 	}
 
@@ -89,7 +89,11 @@ public class LightRailGame : MonoBehaviour
 
 	// Use this for initialization
 	void Start () {
+		// RESET
 		_scoreManager = null;
+		_edgeRaycaster = null;
+		_graph = null;
+
 		QualitySettings.antiAliasing = 4;
 
 		GhostTram = Resources.Load("GhostTram", typeof(Sprite)) as Sprite;
