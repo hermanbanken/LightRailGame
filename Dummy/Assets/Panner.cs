@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using UnityEngine.EventSystems;
 using System;
@@ -22,7 +22,7 @@ public class Panner : MonoBehaviour, IDragHandler {
 			Camera.main.orthographicSize = Math.Max(Camera.main.orthographicSize,20f);
 		}
 		else{
-			Camera.main.orthographicSize = Math.Min(Camera.main.orthographicSize,Background.bounds.size.y / Camera.main.aspect / 2 );
+			Camera.main.orthographicSize = Math.Min(Camera.main.orthographicSize, (float)Background.bounds.size.y/2/Camera.main.aspect);
 		}
 		if (Input.mouseScrollDelta.y != 0)
 			FixCameraPosition (Vector3.zero, 0);
@@ -49,7 +49,7 @@ public class Panner : MonoBehaviour, IDragHandler {
 		var c_w = Camera.main.orthographicSize * Camera.main.aspect;
 		var c_h = Camera.main.orthographicSize;
 		var pos = Camera.main.transform.position;
-		pos.x = Math.Max (Background.bounds.min.y  + c_w, Math.Min (Background.bounds.max.x - c_w + rightmenuoffset, pos.x - diff.x * speed));
+		pos.x = Math.Max (Background.bounds.min.x  + c_w, Math.Min (Background.bounds.max.x - c_w + rightmenuoffset, pos.x - diff.x * speed));
 		pos.y = Math.Max (Background.bounds.min.y + c_h  , Math.Min (Background.bounds.max.y - c_h + (10*Camera.main.orthographicSize/88), pos.y - diff.y * speed));
 		Camera.main.transform.position = pos;
 		
