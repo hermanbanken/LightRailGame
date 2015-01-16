@@ -98,7 +98,7 @@ public class ScoreManager : MonoBehaviour
 			//score item stop/start tram manualy 
 			// als de previous > 0 en current == 0 dan net gestopt.
 			if (e.Previous > 0 && e.Current == 0) ImpactCount += 100;
-			if (e.Previous == 0 && e.Current > 0) ImpactCount -= 50;
+			if (e.Previous == 0 && e.Current > 0 && ImpactCount >= 50) ImpactCount -= 50;
 		};
 	}
 

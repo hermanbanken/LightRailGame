@@ -3108,7 +3108,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   points:
   - {x: 3.90310979, y: -46.07967, z: -4}
-  - {x: 1.47931182, y: -39.3374901, z: -4}
+  - {x: 1.99673152, y: -39.4966927, z: -4}
   - {x: 1.34190476, y: -36.2162437, z: -4}
   - {x: 1.20449758, y: -33.0950012, z: -4}
   modes: 0000000000000000
@@ -11161,7 +11161,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   points:
   - {x: -1.34158301, y: -35, z: -4}
-  - {x: -1.55237269, y: -38.0212097, z: -4}
+  - {x: -1.32890177, y: -36.4569092, z: -4}
   - {x: -2.6280973, y: -37.9863472, z: -4}
   - {x: -7.22253656, y: -37.9597893, z: -4}
   modes: 0000000000000000
@@ -17163,7 +17163,7 @@ MonoBehaviour:
   points:
   - {x: 5.31801701, y: -38, z: -4}
   - {x: 1.33333325, y: -38, z: -4}
-  - {x: -1.33333349, y: -38, z: -4}
+  - {x: -.970193088, y: -38.027935, z: -4}
   - {x: -7.22253656, y: -37.9597893, z: -4}
   modes: 0000000000000000
   loop: 0
@@ -18192,7 +18192,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   points:
   - {x: 3.90310979, y: -46.07967, z: -4}
-  - {x: 2.35148406, y: -41.1342049, z: -4}
+  - {x: 3.54553056, y: -43.9601173, z: -4}
   - {x: 3.22122169, y: -41.0935478, z: -4}
   - {x: 8.00239182, y: -40.9287262, z: -4}
   modes: 0000000000000000
@@ -21233,36 +21233,36 @@ MonoBehaviour:
   RailShader: {fileID: 51, guid: 0000000000000000f000000000000000, type: 0}
   Schedule:
   - Name: Line 1
-    TramCount: 3
+    TramCount: 2
     WayPoints:
     - {fileID: 1705855628}
     - {fileID: 1953976165}
     - {fileID: 1166965085}
     - {fileID: 977028681}
   - Name: Line 2
-    TramCount: 4
+    TramCount: 2
     WayPoints:
     - {fileID: 863071829}
     - {fileID: 1661020564}
     - {fileID: 1048533910}
   - Name: Line 3
-    TramCount: 3
+    TramCount: 2
     WayPoints:
     - {fileID: 527795090}
     - {fileID: 738524493}
     - {fileID: 2095025288}
   - Name: Line 4
-    TramCount: 4
+    TramCount: 2
     WayPoints:
     - {fileID: 1401160135}
     - {fileID: 1205094064}
   - Name: Line 5
-    TramCount: 4
+    TramCount: 2
     WayPoints:
     - {fileID: 1396648631}
     - {fileID: 1661946587}
   - Name: Line 6
-    TramCount: 3
+    TramCount: 2
     WayPoints:
     - {fileID: 962869369}
     - {fileID: 1550604377}
@@ -21272,6 +21272,12 @@ MonoBehaviour:
     WayPoints:
     - {fileID: 1333332415}
     - {fileID: 1778459518}
+  - Name: Line 8
+    TramCount: 2
+    WayPoints:
+    - {fileID: 1527127570}
+    - {fileID: 1621140163}
+    - {fileID: 614913062}
 --- !u!4 &2135025056
 Transform:
   m_ObjectHideFlags: 0
