@@ -30,6 +30,9 @@ public static class GUIs
 		GUI.Box (new Rect (x - 5, y - 5, w + 10, h + 10), "");
 		GUILayout.BeginArea (new Rect (x, y, w, h));
 		GUI.skin.button.alignment = TextAnchor.MiddleLeft;
+
+		if (incidents.Count == 0)
+			return true; // Close menu
 		if(incidents.Distinct().Count () == 1)
 			GUILayout.Label (incident.Description()+" How would you like to resolve this issue?");
 		else

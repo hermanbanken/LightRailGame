@@ -11,6 +11,7 @@ public class TrainMenu : MonoBehaviour {
 	private Button stop;
 	private Text stopText;
 	private Text reasonText;
+	private Text titleText;
 	private Slider slider;
 	private Vector3 visiblePosition;
 	private Vector3 hidePosition = new Vector3(200,0,0);
@@ -58,6 +59,7 @@ public class TrainMenu : MonoBehaviour {
 
 		stopText = stop.GetComponentInChildren<Text>();
 		reasonText = this.GetComponentsInChildren<Text> ().Single (t => t.gameObject.name.Equals ("Reason"));
+		titleText = this.GetComponentsInChildren<Text> ().Single (t => t.gameObject.name.Equals ("Title"));
 
 		slider = GetComponentInChildren<Slider> ();
 		slider.minValue = 0f;
@@ -74,6 +76,7 @@ public class TrainMenu : MonoBehaviour {
 			if(!IsOpen && obj != null){
 				this.gameObject.transform.position -= hidePosition;
 				IsOpen = true;
+				titleText.text = obj.name;
 			}
 		};
 
