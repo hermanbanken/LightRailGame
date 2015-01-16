@@ -57,7 +57,7 @@ public class ScoreManager : MonoBehaviour
 						DTcount += 1;
 						ImpactCount += 1;};
 		OnStationOk  += (object sender, StationDueEventArgs e) => DTcount -= 1;
-		OnReroute += (object sender, RerouteEventArgs e) => ImpactCount += 34;
+		OnReroute += (object sender, RerouteEventArgs e) => ImpactCount += 30;
 
 		// Reroute should influence PT or DT since DT is influenced by stations PT is used. 
 		// PTcount += 1;
@@ -75,7 +75,7 @@ public class ScoreManager : MonoBehaviour
 
 			// Score item - Swiftness
 			// Swift bonus / malus : If one plays a disruption quick there is a bonus, when ik takes long a malus
-			if (timeSince <= 9) PowerUps.Magic.Receive ();	// powerup plus
+			if (timeSince <= 5) PowerUps.Magic.Receive ();	// powerup plus
 			else if (timeSince <= 10) Score += 100; 
 			else if(timeSince <= 20)Score += 50;
 			else if(timeSince <= 30)Score += 25;
