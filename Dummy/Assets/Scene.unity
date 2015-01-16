@@ -30583,6 +30583,44 @@ MonoBehaviour:
     WayPoints:
     - {fileID: 1327217206}
     - {fileID: 1373930320}
+  - Name: Line 99
+    TramCount: 1
+    WayPoints:
+    - {fileID: 379983532}
+    - {fileID: 700932557}
+    - {fileID: 162735640}
+    - {fileID: 1582563299}
+    - {fileID: 1987109959}
+  - Name: Line 98
+    TramCount: 1
+    WayPoints:
+    - {fileID: 422198024}
+    - {fileID: 1269728039}
+  - Name: Line 97
+    TramCount: 1
+    WayPoints:
+    - {fileID: 47704885}
+    - {fileID: 333243971}
+    - {fileID: 2032551520}
+    - {fileID: 1735957386}
+  - Name: Line 96
+    TramCount: 1
+    WayPoints:
+    - {fileID: 1001958213}
+    - {fileID: 1743607736}
+    - {fileID: 182833573}
+    - {fileID: 868581925}
+    - {fileID: 761100521}
+    - {fileID: 138756178}
+  - Name: Line 94
+    TramCount: 1
+    WayPoints:
+    - {fileID: 996603363}
+    - {fileID: 1171081817}
+    - {fileID: 1196238256}
+    - {fileID: 1867332148}
+    - {fileID: 761100521}
+    - {fileID: 182833573}
 --- !u!4 &2135025056
 Transform:
   m_ObjectHideFlags: 0
