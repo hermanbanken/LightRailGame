@@ -30411,6 +30411,7 @@ MonoBehaviour:
     TramCount: 2
     WayPoints:
     - {fileID: 379983532}
+    - {fileID: 2136287582}
     - {fileID: 700932557}
     - {fileID: 162735640}
     - {fileID: 1582563299}
@@ -30421,12 +30422,11 @@ MonoBehaviour:
     - {fileID: 422198024}
     - {fileID: 1269728039}
   - Name: Line 97
-    TramCount: 2
+    TramCount: 3
     WayPoints:
-    - {fileID: 47704885}
-    - {fileID: 333243971}
     - {fileID: 2032551520}
     - {fileID: 1735957386}
+    - {fileID: 633615391}
   - Name: Line 96
     TramCount: 2
     WayPoints:
@@ -30437,7 +30437,7 @@ MonoBehaviour:
     - {fileID: 761100521}
     - {fileID: 138756178}
   - Name: Line 94
-    TramCount: 2
+    TramCount: 3
     WayPoints:
     - {fileID: 996603363}
     - {fileID: 1171081817}
