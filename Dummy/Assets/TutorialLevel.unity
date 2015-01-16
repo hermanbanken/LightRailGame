@@ -1305,7 +1305,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Problem timer
+  m_Text: Score counter
 --- !u!222 &294699282
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6147,7 +6147,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Impact timer
+  m_Text: Impact counter
 --- !u!222 &1642760268
 CanvasRenderer:
   m_ObjectHideFlags: 0
