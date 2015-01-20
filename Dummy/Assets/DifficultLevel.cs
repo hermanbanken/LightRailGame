@@ -20,6 +20,6 @@ public class DifficultLevel : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		difficulty = slider.value;
-		text.text = "Diffuculty: " + difficulty;
+		text.text = "Difficulty: " + difficulty;
 	}
 }
