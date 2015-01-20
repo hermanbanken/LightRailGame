@@ -188,7 +188,7 @@ public class Train : MonoBehaviour, IOccupy, IPointerClickHandler, ISelectHandle
 	 * Get prev track segment, if there is any
 	 */
 	public bool TryGetPrevTrack(out int prevTrack, out Edge track) {
-		var nI = (currentTrack - 1) % Path.Count;
+		var nI = (currentTrack - 1 + Path.Count) % Path.Count;
 		if (Path [currentTrack].From == Path [nI].To) {
 			prevTrack = nI;
 			track = Path[nI];
