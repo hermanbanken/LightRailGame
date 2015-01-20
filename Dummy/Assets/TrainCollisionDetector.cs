@@ -33,6 +33,7 @@ public class TrainCollisionDetector : MonoBehaviour
 	}
 
 	void OnCollisionEnter(Collision col){
+		if(!LightRailGame.DemoKey())
 		_onEnter.OnNext (col);
 	}
 

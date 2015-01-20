@@ -30365,6 +30365,7 @@ MonoBehaviour:
   - Name: Line 1
     TramCount: 2
     WayPoints:
+    - {fileID: 2136287582}
     - {fileID: 685075327}
     - {fileID: 62744178}
     - {fileID: 1584373358}

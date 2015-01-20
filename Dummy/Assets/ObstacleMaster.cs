@@ -38,9 +38,9 @@ public class ObstacleMaster : MonoBehaviour {
 	}
 	
 	// TODO Rogier: call this from ScoreManager
-	public void PlaceNewObstacle (){
+	public void PlaceNewObstacle (Edge edge = null){
 		// Get random position
-		Edge edge = game.graph.edges.ElementAt(rnd.Next(0, game.graph.edges.Count ()-1));
+		edge = edge ?? game.graph.edges.ElementAt(rnd.Next(0, game.graph.edges.Count ()-1));
 		float randU = (float)rnd.NextDouble () * edge.GetUnitLength ();
 		float randT = edge.GetPositionOfUnitPoint (randU);
 		Vector3 pos = edge.GetPoint(randT);
@@ -82,8 +82,20 @@ public class ObstacleMaster : MonoBehaviour {
 		return (a.magnitude < b.magnitude) ? a : b;
 	}
 
+	private Queue<string> demo = new Queue<string>(new []{ "Edge 121" });
 	void Update (){
 		// Introduce obstacles
+		if (LightRailGame.Demo) {
+			if(LightRailGame.DemoKey(true)){
+				if(obstacles.Count * 2 - 2f * (.5f + UnityEngine.Random.value) > incidents.Count)
+					CreateNewInsideTramIncident();
+				else {
+					var e = demo.Any() ? GameObject.Find (demo.Dequeue()).GetComponent<Edge>() : null;
+					PlaceNewObstacle (e);
+				}
+			}
+		} 
+		else 
 		if (incidents.Count < LightRailGame.Difficulty && (LastResolved + 2 + 10 * UnityEngine.Random.value < Time.time)) {
 			// TODO Rogier: move this to ScoreManager
 			if (!LastObstacle.HasValue || LastObstacle.Value + 10 < Time.time) {

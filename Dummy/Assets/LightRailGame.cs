@@ -11,6 +11,8 @@ using System.Reactive.Linq;
 
 public class LightRailGame : MonoBehaviour 
 {
+	public static bool Demo = false;
+
 	[HideInInspector,NonSerialized]
 	public bool paused = false;	
 	[HideInInspector,NonSerialized]
@@ -86,6 +88,13 @@ public class LightRailGame : MonoBehaviour
 	public Sprite GhostTram;
 	[NonSerialized]
 	public Sprite NormalTram;
+
+	private static KeyCode[] keys = new KeyCode[] { KeyCode.AltGr, KeyCode.LeftAlt, KeyCode.RightAlt, KeyCode.LeftControl, KeyCode.LeftApple };
+	public static bool DemoKey(bool upOnly = false){
+		if(upOnly)
+			return keys.Any(k => Input.GetKeyDown(k));
+		return keys.Any (k => Input.GetKey (k));
+	}
 
 	// Use this for initialization
 	void Start () {
